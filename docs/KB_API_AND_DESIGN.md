@@ -1,6 +1,6 @@
 # KB Engine API and Design Document
 
-**Last Updated:** 2026-03-06
+**Last Updated:** 2026-03-13
 **Status:** Beta
 
 ---
@@ -8,7 +8,7 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [BSF2-IF vs Standard Prolog](#bsf2-if-vs-standard-prolog)
+2. [Cyclops Storm vs Standard Prolog](#cyclops-storm-vs-standard-prolog)
 3. [Architecture](#architecture)
 4. [Query Flow](#query-flow)
 5. [The Two-Part Reasoning System](#the-two-part-reasoning-system)
@@ -29,11 +29,11 @@ The KB Engine is a hybrid logic programming and temporal reasoning system. It co
 
 ---
 
-## BSF2-IF vs Standard Prolog
+## Cyclops Storm vs Standard Prolog
 
-BSF2-IF is **not** a general-purpose Prolog implementation. It is a domain-specific reasoning engine that borrows Prolog's core (unification, backtracking, Horn clauses) and extends it with temporal reasoning.
+Cyclops Storm is **not** a general-purpose Prolog implementation. It is a domain-specific reasoning engine that borrows Prolog's core (unification, backtracking, Horn clauses) and extends it with temporal reasoning.
 
-| Category | BSF2-IF adds | Standard Prolog has, BSF2-IF lacks |
+| Category | Cyclops Storm adds | Standard Prolog has, Cyclops Storm lacks |
 |---|---|---|
 | **Temporal reasoning** | Event Calculus built-ins (`holds_at`, `initiates`, `terminates`, `happens`, `before`, `initially`) | — |
 | **Provenance** (no Prolog equivalent) | Source text attribution (`fact_id/2`, `supports/2`, `span/4`, `sent/2`), rule derivation tracing (`derivation/1`), unified explanation (`why/1`), recursive evidence trees (`evidence_chain/1`), canonical key normalization | — |
@@ -41,9 +41,9 @@ BSF2-IF is **not** a general-purpose Prolog implementation. It is a domain-speci
 | **Tabling** | SLG-style via `:- table` directive | (Some Prologs have tabling; not ISO) |
 | **Builtins (partial)** | `findall/3`, `between/3`, `atom_concat/3`, `atom_number/2`, `sort/2`, `length/2`, `last/2`, `keysort/2`, `forall/2` | — |
 | **Control & meta** | — | `bagof/3`, `setof/3`, `call/1-N`, `assert/retract` |
-| **Type & term inspection** | — | `var/1`, `atom/1`, `functor/3`, `arg/3`, `=../2`, `copy_term/2` |
+| **Type & term inspection** | `var/1`, `atom/1` (DFS engine) | `functor/3`, `arg/3`, `=../2`, `copy_term/2` |
 | **I/O & modules** | — | `write/1`, `read/1`, module system |
-| **Syntax & misc** | — | `op/3`, DCG (`-->/2`), exception handling (`catch/throw`), `=:=`/`=\=`, bitwise ops |
+| **Syntax & misc** | — | `op/3`, DCG (`-->/2`), exception handling (`catch/throw`), bitwise ops |
 
 ---
 
@@ -142,7 +142,7 @@ engine.add("parent(alice, bob).")
     → classify (fact / rule / temporal)
     → store in IndexedFactStore
     → compile rules via RuleCompiler
-    → invalidate caches (increment epoch)
+    → invalidate caches (clear_all via EpochCacheManager)
 ```
 
 ---
@@ -155,7 +155,7 @@ The Reasoner routes each query to one of two engines: **DFS** (depth-first searc
 
 | Query type | Engine | Example |
 |---|---|---|
-| Simple fact lookup (allowlisted) | DFS | `parent(alice, X)` |
+| Simple fact lookup (allowlisted) | DFS | `person(alice)`, `child(bob)` |
 | Rule with cut (`!`) | DFS | `max(X, Y, X) :- X >= Y, !.` |
 | `holds_at` / temporal predicates | Legacy | `holds_at(in_room(agent, kitchen), t3)` |
 | Tabled recursive predicate | Legacy | `path(X, Y) :- edge(X, Z), path(Z, Y).` |
@@ -378,6 +378,61 @@ Components: `TablingCoordinator` manages the protocol, `TableManager` stores pro
 
 ---
 
+## Builtin Examples
+
+### Batch Fact Addition
+
+`add_facts()` adds multiple facts with a single cache invalidation (not one per fact). Internally calls `cache_manager.clear_all()` once after all facts are stored:
+
+```python
+engine.add_facts(["person(alice)", "person(bob)", "friend(alice, bob)"])
+# cache cleared once after all facts loaded
+```
+
+`add_rules()` works similarly for rules:
+
+```python
+engine.add_rules([
+    "ancestor(X, Y) :- parent(X, Y)",
+    "ancestor(X, Z) :- parent(X, Y), ancestor(Y, Z)"
+])
+```
+
+### findall/3
+
+Collect all solutions for a goal into a list:
+
+```python
+engine.add("color(apple, red). color(banana, yellow). color(cherry, red).")
+engine.query("findall(X, color(X, red), L)")
+# → [{'L': Term('[]', ('apple', 'cherry'))}]
+```
+
+Note: list results use the internal `Term('[]', (...))` representation.
+
+### Arithmetic and Comparison
+
+```python
+engine.query("X is 3 + 4 * 2")       # → [{'X': 11.0}]
+engine.query("between(1, 5, X)")      # → [{'X': 1}, {'X': 2}, ..., {'X': 5}]
+engine.query("sort([3,1,2,1], X)")    # → [{'X': Term('[]', (1, 2, 3))}]
+engine.query("length([a,b,c], N)")    # → [{'N': 3}]
+```
+
+### Snapshot and Restore
+
+Save and restore KB state for speculative reasoning:
+
+```python
+snap = engine.snapshot()
+engine.add("temporary_fact(x).")
+engine.query("temporary_fact(x)")  # → [{}]
+engine.restore(snap)
+engine.query("temporary_fact(x)")  # → []
+```
+
+---
+
 ## Provenance
 
 ### Why This Matters — What SWI-Prolog Doesn't Have
@@ -389,7 +444,7 @@ Standard Prolog implementations, including SWI-Prolog, are opaque reasoners. The
 - Explain temporal reasoning — why a fluent holds at a particular time through initiation, persistence, and non-termination
 - Build recursive evidence trees from a conclusion down to its leaf evidence
 
-SWI-Prolog's `prolog_stack/1` shows the call stack during execution, and libraries like `pengines` can trace resolution steps, but neither produces a structured provenance record that connects conclusions to source evidence. The BSF2-IF provenance system fills this gap at three levels.
+SWI-Prolog's `prolog_stack/1` shows the call stack during execution, and libraries like `pengines` can trace resolution steps, but neither produces a structured provenance record that connects conclusions to source evidence. The Cyclops Storm provenance system fills this gap at three levels.
 
 ### Three-Layer Architecture
 
@@ -641,13 +696,13 @@ results = engine.query("ancestor(alice, X)")
 # → [{'X': 'bob'}]
 ```
 
-**Public API:** `query()`, `add()`, `add_facts()`, `add_rules()`, `consult()`, `clear()`, `snapshot()`, `restore()`, `clear_cache()`, `explain_holds_at()`, `timeline()`
+**Public API:** `query()`, `add()`, `add_fact()`, `add_facts()`, `add_rule()`, `add_rules()`, `consult()`, `snapshot()`, `restore()`, `clear_cache()`, `explain_holds_at()`, `timeline()`, `enable_validation()`, `set_validation_level()`, `get_validation_stats()`, `enable_semantic_analysis()`, `run_semantic_analysis()`, `get_semantic_report()`, `rebuild_temporal_indexes()`
 
 ### Reasoner — `kb_reasoner.py`
 
 Inference coordinator. Owns both engines, all temporal components, evaluation strategies, tabling, and routing.
 
-**Public API:** `holds_at()`, `evaluate_derived()`, `clear_cache()`, `resolve_fully()`, `evaluate_body_with_disjunctions()`
+**Public API:** `holds_at()`, `evaluate_derived()`, `clear_cache()`, `resolve_fully()`. (`evaluate_body_with_disjunctions()` exists but has no callers — the evaluation pipeline uses `_evaluate_sequence_gen()` instead.)
 
 ### FactStore — `kb_store.py`
 
@@ -661,7 +716,7 @@ Tokenizes and parses Prolog syntax into `core.Term` AST nodes. Supports: atoms, 
 
 ### Unifier — `kb_unify.py`
 
-Pattern matching with variable binding. `unify(pattern, ground, subst)` returns a substitution or `None`. Supports occurs check, list unification, anonymous variables (`_`), substitution composition, and chain walking.
+Pattern matching with variable binding. `unify(pattern, ground, subst)` returns a substitution or `None`. Supports occurs check, list unification, anonymous variables (`_`), substitution composition, and chain walking. Internal helpers `_get_functor()` and `_get_args()` handle cross-type unification between `kb_model.Term` (`.functor`, `.args`) and `core.Term` (`.value`, `.args`).
 
 ### RuleCompiler — `engine/compilation/rule_compiler.py`
 
@@ -669,7 +724,7 @@ Transforms rules into executable form. Extracts variables, builds dependency gra
 
 ### Caching — `engine/caching/`
 
-`EpochCacheManager` maintains six cache levels: memo, query, holds, reasoner_holds, reasoner_derived, and tabling. Each `add()` increments the epoch, invalidating stale entries.
+`EpochCacheManager` maintains six cache levels: memo, query, holds, reasoner_holds, reasoner_derived, and tabling. Each `add()` call triggers `cache_manager.clear_all()`, eagerly invalidating all cached entries. Batch operations like `add_facts()` invalidate once after all facts are stored.
 
 ### Handler Registry — `engine/query/handler_setup.py`
 
@@ -681,7 +736,7 @@ Maps predicate functors to specialized handlers. Handlers are grouped by categor
 | Provenance | `DerivationHandler`, `WhyHandler`, `EvidenceChainHandler`, `FactIdHandler`, `SupportsHandler` | `derivation`, `why`, `evidence_chain`, `fact_id`, `supports` |
 | Control | `NegationHandler`, `DisjunctionHandler`, `ConjunctionHandler`, `ForallHandler` | `\+`, `;`, `,`, `forall` |
 | Builtins | `BuiltinHandler` | `findall`, `sort`, `length`, `last`, `keysort`, `atom_concat`, `atom_number`, `between` |
-| Comparison | `ComparisonHandler` | `is`, `=`, `\=`, `<`, `>`, `=<`, `>=`, `==`, `\==` |
+| Comparison | `ComparisonHandler` | `is`, `=`, `\=`, `<`, `>`, `=<`, `>=`, `==`, `\==`, `=:=`, `=\=` |
 | Default | `GeneralPredicateHandler` | Any unmapped predicate |
 
 ---
@@ -705,7 +760,7 @@ Defined in `kb_model.py` (re-exports from `kb_core.model`):
 | `Clause(head, body)` | Inference rule (aliased as `Rule`) | `Clause(head_term, (body_lit1, body_lit2))` |
 | `Directive(term)` | Prolog directive (`:- table fib/1`) | `Directive(Term('table', ...))` |
 
-**Substitution:** `Dict[str, Any]` mapping variable names to bound values.
+**Substitution:** `Dict[Union[str, Var], Any]` mapping variable names (strings) or `Var` objects to bound values. The `Unifier.clean_substitution()` method normalizes `Var` keys to string keys for external consumption.
 
 ---
 
@@ -734,37 +789,111 @@ Defined in `kb_model.py` (re-exports from `kb_core.model`):
 
 ---
 
-## Detailed Glossary for more depth
+## Detailed Glossary
 
-This glossary defines technical terms used throughout this document, with particular attention to concepts that may be unfamiliar to readers without a logic programming background.
+This section provides in-depth explanations of key concepts. If you are new to logic programming or Event Calculus, start here. For a side-by-side comparison with SWI-Prolog, see [KB_ARCHITECTURE_VS_SWI_PROLOG.md](KB_ARCHITECTURE_VS_SWI_PROLOG.md).
+
+### Unification
+
+**Unification** is the core pattern-matching operation underlying all Prolog-style reasoning. Given two terms, unification finds a substitution (a mapping from variables to values) that makes the terms identical, or reports failure if no such mapping exists.
+
+```prolog
+?- f(X, b) = f(a, Y).    % X = a, Y = b
+?- f(X, X) = f(a, b).    % FAILS — X can't be both a and b
+?- f(X, Y) = f(Y, a).    % X = a, Y = a (chains: X→Y→a)
+```
+
+Cyclops Storm uses **immutable substitution dictionaries** — each binding creates a new dict rather than mutating in place. This prevents aliasing bugs (where two variables accidentally share the same binding) at the cost of more memory. The **occurs check** is always on, preventing circular terms like `X = f(X)` which would cause infinite loops. Standard Prolog leaves occurs check off by default for speed.
+
+### Backtracking
+
+**Backtracking** is Prolog's mechanism for exploring multiple solutions. When a query has multiple possible matches, the engine tries the first, and if it fails (or the user asks for more solutions), it undoes recent bindings and tries the next alternative.
+
+```prolog
+color(apple, red).
+color(banana, yellow).
+color(cherry, red).
+
+?- color(X, red).
+% First solution: X = apple
+% Backtrack → second solution: X = cherry
+% Backtrack → no more solutions
+```
+
+Cyclops Storm implements backtracking with Python generators — each choice point `yield`s a solution, and the caller can request more by advancing the generator. The DFS engine uses an explicit choice point stack; the Legacy engine uses recursive generators.
 
 ### DFS Engine
 
-The **Depth-First Search Engine** is BSF2-IF's faster query evaluator for pure Prolog queries. It implements classical Prolog's left-to-right, depth-first search strategy using an explicit choice point stack rather than the recursive evaluation used by the Legacy engine. The DFS engine traverses the search space by exploring each branch fully before backtracking to try alternatives, yielding solutions incrementally via Python generators. It handles unification, backtracking, disjunction (`A ; B`), cut (`!`), and limited negation-as-failure, but lacks support for Event Calculus predicates and temporal reasoning. Cut is implemented as a builtin that succeeds and commits to the current clause. Queries are routed to the DFS engine when they contain only "pure" predicates (no EC, no unsafe NAF), providing significant performance improvement over the Legacy engine for applicable queries.
+The **Depth-First Search Engine** is Cyclops Storm's faster query evaluator for pure Prolog queries. It implements classical Prolog's left-to-right, depth-first search strategy using an explicit choice point stack rather than the recursive evaluation used by the Legacy engine. The DFS engine traverses the search space by exploring each branch fully before backtracking to try alternatives, yielding solutions incrementally via Python generators. It handles unification, backtracking, disjunction (`A ; B`), cut (`!`), and limited negation-as-failure, but lacks support for Event Calculus predicates and temporal reasoning. Cut is implemented as a builtin that succeeds and commits to the current clause. Queries are routed to the DFS engine when they contain only "pure" predicates (no EC, no unsafe NAF), providing significant performance improvement over the Legacy engine for applicable queries.
 
 ### DFS Allowlist
 
-The **DFS Allowlist** is a configuration set that specifies which user-defined predicates are safe to evaluate using the faster DFS engine. By default, BSF2-IF conservatively routes most queries to the Legacy engine to ensure correct semantics. The allowlist mechanism allows specific predicates (e.g., `person/1`, `child/2`) to be marked as "pure Prolog"—meaning they don't depend on Event Calculus reasoning, temporal state, or features the DFS engine doesn't support. When a query involves only allowlisted predicates and built-in pure predicates, the routing FSM directs it to the DFS engine. The allowlist is currently minimized due to a known DFS sibling-clause bug that can cause incorrect results for predicates with multiple clause definitions.
+The **DFS Allowlist** is a configuration set that specifies which user-defined predicates are safe to evaluate using the faster DFS engine. By default, Cyclops Storm conservatively routes most queries to the Legacy engine to ensure correct semantics. The allowlist mechanism allows specific predicates (e.g., `person/1`, `child/2`) to be marked as "pure Prolog"—meaning they don't depend on Event Calculus reasoning, temporal state, or features the DFS engine doesn't support. When a query involves only allowlisted predicates and built-in pure predicates, the routing FSM directs it to the DFS engine. The allowlist is currently `{person, child}` only — `sibling` is excluded due to a known DFS compound-rule backtracking bug where the engine produces 0 results for rules with 3+ conjuncts (e.g., `sibling(X,Y) :- parent(Z,X), parent(Z,Y), different(X,Y)`).
+
+### Legacy Engine
+
+The **Legacy Engine** is Cyclops Storm's original query evaluator, handling Event Calculus predicates, temporal reasoning, tabling, and belief state management. Unlike the DFS engine (which uses an explicit choice point stack), the Legacy engine uses recursive evaluation with Python generators. All EC predicates (`happens`, `holds_at`, `initiates`, `terminates`, `initially`, `before`) are routed to the Legacy engine, as are queries involving tabling or cutoff time. The Legacy engine also handles cut via `CutSequenceStrategy` and `CutCommit` exceptions, though the routing tables preferentially send cut-containing queries to the DFS engine. The term "Legacy" reflects the architectural evolution—newer pure Prolog queries use the faster DFS engine, while the Legacy engine remains essential for EC semantics.
 
 ### EC (Event Calculus)
 
-**Event Calculus** is a logical formalism for reasoning about events, actions, and their effects over time. Originally developed by Kowalski and Sergot (1986) for database applications, it provides a declarative framework for specifying how events initiate and terminate time-varying properties (fluents). The core EC predicates include: `happens(Event, Time)` (an event occurs), `initiates(Event, Fluent)` (an event starts a property holding), `terminates(Event, Fluent)` (an event stops a property holding), `holds_at(Fluent, Time)` (a property holds at a time), and `initially(Fluent)` (a property holds at the initial time). BSF2-IF uses 2-arity `initiates/2` and `terminates/2` as the standard form; a legacy 3-arity form (`initiates(Event, Fluent, Time)`) is also accepted. EC elegantly solves the *frame problem*—determining what remains unchanged after an action—through an inertia axiom: fluents persist unless explicitly terminated. BSF2-IF implements discrete EC with explicit time points, making it suitable for narrative reasoning where events occur at specific moments in a story timeline.
+**Event Calculus** is a logical formalism for reasoning about events, actions, and their effects over time. Originally developed by Kowalski and Sergot (1986) for database applications, it provides a declarative framework for specifying how events initiate and terminate time-varying properties (fluents). The core EC predicates are:
+
+| Predicate | Meaning | Example |
+|---|---|---|
+| `initially(F)` | Fluent F holds at the start | `initially(in_room(agent, kitchen))` |
+| `happens(E, T)` | Event E occurs at time T | `happens(move(agent, hall), t2)` |
+| `initiates(E, F)` | Event E starts fluent F | `initiates(move(agent, hall), in_room(agent, hall))` |
+| `terminates(E, F)` | Event E ends fluent F | `terminates(move(agent, hall), in_room(agent, kitchen))` |
+| `holds_at(F, T)` | Fluent F holds at time T | `holds_at(in_room(agent, hall), t3)` |
+| `before(T1, T2)` | T1 precedes T2 | `before(t1, t2)` |
+
+Cyclops Storm uses 2-arity `initiates/2` and `terminates/2` as the standard form; a legacy 3-arity form (`initiates(Event, Fluent, Time)`) is also accepted. EC elegantly solves the *frame problem*—determining what remains unchanged after an action—through an inertia axiom: fluents persist unless explicitly terminated. Cyclops Storm implements discrete EC with explicit time points, making it suitable for narrative reasoning where events occur at specific moments in a story timeline.
 
 ### Fluents
 
-**Fluents** are time-varying properties in Event Calculus—predicates whose truth value can change over time as events occur. The term comes from "flowing" or "flux," reflecting that these properties are not static facts but dynamic states. For example, `in_room(agent, kitchen)` is a fluent representing the agent's location, which changes when movement events occur. Fluents contrast with *static predicates* like `color(apple, red)` that don't change over time. In BSF2-IF, fluents are the subjects of `holds_at/2` queries and the objects of `initiates/2` and `terminates/2` causal rules. The system tracks fluent lifecycles: when they were initiated, whether they've been terminated (clipped), and the complete provenance chain explaining why a fluent holds or doesn't hold at any given time point. Fluents can also be *exclusive*—only one value can hold at a time (e.g., an agent can only be in one room).
+**Fluents** are time-varying properties in Event Calculus—predicates whose truth value can change over time as events occur. The term comes from "flowing" or "flux," reflecting that these properties are not static facts but dynamic states. For example, `in_room(agent, kitchen)` is a fluent representing the agent's location, which changes when movement events occur. Fluents contrast with *static predicates* like `color(apple, red)` that don't change over time.
 
-### Flounder (Floundering)
+In Cyclops Storm, fluents are the subjects of `holds_at/2` queries and the objects of `initiates/2` and `terminates/2` causal rules. The system tracks fluent lifecycles: when they were initiated, whether they've been terminated (clipped), and the complete provenance chain explaining why a fluent holds or doesn't hold at any given time point. Fluents can also be *exclusive*—only one value can hold at a time (e.g., an agent can only be in one room).
 
-**Floundering** occurs when negation-as-failure (NAF) is applied to a goal containing unbound variables. Since NAF uses the closed-world assumption ("if we can't prove P, then ¬P"), applying it to a non-ground goal like `\+ member(X, [1,2,3])` is semantically problematic: we cannot enumerate all possible values of X to check that none are members. Different Prolog systems handle floundering differently—some delay the negation until variables become bound, some raise errors, and some produce unsound results. BSF2-IF implements a conservative flounder policy: when NAF encounters a non-ground goal, it immediately triggers backtracking without binding any variables or raising an error. This means queries must be written to ground variables *before* negation: `member(X, Candidates), \+ excluded(X)` succeeds, but `\+ excluded(X), member(X, Candidates)` flounders. The term "flounder" evokes a fish out of water—the computation is stuck, unable to proceed meaningfully.
+### Frame Problem and Inertia Axiom
+
+The **Frame Problem** is a fundamental challenge in AI: how to efficiently represent what *doesn't* change when an action occurs. Naively, you'd need explicit "frame axioms" stating that every unchanged property persists after every action—an exponential blowup. If "opening a door" doesn't affect an agent's location, you'd need a frame axiom for every property that isn't affected. With 100 fluents and 50 actions, that's 5,000 frame axioms.
+
+The **Inertia Axiom** is Event Calculus's elegant solution: a fluent that holds at time T continues to hold at later times unless an event terminates it. Formally: `holds_at(F, T) ∧ ¬clipped(T, F, T') → holds_at(F, T')` for T < T'. In Cyclops Storm, inertia is implemented implicitly in the `holds_at` algorithm: after finding an initiation time, the system searches for terminating events; if none exist before the query time, the fluent holds. This avoids the need for explicit persistence axioms and makes temporal reasoning tractable.
 
 ### NAF (Negation as Failure)
 
-**Negation as Failure** is Prolog's approach to negation under the closed-world assumption: a goal `\+ P` succeeds if and only if `P` cannot be proven from the knowledge base. Unlike classical logical negation, NAF doesn't require explicit negative facts—absence of proof is treated as proof of absence. This makes NAF non-monotonic: adding new facts can cause previously successful negations to fail. In BSF2-IF, NAF is implemented by attempting to prove the inner goal in an isolated subproof; if the subproof yields no solutions, the negation succeeds with the current substitution unchanged. NAF has important limitations: it requires ground arguments (see *Floundering*), it doesn't work well with incomplete information, and it can interact subtly with other control constructs like cut and disjunction. The Legacy engine handles NAF more robustly than the DFS engine, which is why queries with potentially unsafe NAF are routed to Legacy.
+**Negation as Failure** is Prolog's approach to negation under the closed-world assumption: a goal `\+ P` succeeds if and only if `P` cannot be proven from the knowledge base. Unlike classical logical negation, NAF doesn't require explicit negative facts—absence of proof is treated as proof of absence.
+
+```prolog
+bird(tweety). penguin(opus). bird(opus).
+flies(X) :- bird(X), \+ penguin(X).
+
+?- flies(tweety).  % YES — tweety is a bird, not a penguin
+?- flies(opus).    % NO  — opus is a penguin (NAF fails)
+```
+
+This makes NAF **non-monotonic**: adding `penguin(tweety).` would cause `flies(tweety)` to stop succeeding. In Cyclops Storm, NAF is implemented by attempting to prove the inner goal in an isolated subproof; if the subproof yields no solutions, the negation succeeds with the current substitution unchanged.
+
+NAF has important limitations: it requires ground arguments (see *Floundering*), it doesn't work well with incomplete information, and it can interact subtly with other control constructs like cut and disjunction. The Legacy engine handles NAF more robustly than the DFS engine, which is why queries with potentially unsafe NAF are routed to Legacy.
+
+### Flounder (Floundering)
+
+**Floundering** occurs when negation-as-failure (NAF) is applied to a goal containing unbound variables. Since NAF uses the closed-world assumption ("if we can't prove P, then ¬P"), applying it to a non-ground goal like `\+ member(X, [1,2,3])` is semantically problematic: we cannot enumerate all possible values of X to check that none are members.
+
+Cyclops Storm implements a conservative flounder policy: when NAF encounters a non-ground goal, it immediately triggers backtracking without binding any variables or raising an error. This means queries must be written to ground variables *before* negation:
+
+```prolog
+% SAFE — X is bound by person(X) before NAF checks
+eligible(X) :- person(X), \+ excluded(X).
+
+% UNSAFE — X is unbound when NAF fires → flounders
+bad(X) :- \+ excluded(X), person(X).
+```
 
 ### Selective Tabling
 
-**Selective Tabling** is BSF2-IF's approach to applying tabling only to predicates that need it, controlled via the standard Prolog `:- table` directive. Consider a knowledge base with both simple facts and recursive rules:
+**Selective Tabling** is Cyclops Storm's approach to applying tabling only to predicates that need it, controlled via the standard Prolog `:- table` directive. Consider a knowledge base with both simple facts and recursive rules:
 
 ```prolog
 :- table reaches/2.
@@ -778,39 +907,52 @@ reaches(X, Z) :- edge(X, Y), reaches(Y, Z).
 
 Here, only `reaches/2` benefits from tabling—it's recursive and would otherwise recompute the same subgoals repeatedly. The simple `person/1` facts don't need tabling overhead (table creation, answer storage, fixpoint iteration). With selective tabling, querying `person(X)` bypasses the tabling machinery entirely, while `reaches(a, X)` uses full SLG resolution with memoization.
 
-BSF2-IF supports two modes. When `:- table` directives are present, only registered predicates use tabling; unregistered predicates evaluate directly without table creation. When no directives exist (blanket mode), all predicates use tabling for backward compatibility. Multiple predicates can be registered in a single directive (`:- table ancestor/2, path/2.`), and programmatic registration is available via `engine.reasoner.register_tabled_predicate("pred", arity)`.
+Cyclops Storm supports two modes. When `:- table` directives are present, only registered predicates use tabling; unregistered predicates evaluate directly without table creation. When no directives exist (blanket mode), all predicates use tabling for backward compatibility. Multiple predicates can be registered in a single directive (`:- table ancestor/2, path/2.`), and programmatic registration is available via `engine.reasoner.register_tabled_predicate("pred", arity)`.
 
-The implementation maintains a set of `(functor, arity)` tuples representing registered predicates. During query evaluation, the reasoner checks this registry before entering the tabling code path, allowing unregistered predicates to skip table lookup, producer/consumer protocol, and fixpoint iteration—resulting in faster evaluation for predicates that don't need memoization.
+### SLG Resolution
 
-### SLG (SLG Resolution / Tabling)
+**SLG Resolution** (Selective Linear Definite clause resolution with Generalization) is the tabling algorithm that enables efficient evaluation of recursive queries by memoizing intermediate results. Without tabling, a query like computing the transitive closure of a graph can loop infinitely or recompute the same subgoals exponentially many times.
 
-**SLG Resolution** (Selective Linear Definite clause resolution with Generalization) is the tabling algorithm that enables efficient evaluation of recursive queries by memoizing intermediate results. Without tabling, a query like computing the transitive closure of a graph can loop infinitely or recompute the same subgoals exponentially many times. SLG resolution, pioneered by the XSB Prolog system, addresses this through a producer/consumer protocol: the first call to a tabled predicate becomes a "producer" that computes answers, while subsequent calls with equivalent (variant) arguments become "consumers" that reuse cached answers. When a consumer encounters a call that's still being evaluated (a cycle), it suspends and waits for the producer to generate answers. BSF2-IF implements variant-based tabling where goals like `path(X, Y)` and `path(A, B)` share the same table entry (alpha-equivalent variants). The system uses fixpoint iteration to handle recursive definitions, continuing until no new answers are produced. SLG is essential for BSF2-IF's temporal reasoning, where queries like "all times before T5" involve recursive `before/2` relationships.
+SLG resolution uses a **producer/consumer protocol**: the first call to a tabled predicate becomes a "producer" that computes answers, while subsequent calls with equivalent (variant) arguments become "consumers" that reuse cached answers. When a consumer encounters a call that's still being evaluated (a cycle), it suspends and waits for the producer to generate answers. Cyclops Storm uses fixpoint iteration to handle recursive definitions, continuing until no new answers are produced.
 
 ### Cutoff Time
 
-**Cutoff Time** is BSF2-IF's temporal pruning optimization that limits the horizon of Event Calculus queries. When evaluating `holds_at(Fluent, T)` with a cutoff, the system ignores events occurring after the cutoff time, reducing the search space for initiation and termination checks. This is particularly useful for interactive narrative systems where only recent history matters, or for debugging where you want to isolate behavior within a specific time window. Cutoff time is passed through the evaluation context and affects `holds_at`, `initiates`, `terminates`, and related EC predicates. Queries with cutoff are always routed to the Legacy engine (the DFS engine doesn't implement temporal pruning).
+**Cutoff Time** is Cyclops Storm's temporal pruning optimization that limits the horizon of Event Calculus queries. When evaluating `holds_at(Fluent, T)` with a cutoff, the system ignores events occurring after the cutoff time, reducing the search space for initiation and termination checks. This is particularly useful for interactive narrative systems where only recent history matters, or for debugging where you want to isolate behavior within a specific time window. Cutoff time is passed through the evaluation context and affects `holds_at`, `initiates`, `terminates`, and related EC predicates.
 
 ### Epoch
 
-**Epoch** is BSF2-IF's cache invalidation mechanism, implemented by the `EpochCacheManager`. Each mutation to the knowledge base (adding or removing facts) increments a global epoch counter. Cached query results store the epoch at which they were computed; when accessed, if the cache entry's epoch doesn't match the current epoch, it's treated as stale and recomputed. This "lazy invalidation" approach is simple and guarantees correctness (no stale results) at the cost of coarse granularity (all caches affected by any mutation). The epoch system eliminates the circular dependency between `KBEngine` and `Reasoner` that plagued earlier architectures.
+**Epoch** is Cyclops Storm's cache invalidation mechanism, implemented by the `EpochCacheManager`. Each mutation to the knowledge base (adding or removing facts) calls `clear_all()`, which physically clears all six cache dictionaries in place and bumps the epoch counter. This eager invalidation approach is simple and guarantees correctness (no stale results) at the cost of coarse granularity (all caches affected by any mutation). A lighter-weight `bump_epoch()` method exists for lazy invalidation (entries become stale but are not reclaimed until re-queried), though the engine currently uses `clear_all()` by default.
 
-### Frame Problem
-
-The **Frame Problem** is a fundamental challenge in AI and logic programming: how to efficiently represent what *doesn't* change when an action occurs. Naively, you'd need explicit "frame axioms" stating that every unchanged property persists after every action—an exponential blowup. For example, if "opening a door" doesn't affect an agent's location, you'd need `opens(Door, T), holds_at(location(Agent, Room), T) → holds_at(location(Agent, Room), T+1)` for every possible property. Event Calculus solves this elegantly via the *inertia axiom*: fluents persist by default unless explicitly terminated. BSF2-IF implements this implicitly—`holds_at` only checks for termination events, not for preservation.
-
-### Inertia Axiom
-
-The **Inertia Axiom** is Event Calculus's solution to the frame problem. It states: a fluent that holds at time T continues to hold at T+1 unless an event terminates it. Formally: `holds_at(F, T) ∧ ¬clipped(T, F, T') → holds_at(F, T')` for T < T'. In BSF2-IF, inertia is implemented implicitly in the `holds_at` algorithm: after finding an initiation time, the system searches for terminating events; if none exist before the query time, the fluent holds. This avoids the need for explicit persistence axioms and makes temporal reasoning tractable.
-
-### Legacy Engine
-
-The **Legacy Engine** is BSF2-IF's original query evaluator, handling Event Calculus predicates, temporal reasoning, tabling, and belief state management. Unlike the DFS engine (which uses an explicit choice point stack), the Legacy engine uses recursive evaluation with Python generators. All EC predicates (`happens`, `holds_at`, `initiates`, `terminates`, `initially`, `before`) are routed to the Legacy engine, as are queries involving tabling or cutoff time. The Legacy engine also handles cut via `CutSequenceStrategy` and `CutCommit` exceptions, though the routing tables preferentially send cut-containing queries to the DFS engine. The term "Legacy" reflects the architectural evolution—newer pure Prolog queries use the faster DFS engine, while the Legacy engine remains essential for EC semantics.
+```python
+engine.add("person(alice).")    # caches cleared, epoch bumped
+engine.add("person(bob).")      # caches cleared again
+# Batch alternative: engine.add_facts([...]) clears only once
+```
 
 ### Provenance
 
-**Provenance** is BSF2-IF's mechanism for tracking *why* a fluent holds at a given time, not just *that* it holds. The provenance system uses `DerivationRecord` objects (in `engine/derived_evaluation/data_structures.py`) to document rule derivation steps and `TemporalProvenanceNode` objects (in `engine/reasoning/temporal/temporal_provenance.py`) to document temporal reasoning chains — which events occurred, which rules fired, which preconditions were satisfied. This supports explainability ("Why does the agent have the key at t5?"), debugging ("Which event caused this unexpected state?"), and narrative generation ("Summarize the agent's actions"). Provenance tracking is a key differentiator from SWI-Prolog, which doesn't provide built-in causal explanation for temporal queries.
+**Provenance** is Cyclops Storm's mechanism for tracking *why* a conclusion holds, not just *that* it holds. The provenance system operates at three levels:
 
-### WAM (Warren Abstract Machine)
+1. **Source attribution**: `fact_id/2` and `supports/2` link facts to source text spans
+2. **Rule derivation**: `DerivationRecord` objects document which rules fired and what bindings were used
+3. **Temporal reasoning**: `TemporalProvenanceNode` objects trace the Event Calculus chain — which events occurred, which rules fired, which preconditions were satisfied
 
-The **Warren Abstract Machine** is the standard execution model for Prolog implementations, designed by David H.D. Warren in 1983. It compiles Prolog clauses to bytecode for an abstract machine with specialized registers, a trail for undo logging, and efficient first-argument indexing for clause selection. SWI-Prolog uses WAM (with JIT compilation to native code), achieving 100-1000x performance over interpreted approaches. BSF2-IF does *not* use WAM—it's pure Python with explicit data structures—trading performance for maintainability, debuggability, and seamless Python ecosystem integration.
+This supports explainability ("Why does the agent have the key at t5?"), debugging ("Which event caused this unexpected state?"), and narrative generation ("Summarize the agent's actions").
+
+### Stratification
+
+**Stratification** is the layering of predicates by their negation dependencies. A program is *stratifiable* if its predicates can be arranged in layers (strata) such that negation only refers to predicates in lower strata — never to predicates in the same or higher stratum.
+
+```prolog
+% Stratifiable: negation only refers "down"
+bird(tweety).
+penguin(opus).
+flies(X) :- bird(X), \+ penguin(X).   % flies (stratum 2) negates penguin (stratum 1) ✓
+
+% Non-stratifiable: odd cycle through negation
+p :- \+ q.
+q :- \+ p.   % p and q negate each other — undefined semantics ✗
+```
+
+Non-stratifiable programs have undefined NAF semantics. Cyclops Storm includes a compile-time `StratificationAnalyzer` that detects these cases via dependency graph analysis (Tarjan's algorithm for strongly connected components).
 

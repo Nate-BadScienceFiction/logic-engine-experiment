@@ -12,8 +12,8 @@
 - Reference: BSF2-IF Knowledge Base Engine repo (coming)
 
 ## Docs:
-- [Architectural comparison with SWI Prolog: a compare and contrast](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_ARCHITECTURE_VS_SWI_PROLOG.md). Updated 03/05/2026.
-- [KB Engine API and Design Document](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_API_AND_DESIGN.md). Updated 03/05/2026.
+- [Architectural comparison with SWI Prolog: a compare and contrast](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_ARCHITECTURE_VS_SWI_PROLOG.md). Updated 03/13/2026.
+- [KB Engine API and Design Document](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_API_AND_DESIGN.md). Updated 03/13/2026.
 
 ## Unit Tests:
 - Update 03/11/2026
