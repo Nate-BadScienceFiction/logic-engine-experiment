@@ -918,6 +918,14 @@
             borderWidth: 1,
         }];
 
+        // Scale state (must be declared before chart creation for plugin access)
+        let currentScale = 'linear';
+        const LOG_ZERO_VALUE = 0.5;  // Value to use for 0 in log scale (since log(0) is undefined)
+
+        function scaleValueForDisplay(value, scaleType) {
+            return scaleType === 'log' && value === 0 ? LOG_ZERO_VALUE : value;
+        }
+
         const chart = new Chart(ctx, {
             type: 'bubble',
             data: { datasets },
@@ -1093,14 +1101,6 @@
 
         // Resize canvas
         document.querySelector('.chart-container').style.height = '600px';
-
-        // Scale toggle function
-        let currentScale = 'linear';
-        const LOG_ZERO_VALUE = 0.5;  // Value to use for 0 in log scale (since log(0) is undefined)
-
-        function scaleValueForDisplay(value, scaleType) {
-            return scaleType === 'log' && value === 0 ? LOG_ZERO_VALUE : value;
-        }
 
         function getPointDisplayValue(point, field) {
             return scaleValueForDisplay(point[field], currentScale);
