@@ -9,15 +9,15 @@
 
 - Featured big idea: ["Machining the Ghost: Ideating in the Age of AI"](https://natecombs.substack.com/p/machining-the-ghost-ideating-in-the)
 
-- Reference: BSF2-IF Knowledge Base Engine repo (coming)
+- Reference: Knowledge Base Engine source code repo (coming)
 
 ## Docs:
 - [Architectural comparison with SWI Prolog: a compare and contrast](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_ARCHITECTURE_VS_SWI_PROLOG.md). Updated 03/13/2026.
 - [KB Engine API and Design Document](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_API_AND_DESIGN.md). Updated 03/13/2026.
 
 ## Unit Tests:
-- Update 03/18/2026
-  - <img width="450" height="225" alt="unit_test_progress" src="viz/unit_test_chart_03_18_2026.png" />
+- Update 03/20/2026
+  - <img width="450" height="225" alt="unit_test_progress" src="viz/unit_test_chart_03_20_2026.png" />
 
 ## Status (Highlights):
 
