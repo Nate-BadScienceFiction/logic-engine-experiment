@@ -1,6 +1,6 @@
 # KB Engine API and Design Document
 
-**Last Updated:** 2026-03-13
+**Last Updated:** 2026-03-19
 **Status:** Beta
 
 ---
@@ -39,8 +39,8 @@ Cyclops Storm is **not** a general-purpose Prolog implementation. It is a domain
 | **Provenance** (no Prolog equivalent) | Source text attribution (`fact_id/2`, `supports/2`, `span/4`, `sent/2`), rule derivation tracing (`derivation/1`), unified explanation (`why/1`), recursive evidence trees (`evidence_chain/1`), canonical key normalization | — |
 | **Architecture** | Dual-engine routing (DFS/Legacy), epoch caching | — |
 | **Tabling** | SLG-style via `:- table` directive | (Some Prologs have tabling; not ISO) |
-| **Builtins (partial)** | `findall/3`, `between/3`, `atom_concat/3`, `atom_number/2`, `sort/2`, `length/2`, `last/2`, `keysort/2`, `forall/2` | — |
-| **Control & meta** | — | `bagof/3`, `setof/3`, `call/1-N`, `assert/retract` |
+| **Builtins (partial)** | `findall/3`, `setof/3`, `between/3`, `atom_concat/3`, `atom_number/2`, `sort/2`, `length/2`, `last/2`, `keysort/2`, `forall/2` | — |
+| **Control & meta** | — | `bagof/3`, `call/1-N`, `assert/retract` |
 | **Type & term inspection** | `var/1`, `atom/1` (DFS engine) | `functor/3`, `arg/3`, `=../2`, `copy_term/2` |
 | **I/O & modules** | — | `write/1`, `read/1`, module system |
 | **Syntax & misc** | — | `op/3`, DCG (`-->/2`), exception handling (`catch/throw`), bitwise ops |
@@ -98,7 +98,7 @@ KBEngine (Facade)
 │       └── EventCalculusQueries (initiation/termination queries)
 │
 └── Caching
-    EpochCacheManager (memo, query, holds, reasoner_holds, reasoner_derived, tabling)
+    EpochCacheManager (memo, holds, query, reasoner_derived, tabling)
 ```
 
 ---
@@ -710,7 +710,9 @@ Indexed storage for facts, rules, temporal relations, and provenance. Maintains 
 
 ### Parser — `kb_parser.py`
 
-Tokenizes and parses Prolog syntax into `core.Term` AST nodes. Supports: atoms, variables, numbers (including scientific notation), strings, compound terms, lists, operators, arithmetic, cut, negation, disjunction, if-then-else.
+Tokenizes and parses Prolog syntax into `core.Term` AST nodes. Supports: atoms, variables, numbers (including scientific notation), strings, compound terms, lists, operators, arithmetic, cut, negation, disjunction (n-ary), if-then-else.
+
+Infix parsing uses precedence-climbing with four levels (lowest to highest): `_parse_term_with_infix()` handles disjunction (`;`, left-associative), `_parse_comparison_term()` handles comparison and `is` operators, `_parse_additive_expression()` handles `+`/`-`, and `_parse_multiplicative_expression()` handles `*`/`/`/`//`/`mod`. N-ary disjunctions like `(A ; B ; C)` produce left-associative ASTs: `';'(';'(A, B), C)`.
 
 `KBEngine` converts `core.Term` (has `.type`, `.value`) to `kb_model.Term` (has `.functor`, `.args`) via `_convert_core_term_to_model()`.
 
@@ -724,7 +726,7 @@ Transforms rules into executable form. Extracts variables, builds dependency gra
 
 ### Caching — `engine/caching/`
 
-`EpochCacheManager` maintains six cache levels: memo, query, holds, reasoner_holds, reasoner_derived, and tabling. Each `add()` call triggers `cache_manager.clear_all()`, eagerly invalidating all cached entries. Batch operations like `add_facts()` invalidate once after all facts are stored.
+`EpochCacheManager` maintains five cache levels: memo, holds, query, reasoner_derived, and tabling. Each `add()` call triggers `cache_manager.clear_all()`, eagerly invalidating all cached entries. Batch operations like `add_facts()` invalidate once after all facts are stored.
 
 ### Handler Registry — `engine/query/handler_setup.py`
 
@@ -753,7 +755,7 @@ Defined in `kb_model.py` (re-exports from `kb_core.model`):
 | `QuotedAtom(value)` | Quoted string | `QuotedAtom('hello')` |
 | `Literal(term, neg)` | Term with negation flag | `Literal(term, neg=False)` |
 | `Negation(inner)` | NAF wrapper | `Negation(Literal(term))` |
-| `OrNode(branches)` | Disjunction (`A ; B`) | `OrNode(((lit_a,), (lit_b,)))` |
+| `OrNode(branches)` | Disjunction (`A ; B`, n-ary `A ; B ; C`) | `OrNode(((lit_a,), (lit_b,)))` |
 | `Conjunction(items)` | Conjunction (preserves structure for NAF) | `Conjunction((lit_a, lit_b))` |
 | `Cut()` | Cut operator | `Cut()` |
 | `IfThenElse(condition, then_branch, else_branch)` | Conditional | `IfThenElse(cond, (then_lits,), (else_lits,))` |
@@ -824,7 +826,7 @@ Cyclops Storm implements backtracking with Python generators — each choice poi
 
 ### DFS Engine
 
-The **Depth-First Search Engine** is Cyclops Storm's faster query evaluator for pure Prolog queries. It implements classical Prolog's left-to-right, depth-first search strategy using an explicit choice point stack rather than the recursive evaluation used by the Legacy engine. The DFS engine traverses the search space by exploring each branch fully before backtracking to try alternatives, yielding solutions incrementally via Python generators. It handles unification, backtracking, disjunction (`A ; B`), cut (`!`), and limited negation-as-failure, but lacks support for Event Calculus predicates and temporal reasoning. Cut is implemented as a builtin that succeeds and commits to the current clause. Queries are routed to the DFS engine when they contain only "pure" predicates (no EC, no unsafe NAF), providing significant performance improvement over the Legacy engine for applicable queries.
+The **Depth-First Search Engine** is Cyclops Storm's faster query evaluator for pure Prolog queries. It implements classical Prolog's left-to-right, depth-first search strategy using an explicit choice point stack rather than the recursive evaluation used by the Legacy engine. The DFS engine traverses the search space by exploring each branch fully before backtracking to try alternatives, yielding solutions incrementally via Python generators. It handles unification, backtracking, disjunction (`A ; B`, including n-ary `A ; B ; C ; ...`), cut (`!`), and limited negation-as-failure, but lacks support for Event Calculus predicates and temporal reasoning. Cut is implemented as a builtin that succeeds and commits to the current clause. Queries are routed to the DFS engine when they contain only "pure" predicates (no EC, no unsafe NAF), providing significant performance improvement over the Legacy engine for applicable queries.
 
 ### DFS Allowlist
 
@@ -832,7 +834,7 @@ The **DFS Allowlist** is a configuration set that specifies which user-defined p
 
 ### Legacy Engine
 
-The **Legacy Engine** is Cyclops Storm's original query evaluator, handling Event Calculus predicates, temporal reasoning, tabling, and belief state management. Unlike the DFS engine (which uses an explicit choice point stack), the Legacy engine uses recursive evaluation with Python generators. All EC predicates (`happens`, `holds_at`, `initiates`, `terminates`, `initially`, `before`) are routed to the Legacy engine, as are queries involving tabling or cutoff time. The Legacy engine also handles cut via `CutSequenceStrategy` and `CutCommit` exceptions, though the routing tables preferentially send cut-containing queries to the DFS engine. The term "Legacy" reflects the architectural evolution—newer pure Prolog queries use the faster DFS engine, while the Legacy engine remains essential for EC semantics.
+The **Legacy Engine** is Cyclops Storm's original query evaluator, handling Event Calculus predicates, temporal reasoning, tabling, and belief state management. Unlike the DFS engine (which uses an explicit choice point stack), the Legacy engine uses recursive evaluation with Python generators. All EC predicates (`happens`, `holds_at`, `initiates`, `terminates`, `initially`, `before`) are routed to the Legacy engine, as are queries involving tabling or cutoff time. The Legacy engine also handles cut via `CutSequenceStrategy` and `CutCommit` exceptions, though the routing tables preferentially send cut-containing queries to the DFS engine. Result cleaning uses `_deep_walk` to recursively resolve variables inside compound terms (e.g., cons-cells from recursive list construction), not just top-level variable chains. The term "Legacy" reflects the architectural evolution—newer pure Prolog queries use the faster DFS engine, while the Legacy engine remains essential for EC semantics.
 
 ### EC (Event Calculus)
 
@@ -921,7 +923,7 @@ SLG resolution uses a **producer/consumer protocol**: the first call to a tabled
 
 ### Epoch
 
-**Epoch** is Cyclops Storm's cache invalidation mechanism, implemented by the `EpochCacheManager`. Each mutation to the knowledge base (adding or removing facts) calls `clear_all()`, which physically clears all six cache dictionaries in place and bumps the epoch counter. This eager invalidation approach is simple and guarantees correctness (no stale results) at the cost of coarse granularity (all caches affected by any mutation). A lighter-weight `bump_epoch()` method exists for lazy invalidation (entries become stale but are not reclaimed until re-queried), though the engine currently uses `clear_all()` by default.
+**Epoch** is Cyclops Storm's cache invalidation mechanism, implemented by the `EpochCacheManager`. Each mutation to the knowledge base (adding or removing facts) calls `clear_all()`, which physically clears all five cache dictionaries in place and bumps the epoch counter. This eager invalidation approach is simple and guarantees correctness (no stale results) at the cost of coarse granularity (all caches affected by any mutation). A lighter-weight `bump_epoch()` method exists for lazy invalidation (entries become stale but are not reclaimed until re-queried), though the engine currently uses `clear_all()` by default.
 
 ```python
 engine.add("person(alice).")    # caches cleared, epoch bumped
