@@ -1,6 +1,6 @@
 # Cyclops Storm vs SWI-Prolog: Architectural Comparison
 
-**Last Updated:** 2026-03-13
+**Last Updated:** 2026-04-09
 **Purpose:** Architectural comparison of Cyclops Storm (Event Calculus reasoner) vs SWI-Prolog (general-purpose Prolog)
 **For:** People choosing between Cyclops Storm and SWI-Prolog for narrative/temporal reasoning vs general Prolog work
 **See also:** `docs/KB_API_AND_DESIGN.md` for the Cyclops Storm API reference and internal design
@@ -28,7 +28,7 @@
 | **Maintainability** | Modular Python | Monolithic C |
 | **ISO Compliance** | Prolog subset | Full ISO Prolog |
 | **Narrative Reasoning** | Specialized (belief states, provenance) | Not built-in |
-| **Test Suite** | ~5,400 tests, 99%+ pass | 10,000+ tests |
+| **Test Suite** | ~6,000 tests, 99%+ pass | 10,000+ tests |
 
 ---
 
@@ -181,7 +181,7 @@ Cyclops Storm implements a **restricted Prolog subset** optimized for Event Calc
 |-----------|------------------|----------------------|
 | **Unification** | Recursive with **occurs check always on**. Immutable substitutions (new dict per binding). | ISO: occurs check off by default (`unify_with_occurs_check/2` for explicit). Cyclops Storm safer but slower. |
 | **Backtracking** | Generator-based DFS with explicit choice point stack. Yields solutions incrementally. | ISO: WAM trail-based. Cyclops Storm equivalent semantics, significantly slower. |
-| **Disjunction** | `(A ; B)` supported via `OrNode`. Evaluates branches left-to-right, backtracks into alternatives. | ISO-compliant. |
+| **Disjunction** | `(A ; B)` and n-ary `(A ; B ; C ; ...)` supported via `OrNode`. Left-associative parsing; evaluates branches left-to-right, backtracks into alternatives. | ISO-compliant. |
 | **Cut (`!`)** | Supported. Routed to DFS engine which has native cut via goal stack pruning. | ISO: full ancestor cut. |
 | **NAF (`\+`)** | Closed-world assumption. **Requires ground arguments** (see floundering below). Subproof isolation. | ISO-compliant when ground. |
 | **Time Pruning** | `cutoff_time` parameter limits temporal horizon. Events beyond cutoff ignored in `holds_at`, `initiates`, `terminates`. EC-specific, no ISO equivalent. | N/A—EC extension. |
@@ -194,12 +194,13 @@ Cyclops Storm implements a **restricted Prolog subset** optimized for Event Calc
 | Variables | ✅ Supported | Explicit UID-based identity |
 | Atoms, integers, floats | ✅ Supported | Standard representation |
 | Lists | ✅ Supported | `[H|T]`, `[]`, `[a,b,c]` |
-| Arithmetic (`is/2`) | ✅ Supported | `X is 3 + 4`, `Y is X * 2`, `Z is -(X)` (unary minus) |
+| Arithmetic (`is/2`) | ✅ Supported | `X is 3 + 4`, `Y is X * 2`, `Z is -(X)` (unary minus via expression), `-10` (negative number literals) |
 | Comparison (`<`, `>`, `=<`, `>=`) | ✅ Supported | Numeric comparison |
 | Equality (`=`, `\=`) | ✅ Supported | Unification-based |
 | Arithmetic equality (`=:=`, `=\=`) | ✅ Supported | Evaluates both sides arithmetically, compares results |
 | Member, append, length | ✅ Supported | Built-in list predicates |
-| Findall, bagof, setof | ⚠️ Partial | `findall/3` supported; `bagof/3`, `setof/3` not implemented |
+| String/atom predicates | ✅ Supported | `atom_concat/3`, `atom_number/2`, `atom_length/2`, `sub_atom/5`, `atom_chars/2` |
+| Findall, bagof, setof | ⚠️ Partial | `findall/3` and `setof/3` supported; `bagof/3` not implemented |
 | Assert/retract | ❌ Unsupported | Use Python API: `engine.add()`, epoch-based |
 | Module system | ❌ Unsupported | Single namespace |
 | DCG notation | ❌ Unsupported | No grammar rules |
@@ -273,7 +274,7 @@ KBEngine (kb_engine.py) ─── Facade
 - **TemporalReasoner**: Enforces before/after ordering, cutoff time pruning
 - **Routing** (on Reasoner): Routes pure Prolog → DFS (faster), EC → Legacy (full semantics)
 - **Tabling** (on Reasoner): Variant-based memoization for recursive queries (producer/consumer protocol), runs in Legacy engine
-- **EpochCacheManager** (on KBEngine): Cache invalidation; each `add()` calls `clear_all()`, eagerly clearing all six cache levels and bumping the epoch
+- **EpochCacheManager** (on KBEngine): Cache invalidation; each `add()` calls `clear_all()`, eagerly clearing all five cache levels and bumping the epoch
 
 ### 3.2 Data Model: Terms & Variables
 
@@ -357,7 +358,7 @@ This is Cyclops Storm's key differentiator—first-class temporal state tracking
 | **Method** | Eager (physical clear on mutation) | Eager or lazy |
 | **Correctness** | Guaranteed | User responsibility |
 
-Cyclops Storm eagerly clears all six cache levels on every mutation via `clear_all()`—simple and correct, no partial invalidation bugs. A lighter-weight `bump_epoch()` exists for lazy invalidation but is not currently used by the default `add()` path. SWI-Prolog's incremental tabling (`:- table pred/N as incremental`) is more fine-grained but requires explicit declarations.
+Cyclops Storm eagerly clears all five cache levels on every mutation via `clear_all()`—simple and correct, no partial invalidation bugs. A lighter-weight `bump_epoch()` exists for lazy invalidation but is not currently used by the default `add()` path. SWI-Prolog's incremental tabling (`:- table pred/N as incremental`) is more fine-grained but requires explicit declarations.
 
 ---
 
@@ -576,7 +577,7 @@ Cyclops Storm uses significantly more memory than SWI-Prolog due to Python's obj
 
 ### 6.4 Testing
 
-Both systems have mature, comprehensive test suites. Cyclops Storm's ~5,400 tests with 99%+ pass rate indicates robustness for its target domain. SWI-Prolog's suite covers ISO compliance, extensions, and libraries.
+Both systems have mature, comprehensive test suites. Cyclops Storm's ~6,000 tests with 99%+ pass rate indicates robustness for its target domain. SWI-Prolog's suite covers ISO compliance, extensions, and libraries.
 
 ---
 
@@ -589,7 +590,7 @@ Cyclops Storm is a **specialized Event Calculus reasoner**, NOT a general-purpos
 **Key Differentiators**:
 1. **Domain Focus**: EC reasoning, narrative analysis, belief states with provenance
 2. **Python Native**: Seamless ecosystem integration (NumPy, pandas, scikit-learn)
-3. **Maintainability**: Modular architecture, comprehensive tests (~5,400 tests, 99%+ pass)
+3. **Maintainability**: Modular architecture, comprehensive tests (~6,000 tests, 99%+ pass)
 4. **Selective Tabling**: `:- table` directive support
 5. **Trade-offs**: Significantly slower than SWI-Prolog, but acceptable for interactive narrative reasoning
 
@@ -675,7 +676,7 @@ Cyclops Storm implements backtracking with Python generators — each choice poi
 
 ### DFS Engine
 
-The **Depth-First Search Engine** is Cyclops Storm's faster query evaluator for pure Prolog queries. It implements classical Prolog's left-to-right, depth-first search strategy using an explicit choice point stack rather than the recursive evaluation used by the Legacy engine. The DFS engine traverses the search space by exploring each branch fully before backtracking to try alternatives, yielding solutions incrementally via Python generators. It handles unification, backtracking, disjunction (`A ; B`), cut (`!`), and limited negation-as-failure, but lacks support for Event Calculus predicates and temporal reasoning. Cut is implemented as a builtin that succeeds and commits to the current clause. Queries are routed to the DFS engine when they contain only "pure" predicates (no EC, no unsafe NAF), providing significant performance improvement over the Legacy engine for applicable queries.
+The **Depth-First Search Engine** is Cyclops Storm's faster query evaluator for pure Prolog queries. It implements classical Prolog's left-to-right, depth-first search strategy using an explicit choice point stack rather than the recursive evaluation used by the Legacy engine. The DFS engine traverses the search space by exploring each branch fully before backtracking to try alternatives, yielding solutions incrementally via Python generators. It handles unification, backtracking, disjunction (`A ; B`, including n-ary `A ; B ; C ; ...`), cut (`!`), and limited negation-as-failure, but lacks support for Event Calculus predicates and temporal reasoning. Cut is implemented as a builtin that succeeds and commits to the current clause. Queries are routed to the DFS engine when they contain only "pure" predicates (no EC, no unsafe NAF), providing significant performance improvement over the Legacy engine for applicable queries.
 
 ### DFS Allowlist
 
@@ -729,7 +730,7 @@ For example, in a narrative with 1000 time points, querying `holds_at(F, t500)` 
 
 ### Epoch
 
-**Epoch** is Cyclops Storm's cache invalidation mechanism, implemented by the `EpochCacheManager`. Each mutation to the knowledge base (adding or removing facts) calls `clear_all()`, which physically clears all six cache dictionaries in place and bumps the epoch counter. A lighter-weight `bump_epoch()` method exists for lazy invalidation (entries become stale but are not reclaimed until re-queried), though the engine currently uses `clear_all()` by default.
+**Epoch** is Cyclops Storm's cache invalidation mechanism, implemented by the `EpochCacheManager`. Each mutation to the knowledge base (adding or removing facts) calls `clear_all()`, which physically clears all five cache dictionaries in place and bumps the epoch counter. A lighter-weight `bump_epoch()` method exists for lazy invalidation (entries become stale but are not reclaimed until re-queried), though the engine currently uses `clear_all()` by default.
 
 ```python
 engine.add("person(alice).")           # caches cleared, epoch bumped
@@ -751,7 +752,7 @@ The **Inertia Axiom** is Event Calculus's solution to the frame problem. It stat
 
 ### Legacy Engine
 
-The **Legacy Engine** is Cyclops Storm's original query evaluator, handling Event Calculus predicates, temporal reasoning, tabling, and belief state management. Unlike the DFS engine (which uses an explicit choice point stack), the Legacy engine uses recursive evaluation with Python generators. All EC predicates (`happens`, `holds_at`, `initiates`, `terminates`, `initially`, `before`) are routed to the Legacy engine, as are queries involving tabling or cutoff time. The Legacy engine also handles cut via `CutSequenceStrategy` and `CutCommit` exceptions, though the routing tables preferentially send cut-containing queries to the DFS engine. The term "Legacy" reflects the architectural evolution—newer pure Prolog queries use the faster DFS engine, while the Legacy engine remains essential for EC semantics.
+The **Legacy Engine** is Cyclops Storm's original query evaluator, handling Event Calculus predicates, temporal reasoning, tabling, and belief state management. Unlike the DFS engine (which uses an explicit choice point stack), the Legacy engine uses recursive evaluation with Python generators. All EC predicates (`happens`, `holds_at`, `initiates`, `terminates`, `initially`, `before`) are routed to the Legacy engine, as are queries involving tabling or cutoff time. The Legacy engine also handles cut via `CutSequenceStrategy` and `CutCommit` exceptions, though the routing tables preferentially send cut-containing queries to the DFS engine. Result cleaning uses `_deep_walk` to recursively resolve variables inside compound terms (e.g., cons-cells from recursive list construction), not just top-level variable chains. The term "Legacy" reflects the architectural evolution—newer pure Prolog queries use the faster DFS engine, while the Legacy engine remains essential for EC semantics.
 
 ### Provenance
 
@@ -803,4 +804,4 @@ The **Warren Abstract Machine** is the standard execution model for Prolog imple
 - Chen, W., & Warren, D. S. (1996). *Tabled Evaluation with Delaying for General Logic Programs*. JACM. (XSB tabling)
 
 ---
-**Last Updated**: 2026-03-11
+**Last Updated**: 2026-03-19

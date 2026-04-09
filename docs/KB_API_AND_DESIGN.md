@@ -1,6 +1,6 @@
 # KB Engine API and Design Document
 
-**Last Updated:** 2026-03-19
+**Last Updated:** 2026-04-09
 **Status:** Beta
 
 ---
@@ -39,7 +39,7 @@ Cyclops Storm is **not** a general-purpose Prolog implementation. It is a domain
 | **Provenance** (no Prolog equivalent) | Source text attribution (`fact_id/2`, `supports/2`, `span/4`, `sent/2`), rule derivation tracing (`derivation/1`), unified explanation (`why/1`), recursive evidence trees (`evidence_chain/1`), canonical key normalization | — |
 | **Architecture** | Dual-engine routing (DFS/Legacy), epoch caching | — |
 | **Tabling** | SLG-style via `:- table` directive | (Some Prologs have tabling; not ISO) |
-| **Builtins (partial)** | `findall/3`, `setof/3`, `between/3`, `atom_concat/3`, `atom_number/2`, `sort/2`, `length/2`, `last/2`, `keysort/2`, `forall/2` | — |
+| **Builtins (partial)** | `findall/3`, `setof/3`, `between/3`, `atom_concat/3`, `atom_number/2`, `atom_length/2`, `sub_atom/5`, `atom_chars/2`, `sort/2`, `length/2`, `last/2`, `keysort/2`, `forall/2` | — |
 | **Control & meta** | — | `bagof/3`, `call/1-N`, `assert/retract` |
 | **Type & term inspection** | `var/1`, `atom/1` (DFS engine) | `functor/3`, `arg/3`, `=../2`, `copy_term/2` |
 | **I/O & modules** | — | `write/1`, `read/1`, module system |
