@@ -12,7 +12,7 @@
 - Reference: Knowledge Base Engine public source code repository (coming)
 
 ## Status in a Nutshell:
-- The engine code is in "beta." As I described [here](https://ai.gopubby.com/my-brief-history-of-ai-coding-e9b0accc1593): "I hope to place... "Cyclops Storm" Prolog...(into) a public GitHub repository later this year. But I think it really needs to be accompanied by an application that clearly demonstrates its capabilities. If you have any favorites (something that Claude Code and I might be able to develop), leave your thoughts..."
+- (4/09/2026) The engine code is in "beta." As I detail [here](https://ai.gopubby.com/my-brief-history-of-ai-coding-e9b0accc1593): I hope to place Cyclops Storm Prolog into a public GitHub repository in 2026. I think it really needs to be accompanied by an application that clearly demonstrates its capabilities. If you have any favorites (something that Claude Code and I might be able to develop), leave your thoughts."
 
 
 ## Docs:
@@ -24,7 +24,8 @@
   - <img width="450" height="225" alt="unit_test_progress" src="viz/unit_test_chart_04_09_2026.png" />
   
 ## Change in Code
-- Lines added/removed over time (per commits). Compare them with the unit tests graph. Note the statistics were aggregated over two repositories -- Cyclops Storm Prolog graduated from a sandbox repository to a dedicated one in late Feb. 2026.
+- Lines added/removed over time (per commits). Compare them with the unit tests graph. Updated 04/09/2026.
+- Note the statistics were aggregated over two repositories -- Cyclops Storm Prolog graduated from a sandbox repository to a dedicated one in late Feb. 2026.
   - <img width="450" height="225" alt="lines_of_code_added_removed" src="viz/cumulative_lines_combined_04_09_2026.png" />
 
 ## Status (Highlights):
