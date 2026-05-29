@@ -20,8 +20,8 @@
 - [KB Engine API and Design Document](https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_API_AND_DESIGN.md). Updated 04/09/2026.
 
 ## Unit Tests:
-- Updated 04/09/2026
-  - <img width="450" height="225" alt="unit_test_progress" src="viz/unit_test_chart_04_09_2026.png" />
+- Updated 05/28/2026
+  - <img width="450" height="225" alt="unit_test_progress" src="viz/unit_test_chart_05_28_2026.png" />
   
 ## Change in Code
 - Depicted are lines added/removed over time (per commits). Compare them with the unit tests graph. Updated 04/09/2026.
