@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cyclops Storm lab notes: results and limitations from a 21-case comparison of the AkiyaBlocks reimplementation with the earlier engine.">
+  <title>Cyclops Storm — reimplementation notes</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .date { color:var(--muted); font-size:.9rem; }
+    .intro { margin-bottom:2rem; }
+    .progress-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:1.3rem; margin:1.5rem 0; }
+    .progress-metrics p { margin:0; }
+    .progress-metrics strong { display:block; font-size:1.7rem; font-variant-numeric:tabular-nums; }
+    .progress-chart { max-width:840px; margin-block:1.5rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .tables { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.25rem 0; }
+    .table-scroll { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    caption { text-align:left; font-weight:650; padding-bottom:.55rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    .number { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .behavior-summary { margin-block:1.25rem; }
+    li { margin-bottom:.6rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    .file-links { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; margin:1rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    .history-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1rem; }
+    figure { margin:0; }
+    .lead-image { margin:1.3rem 0 1.5rem; }
+    img { display:block; width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { color:var(--muted); font-size:.85rem; margin-top:.5rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:720px) { .tables,.history-grid { grid-template-columns:1fr; } }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } .progress-metrics { grid-template-columns:1fr; gap:.8rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="#top">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="#punchline">Progress</a><a href="#results">Results</a><a href="#method">Method</a><a href="#implementation">Implementation</a><a href="#reference">Reference</a><a href="#history">Earlier notes</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    <div class="intro">
+      <p class="date">Revised by Astra, Fable and Nate: <time datetime="2026-09-24">September 24, 2026</time></p>
+      <h1>“Cyclops Storm” Prolog</h1>
+      <figure class="lead-image">
+        <img src="assets/akiya-blocks-game-engine.png" width="1323" height="764" alt="A robot character in the AkiyaBlocks prototype, with terrain, buildings, minimaps, and an inventory bar.">
+        <figcaption><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks">AkiyaBlocks</a>, an opinionated game engine I'm developing with AI assistance. Screenshot from the prototype.</figcaption>
+      </figure>
+      <p>Open lab notes on using AI to help build a logic engine for science-fiction worlds. <a href="https://natecombs.substack.com/">My Substack</a>.</p>
+      <p>The earlier work in <a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm">BadScienceFiction-CyclopsStorm</a> grew through continual refactoring. I'm now investigating a fresh Python implementation in <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm">AkiyaBlocks-CyclopsStorm</a>. I want to see which behaviors improve, which carry over, and what gets lost in the rewrite.</p>
+      <p>Both engine repositories are currently private. I'll make them public in the future; their GitHub links require access until then.</p>
+    </div>
+
+    <section id="punchline" aria-labelledby="punchline-title">
+      <h2 id="punchline-title">Are we doing good?</h2>
+      <p>I think so. In the <a href="evidence/index.html#reading-results">shared checks</a>, the rewrite keeps the basic reasoning working and improves how it handles calculations and information. That gives me more confidence in building the game on top of it.</p>
+      <div class="progress-metrics">
+        <p><strong>18 vs. 10</strong> checks pass, out of 21.</p>
+        <p><strong>16 vs. 10</strong> pass when the two cases that allow a timeout are left out.</p>
+        <p><strong>17 of 21</strong> already pass in the first saved rewrite.</p>
+      </div>
+      <figure class="progress-chart">
+        <a href="assets/development-progress.svg"><img src="assets/development-progress.svg" width="840" height="570" alt="Retrospective results on the same 21 checks: earlier engine 10 passes; first rewrite 17, including one accepted timeout; next rewrite 18, including two accepted timeouts." loading="lazy"></a>
+        <figcaption>The cases were selected after these versions were written. <a href="assets/development-progress.svg">Open the full-size graph</a>.</figcaption>
+      </figure>
+      <p>Explanation support still needs work, including <a href="evidence/index.html#case-capability.rule-level-explanation-of-a-derived-fact">a check the earlier engine passes</a>. I want to be able to inspect why the engine reached an answer, too. I can't put a reliable “times faster” number on the rewrite: we haven't recorded comparable working hours or costs. The <a href="evidence/development-progress.html">progress overview</a> summarizes the changes and links to the detailed measurements.</p>
+    </section>
+
+    <section id="results" aria-labelledby="results-title">
+      <h2 id="results-title">Comparison results</h2>
+      <p>I gave both versions the same <a href="evidence/index.html#reading-results">21 small tasks</a> and checked whether they produced the expected results. The tasks cover following rules, working with numbers and information, handling problems, and responding to requests for explanations.</p>
+      <p><strong>Pass</strong> means the result met the rule for that task. Some tasks expect an answer, some expect an error, and two allow the test runner to stop a search that has no end. <a href="evidence/index.html#outcome-definitions">How the results are counted</a>.</p>
+      <h3 id="meaning-title">What the results mean</h3>
+      <p>The script's results show what carried over, what improved, and what still needs work. Each number below is the count of passing checks in that area.</p>
+      <div class="table-scroll behavior-summary" tabindex="0" role="region" aria-label="Passing checks by area">
+        <table aria-describedby="unbounded-searches">
+          <caption>What the checks cover</caption>
+          <thead><tr><th scope="col">Area</th><th class="number" scope="col">Earlier version</th><th class="number" scope="col">Rewrite</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Following rules to find answers</th><td class="number">6 of 6</td><td class="number">6 of 6</td></tr>
+            <tr><th scope="row">Working with numbers and information</th><td class="number">3 of 9</td><td class="number">9 of 9</td></tr>
+            <tr><th scope="row">Errors and searches that do not finish</th><td class="number">0 of 3</td><td class="number">3 of 3*</td></tr>
+            <tr><th scope="row">Responding to requests for explanations</th><td class="number">1 of 3</td><td class="number">0 of 3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The rewrite keeps the basic reasoning covered by these checks and does better at handling information without losing or changing it. That matters for a game built around characters making decisions from rules. Explanation support remains a gap: one check that passes in the earlier version does not yet pass in the rewrite.</p>
+      <p id="unbounded-searches">* Two rewrite passes mean the test runner stopped waiting on searches with no end. They do not show the engine recognizing that its search was unfinished. Without these two tasks, the rewrite passes <strong>16 of 19 checks</strong>, compared with <strong>10 of 19</strong> for the earlier version.</p>
+      <details id="full-counts">
+        <summary>Full counts and saved versions</summary>
+      <p>Using the <a href="evidence/development-progress-notes.html#timeline">recorded versions of the code</a>, the reimplementation passed 18 cases and the earlier implementation passed 10. Both were given the same cases and judged by the same rules. A <a href="evidence/index.html#worked-example">worked example</a> shows the inputs, expected answers, and what each engine returned; the <a href="evidence/index.html#case-results">full results</a> list all 21 outcomes.</p>
+      <div class="tables">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Results per implementation">
+          <table>
+            <caption>Per implementation</caption>
+            <thead><tr><th scope="col">Result</th><th class="number" scope="col">Earlier</th><th class="number" scope="col">New</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Pass</th><td class="number">10</td><td class="number">18</td></tr>
+              <tr><th scope="row">Fail</th><td class="number">11</td><td class="number">3</td></tr>
+              <tr><th scope="row">Unassessable</th><td class="number">0</td><td class="number">0</td></tr>
+              <tr><th scope="row">Pass rate for these cases</th><td class="number">47.6%</td><td class="number">85.7%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Paired outcomes">
+          <table>
+            <caption>Paired outcomes</caption>
+            <thead><tr><th scope="col">Outcome</th><th class="number" scope="col">Cases</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Both pass</th><td class="number">9</td></tr>
+              <tr><th scope="row">New passes, earlier fails</th><td class="number">9</td></tr>
+              <tr><th scope="row">Earlier passes, new fails</th><td class="number">1</td></tr>
+              <tr><th scope="row">Both fail</th><td class="number">2</td></tr>
+              <tr><th scope="row">Unassessable</th><td class="number">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>The difference is eight more passing cases, or 38.1 percentage points, in this set. The cases were written with knowledge of both engines, so these percentages describe this particular comparison.</p>
+      </details>
+      <div class="file-links"><a href="evidence/index.html">Results by case</a><a href="evidence/comparison-2026-09-24.md">Saved script report (Markdown)</a><a href="evidence/comparison-2026-09-24.json">Raw results (JSON)</a><a href="evidence/cases-2026-09-24.json">Task definitions (JSON)</a></div>
+    </section>
+
+    <section id="method" aria-labelledby="method-title">
+      <h2 id="method-title">Method and limits</h2>
+      <p>The comparison script runs each case in separate processes and records pass, fail, or unassessable. Twelve of the 21 cases (57.1%) use SWI-Prolog as the full source of expected results. One combines a SWI answer expectation with a judgment about the Python API, and eight use recorded human adjudications. Some cases also cite ISO clauses.</p>
+      <p>The explanation probes check whether a predicate answers a valid case and rejects a negative control. They do not check the contents of an explanation. The case corpus records these expectations and their sources.</p>
+      <p>The reimplementation does better on this set of cases. This deliberately chosen set cannot tell us whether starting over is generally more effective than continual refactoring. The run does not measure speed, memory use, or development effort. Explanation support and behavior on a broader set of programs remain open questions.</p>
+    </section>
+
+    <section id="implementation" aria-labelledby="implementation-title">
+      <h2 id="implementation-title">Implementation notes</h2>
+      <p>The new kernel is written in Python. It supports Horn clauses, unification, backtracking, cut, negation as failure, stratified tabling, and an Event Calculus over authored story time. It runs without importing the earlier implementation.</p>
+      <p>Its <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/blob/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6/README.md">README</a> has examples; the <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/blob/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6/docs/BEHAVIOUR.md">behavior document</a> describes the intended semantics.</p>
+    </section>
+
+    <section id="reference" aria-labelledby="reference-title">
+      <h2 id="reference-title">Reference: the impact of agentic AI coding</h2>
+      <p><a href="https://www.youtube.com/watch?v=NYFGCESmikA">DHH on programming and AI — Lex Fridman Podcast #501</a>.</p>
+      <p>DHH describes how agentic AI changed his programming work: agents implement, test, and review code while he directs the work and decides what to accept. <a href="https://lexfridman.com/dhh-2-transcript/">Read the transcript</a>.</p>
+    </section>
+
+    <section id="history" aria-labelledby="history-title">
+      <h2 id="history-title">Earlier notes</h2>
+      <p>The <a href="history.html">previous README</a> preserves the refactoring history, articles, Harriet AI notes, the Spider narrative tool, and the test and code-change charts. Those charts track the earlier development process.</p>
+      <ul>
+        <li><a href="viz/quadchart.html">Interactive quad chart</a> and <a href="data/kb-codepack.json">codepack</a></li>
+        <li><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_ARCHITECTURE_VS_SWI_PROLOG.md">Earlier architecture comparison with SWI-Prolog</a></li>
+        <li><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_API_AND_DESIGN.md">Earlier API and design document</a></li>
+        <li><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/ANALYZE_CODE_ALGORITHM_DESCRIPTION.md">Codepack algorithm and schema</a></li>
+      </ul>
+      <details>
+        <summary>Test and code-change charts from the refactoring period</summary>
+        <div class="history-grid">
+          <figure><img src="viz/unit_test_chart_05_28_2026.png" alt="Across roughly 792 historical test runs, total tests rise from about 200 to 6,650; passed tests track closely, with occasional failure spikes." loading="lazy"><figcaption>Unit-test progress · May 2026</figcaption></figure>
+          <figure><img src="viz/cumulative_lines_combined_04_09_2026.png" alt="Cumulative lines added and removed rise from September 2025 to April 2026, with large step changes and a repository transition marked near March 2026." loading="lazy"><figcaption>Code-change record · April 2026</figcaption></figure>
+        </div>
+      </details>
+    </section>
+  </main>
+  <footer><div class="wrap"><p><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/README.md">Project README</a> · Comparison saved September 24; historical replay measured September 25, 2026.</p></div></footer>
+</body>
+</html>

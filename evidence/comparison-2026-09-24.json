@@ -1,0 +1,901 @@
+{
+  "scheduled": 21,
+  "per_engine": {
+    "old": {
+      "scheduled": 21,
+      "pass": 10,
+      "fail": 11,
+      "unknown": 0,
+      "contract_pass_pct": 47.6,
+      "assessment_completeness_pct": 100.0,
+      "unsound_completeness_claims": 2,
+      "unobservable_at_public_api": 0
+    },
+    "new": {
+      "scheduled": 21,
+      "pass": 18,
+      "fail": 3,
+      "unknown": 0,
+      "contract_pass_pct": 85.7,
+      "assessment_completeness_pct": 100.0,
+      "unsound_completeness_claims": 0,
+      "unobservable_at_public_api": 0
+    }
+  },
+  "paired": {
+    "both_pass": 9,
+    "both_fail": 2,
+    "old_pass_new_fail": 1,
+    "old_fail_new_pass": 9,
+    "unknown_pairs": 0
+  },
+  "third_party_oracle_pct": 57.1,
+  "oracle_notes": {
+    "mutation.a-returned-answer-list-is-the-callers-to-keep": "SWI supplies the row expectation; the returned-list isolation check is an independent host API judgment. This mixed case is excluded from third-party oracle coverage."
+  },
+  "verdicts": {
+    "resolution.facts-and-rules-for-one-predicate": {
+      "old": {
+        "case": "resolution.facts-and-rules-for-one-predicate",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "a"
+            }
+          },
+          {
+            "X": {
+              "t": "atom",
+              "v": "b"
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "resolution.facts-and-rules-for-one-predicate",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "a"
+            }
+          },
+          {
+            "X": {
+              "t": "atom",
+              "v": "b"
+            }
+          }
+        ]
+      }
+    },
+    "resolution.conjunction-join": {
+      "old": {
+        "case": "resolution.conjunction-join",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "b"
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "resolution.conjunction-join",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "b"
+            }
+          }
+        ]
+      }
+    },
+    "resolution.cut-commits-to-the-clause": {
+      "old": {
+        "case": "resolution.cut-commits-to-the-clause",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "resolution.cut-commits-to-the-clause",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    },
+    "resolution.negation-binds-nothing": {
+      "old": {
+        "case": "resolution.negation-binds-nothing",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "a"
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "resolution.negation-binds-nothing",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "a"
+            }
+          }
+        ]
+      }
+    },
+    "builtins.arithmetic-integer-division-on-negatives": {
+      "old": {
+        "case": "builtins.arithmetic-integer-division-on-negatives",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "raised while loading: ValueError: Failed to parse clauses: 1:36: Expected DOT, got IDENT",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "builtins.arithmetic-integer-division-on-negatives",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "A": {
+              "t": "int",
+              "v": -3
+            },
+            "B": {
+              "t": "int",
+              "v": -4
+            }
+          }
+        ]
+      }
+    },
+    "builtins.sort-deduplicates-msort-does-not": {
+      "old": {
+        "case": "builtins.sort-deduplicates-msort-does-not",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "expected [{M=[a, b, b], S=[a, b]}], observed []",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "builtins.sort-deduplicates-msort-does-not",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "S": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                }
+              ]
+            },
+            "M": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "builtins.findall-keeps-multiplicity": {
+      "old": {
+        "case": "builtins.findall-keeps-multiplicity",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "builtins.findall-keeps-multiplicity",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "builtins.univ-decomposes-a-compound": {
+      "old": {
+        "case": "builtins.univ-decomposes-a-compound",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "raised while loading: ValueError: Failed to parse clauses: 1:18: Expected term, got DOT",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "builtins.univ-decomposes-a-compound",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "f"
+                },
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "syntax.operator-precedence-in-a-comparison": {
+      "old": {
+        "case": "syntax.operator-precedence-in-a-comparison",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "expected [{X=3}], observed []",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "syntax.operator-precedence-in-a-comparison",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "int",
+              "v": 3
+            }
+          }
+        ]
+      }
+    },
+    "syntax.a-list-is-a-list-at-every-length": {
+      "old": {
+        "case": "syntax.a-list-is-a-list-at-every-length",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "L": {
+              "t": "list",
+              "v": []
+            }
+          },
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                }
+              ]
+            }
+          },
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                },
+                {
+                  "t": "atom",
+                  "v": "c"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "syntax.a-list-is-a-list-at-every-length",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "L": {
+              "t": "list",
+              "v": []
+            }
+          },
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                }
+              ]
+            }
+          },
+          {
+            "L": {
+              "t": "list",
+              "v": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "atom",
+                  "v": "b"
+                },
+                {
+                  "t": "atom",
+                  "v": "c"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "value-fidelity.an-integer-a-float-and-an-atom-are-three-facts": {
+      "old": {
+        "case": "value-fidelity.an-integer-a-float-and-an-atom-are-three-facts",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "expected [{X=1}, {X='1'}, {X=1.0}], observed [{X=1}]",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "int",
+              "v": 1
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "value-fidelity.an-integer-a-float-and-an-atom-are-three-facts",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "int",
+              "v": 1
+            }
+          },
+          {
+            "X": {
+              "t": "atom",
+              "v": "1"
+            }
+          },
+          {
+            "X": {
+              "t": "float",
+              "v": "1.0"
+            }
+          }
+        ]
+      }
+    },
+    "value-fidelity.a-compound-argument-survives-the-boundary": {
+      "old": {
+        "case": "value-fidelity.a-compound-argument-survives-the-boundary",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "C": {
+              "t": "compound",
+              "n": "f",
+              "a": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "compound",
+                  "n": "g",
+                  "a": [
+                    {
+                      "t": "atom",
+                      "v": "b"
+                    }
+                  ]
+                },
+                {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": 1
+                    },
+                    {
+                      "t": "float",
+                      "v": "2.5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "value-fidelity.a-compound-argument-survives-the-boundary",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "C": {
+              "t": "compound",
+              "n": "f",
+              "a": [
+                {
+                  "t": "atom",
+                  "v": "a"
+                },
+                {
+                  "t": "compound",
+                  "n": "g",
+                  "a": [
+                    {
+                      "t": "atom",
+                      "v": "b"
+                    }
+                  ]
+                },
+                {
+                  "t": "list",
+                  "v": [
+                    {
+                      "t": "int",
+                      "v": 1
+                    },
+                    {
+                      "t": "float",
+                      "v": "2.5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "recursion.transitive-closure-over-a-chain": {
+      "old": {
+        "case": "recursion.transitive-closure-over-a-chain",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "Y": {
+              "t": "atom",
+              "v": "b"
+            }
+          },
+          {
+            "Y": {
+              "t": "atom",
+              "v": "c"
+            }
+          },
+          {
+            "Y": {
+              "t": "atom",
+              "v": "d"
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "recursion.transitive-closure-over-a-chain",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "Y": {
+              "t": "atom",
+              "v": "b"
+            }
+          },
+          {
+            "Y": {
+              "t": "atom",
+              "v": "c"
+            }
+          },
+          {
+            "Y": {
+              "t": "atom",
+              "v": "d"
+            }
+          }
+        ]
+      }
+    },
+    "recursion.left-recursion-terminates-and-is-complete": {
+      "old": {
+        "case": "recursion.left-recursion-terminates-and-is-complete",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "Y": {
+              "t": "atom",
+              "v": "b"
+            }
+          },
+          {
+            "Y": {
+              "t": "atom",
+              "v": "c"
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "recursion.left-recursion-terminates-and-is-complete",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "Y": {
+              "t": "atom",
+              "v": "b"
+            }
+          },
+          {
+            "Y": {
+              "t": "atom",
+              "v": "c"
+            }
+          }
+        ]
+      }
+    },
+    "recursion.an-infinite-answer-set-must-not-be-called-complete": {
+      "old": {
+        "case": "recursion.an-infinite-answer-set-must-not-be-called-complete",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "returned 2 answers and reported no status at all for an infinite answer set",
+        "unsound_completeness": true,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "z"
+            }
+          },
+          {
+            "X": {
+              "t": "compound",
+              "n": "s",
+              "a": [
+                {
+                  "t": "atom",
+                  "v": "z"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "new": {
+        "case": "recursion.an-infinite-answer-set-must-not-be-called-complete",
+        "engine": "?",
+        "outcome": "pass",
+        "reason": "stopped on an unbounded answer set, as required",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    },
+    "errors.an-open-generator-must-not-read-as-false": {
+      "old": {
+        "case": "errors.an-open-generator-must-not-read-as-false",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "returned 0 answers and reported no status at all for an infinite answer set",
+        "unsound_completeness": true,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "errors.an-open-generator-must-not-read-as-false",
+        "engine": "?",
+        "outcome": "pass",
+        "reason": "stopped on an unbounded answer set, as required",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    },
+    "mutation.a-returned-answer-list-is-the-callers-to-keep": {
+      "old": {
+        "case": "mutation.a-returned-answer-list-is-the-callers-to-keep",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "a caller-inserted marker appeared in a later answer list",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "mutation.a-returned-answer-list-is-the-callers-to-keep",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": [
+          {
+            "X": {
+              "t": "atom",
+              "v": "a"
+            }
+          },
+          {
+            "X": {
+              "t": "atom",
+              "v": "b"
+            }
+          }
+        ]
+      }
+    },
+    "errors.arithmetic-on-a-non-number-is-an-error": {
+      "old": {
+        "case": "errors.arithmetic-on-a-non-number-is-an-error",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "answered 0 rows for a goal that is malformed; an empty answer set reads as 'false', which it is not",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "errors.arithmetic-on-a-non-number-is-an-error",
+        "engine": "new",
+        "outcome": "pass",
+        "reason": "raised TypeCheckError: type error in arithmetic expression: expected evaluable, got 'a/0'",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    },
+    "capability.rule-level-explanation-of-a-derived-fact": {
+      "old": {
+        "case": "capability.rule-level-explanation-of-a-derived-fact",
+        "engine": "old",
+        "outcome": "pass",
+        "reason": "probe answered, negative control did not",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "capability.rule-level-explanation-of-a-derived-fact",
+        "engine": "new",
+        "outcome": "fail",
+        "reason": "probe answered nothing; the capability is absent",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    },
+    "capability.why-a-fact-holds": {
+      "old": {
+        "case": "capability.why-a-fact-holds",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "negative control control answered 1 rows; a capability that answers everything is not evidence of anything",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "capability.why-a-fact-holds",
+        "engine": "new",
+        "outcome": "fail",
+        "reason": "probe answered nothing; the capability is absent",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    },
+    "capability.evidence-chain-for-a-derived-fact": {
+      "old": {
+        "case": "capability.evidence-chain-for-a-derived-fact",
+        "engine": "old",
+        "outcome": "fail",
+        "reason": "negative control control answered 1 rows; a capability that answers everything is not evidence of anything",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      },
+      "new": {
+        "case": "capability.evidence-chain-for-a-derived-fact",
+        "engine": "new",
+        "outcome": "fail",
+        "reason": "probe answered nothing; the capability is absent",
+        "unsound_completeness": false,
+        "unobservable": 0,
+        "rows": []
+      }
+    }
+  },
+  "provisional": false,
+  "revisions": {
+    "old": "e62758c23f66b26fa92c6d2dafaaf6bf3466499f",
+    "new": "9be7804c933cc8a3c51af3d8a5e4f54b012c8be6"
+  },
+  "swipl": {
+    "path": "C:\\Program Files\\swipl\\bin\\swipl.exe",
+    "version": "SWI-Prolog version 10.0.2 for x64-win64"
+  },
+  "elapsed_seconds": 72.71
+}

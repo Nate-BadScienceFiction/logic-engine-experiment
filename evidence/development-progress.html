@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The Cyclops Storm rewrite in one view: a results graph, a compact behavior comparison, and the remaining explanation gap.">
+  <title>Progress overview — Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1280px,calc(100% - 2rem)); margin-inline:auto; }
+    header,footer { padding-block:1rem; border-bottom:1px solid var(--line); }
+    footer { border-top:1px solid var(--line); border-bottom:0; font-size:.9rem; }
+    main { padding-block:2rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { font-size:clamp(1.8rem,4vw,2.4rem); margin:.4rem 0 1rem; }
+    h2 { font-size:1.3rem; margin:1.5rem 0 .8rem; }
+    h3 { font-size:1.1rem; }
+    p,ul,ol { max-width:85ch; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:focus-visible,.table-scroll:focus-visible,summary:focus-visible { outline:3px solid #9a5b1a; outline-offset:3px; }
+    .skip { position:absolute; left:-1000px; padding:.6rem 1rem; background:white; }
+    .skip:focus { left:1rem; }
+    .date { margin:0; color:var(--muted); font-size:.9rem; }
+    .links { display:flex; flex-wrap:wrap; gap:.5rem 1.2rem; }
+    .table-scroll { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    caption { text-align:left; padding-bottom:.6rem; font-size:.9rem; color:var(--muted); }
+    th,td { border-bottom:1px solid var(--line); text-align:left; padding:.65rem .6rem; vertical-align:top; }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+
+    #method { scroll-margin-top:1rem; }
+    .lead { font-size:1.06rem; }
+    .comparison { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:2rem; align-items:start; }
+    .comparison > section { min-width:0; }
+    figure { margin:0; }
+    figure img { display:block; width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; font-size:.88rem; color:var(--muted); }
+    .behavior-table { table-layout:fixed; font-size:.95rem; }
+    .behavior-table th[scope=row] { width:38%; }
+    .reading-note { margin-top:1.5rem; border-top:1px solid var(--line); padding-top:1rem; }
+    .reading-note p { margin:0 0 .8rem; }
+    .reading-note .limits { color:var(--muted); font-size:.92rem; }
+    @media (max-width:1050px) { .comparison { grid-template-columns:1fr; gap:.5rem; } figure { max-width:840px; } }
+    @media (max-width:480px) { main { padding-top:1.3rem; } .behavior-table { font-size:.88rem; } th,td { padding:.55rem .4rem; } }
+
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header><div class="wrap"><a href="../index.html#punchline">Cyclops Storm / Lab notes</a></div></header>
+  <main id="main" class="wrap">
+    <p class="date">Comparison measured <time datetime="2026-09-25">September 25, 2026</time></p>
+    <h1 id="method">What the rewrite improves</h1>
+    <p class="lead">I used the same 21 checks to compare saved versions of both engines. The rewrite fixes several ways to lose information or get a misleading answer. That gives me a more useful starting point for game behavior; explanation support remains unfinished.</p>
+    <div class="comparison">
+      <section aria-labelledby="progress">
+        <h2 id="progress">The improvement appears early</h2>
+        <figure>
+          <a href="../assets/development-progress.svg"><img src="../assets/development-progress.svg" width="840" height="570" alt="On 21 selected checks replayed against saved code, the earlier engine passes 10, the first rewrite passes 17 including one accepted timeout, and the next rewrite passes 18 including two accepted timeouts."></a>
+          <figcaption>The first saved rewrite already passes most of these checks. Hatched portions are accepted timeouts. <a href="../assets/development-progress.svg">Larger graph</a>.</figcaption>
+        </figure>
+      </section>
+      <section aria-labelledby="behaviors">
+        <h2 id="behaviors">What changes for the caller</h2>
+        <table class="behavior-table">
+          <caption>Examples from the latest compared versions</caption>
+          <thead><tr><th scope="col">Behavior</th><th scope="col">Earlier</th><th scope="col">Rewrite</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><a href="index.html#worked-example">Keep distinct values</a></th><td>Two values lost.</td><td>All three kept.</td></tr>
+            <tr><th scope="row"><a href="index.html#case-mutation.a-returned-answer-list-is-the-callers-to-keep">Add to returned answers</a></th><td>Changes later answers.</td><td>Later answers unchanged.</td></tr>
+            <tr><th scope="row"><a href="index.html#case-errors.arithmetic-on-a-non-number-is-an-error">Report bad arithmetic</a></th><td>Looks like no answers.</td><td>Reports an error.</td></tr>
+            <tr><th scope="row"><a href="index.html#case-capability.rule-level-explanation-of-a-derived-fact">Explanation checks</a></th><td>1 of 3 passes.</td><td>0 of 3 passes.</td></tr>
+          </tbody>
+        </table>
+        <p>I want to debug the rules behind a character's behavior with fewer surprises from missing or altered answers. These fixes help with that. The explanation gap still needs attention.</p>
+      </section>
+    </div>
+    <aside id="limits" class="reading-note" aria-label="How to read these results">
+      <p>Without the two timeout cases, the rewrite passes <strong>16 of 19 checks; the earlier engine passes 10</strong>. Those two passes come from the test runner stopping endless searches. They do not show the engine reporting an incomplete search.</p>
+      <p id="measurement-limits" class="limits">The checks were selected with knowledge of both engines. They establish specific behavior improvements; comparable working hours and costs have not been recorded.</p>
+    </aside>
+    <div id="technical-details">
+      <nav id="method-details" class="links" aria-label="Supporting evidence">
+        <a href="index.html#reading-results">What the 21 checks cover</a>
+        <a id="numbers" href="development-progress-notes.html#numbers">Measurement details</a>
+        <a id="timeline" href="development-progress-notes.html#timeline">Saved versions</a>
+        <a id="replay" href="development-progress-notes.html#replay">Replay instructions</a>
+      </nav>
+    </div>
+  </main>
+  <footer><div class="wrap links"><a href="../index.html">Lab notes</a><a href="index.html">Results by case</a><a href="https://natecombs.substack.com/">My Substack</a><a href="https://www.youtube.com/watch?v=NYFGCESmikA">DHH / Lex Fridman #501</a></div></footer>
+</body>
+</html>

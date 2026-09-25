@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="604.8pt" height="410.4pt" viewBox="0 0 604.8 410.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>Cyclops Storm: same 21 checks, three milestones</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Cyclops Storm: same 21 checks, three milestones</dc:title>
+    <dc:description>The earlier engine's August 30 revision passes 10 of 21 checks. The first rewrite revision on September 14 passes 17, including one external timeout accepted under an unbounded-search rule. The September 15 rewrite passes 18, including two such timeouts. Commit intervals from the seed prompt are approximately 10 and 35 hours; they do not measure active labor. Later sampled rewrite revisions retain 18 passes.</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 410.4 
+L 604.8 410.4 
+L 604.8 0 
+L 0 0 
+z
+" style="fill: #faf9f6"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 54.432 303.696 
+L 592.704 303.696 
+L 592.704 90.288 
+L 54.432 90.288 
+z
+" style="fill: #faf9f6"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #283238" transform="translate(85.248204 324.015297)">Earlier engine</text>
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #283238" transform="translate(105.788829 338.417641)">Aug 30</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #283238" transform="translate(287.925188 324.015297)">First rewrite</text>
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #283238" transform="translate(302.716125 338.417641)">Sep 14</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+     <g id="text_3">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #283238" transform="translate(483.092796 324.015297)">Next rewrite</text>
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #283238" transform="translate(499.237483 338.417641)">Sep 15</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 54.432 303.696 
+L 592.704 303.696 
+" clip-path="url(#p89766af7ba)" style="fill: none; stroke: #d6d9d8; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5"/>
+     <g id="text_4">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #586269" x="44.432" y="308.254594" transform="rotate(-0 44.432 308.254594)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 54.432 238.745739 
+L 592.704 238.745739 
+" clip-path="url(#p89766af7ba)" style="fill: none; stroke: #d6d9d8; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_7"/>
+     <g id="text_5">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #586269" x="44.432" y="243.304333" transform="rotate(-0 44.432 243.304333)">7</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 54.432 173.795478 
+L 592.704 173.795478 
+" clip-path="url(#p89766af7ba)" style="fill: none; stroke: #d6d9d8; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_9"/>
+     <g id="text_6">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #586269" x="44.432" y="178.354072" transform="rotate(-0 44.432 178.354072)">14</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_10">
+      <path d="M 54.432 108.845217 
+L 592.704 108.845217 
+" clip-path="url(#p89766af7ba)" style="fill: none; stroke: #d6d9d8; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_11"/>
+     <g id="text_7">
+      <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #586269" x="44.432" y="113.403811" transform="rotate(-0 44.432 113.403811)">21</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #283238" x="22.279188" y="196.992" transform="rotate(-90 22.279188 196.992)">Checks passing</text>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 78.898909 303.696 
+L 175.194375 303.696 
+L 175.194375 210.909913 
+L 78.898909 210.909913 
+z
+" clip-path="url(#p89766af7ba)" style="fill: #215e73"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 275.420267 303.696 
+L 371.715733 303.696 
+L 371.715733 155.238261 
+L 275.420267 155.238261 
+z
+" clip-path="url(#p89766af7ba)" style="fill: #215e73"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 471.941625 303.696 
+L 568.237091 303.696 
+L 568.237091 155.238261 
+L 471.941625 155.238261 
+z
+" clip-path="url(#p89766af7ba)" style="fill: #215e73"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 78.898909 210.909913 
+L 175.194375 210.909913 
+L 175.194375 210.909913 
+L 78.898909 210.909913 
+z
+" clip-path="url(#p89766af7ba)" style="fill: url(#hc26bd078a4); stroke: #7b5a24; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 275.420267 155.238261 
+L 371.715733 155.238261 
+L 371.715733 145.959652 
+L 275.420267 145.959652 
+z
+" clip-path="url(#p89766af7ba)" style="fill: url(#hc26bd078a4); stroke: #7b5a24; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 471.941625 155.238261 
+L 568.237091 155.238261 
+L 568.237091 136.681043 
+L 471.941625 136.681043 
+z
+" clip-path="url(#p89766af7ba)" style="fill: url(#hc26bd078a4); stroke: #7b5a24; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 600; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #283238" x="127.046642" y="200.330903" transform="rotate(-0 127.046642 200.330903)">10 / 21</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 600; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #283238" x="323.568" y="135.380642" transform="rotate(-0 323.568 135.380642)">17 / 21</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 600; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #283238" x="520.089358" y="126.102033" transform="rotate(-0 520.089358 126.102033)">18 / 21</text>
+   </g>
+  </g>
+  <g id="text_12">
+   <text style="font-weight: 600; font-size: 19px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #283238" x="54.432" y="24.624" transform="rotate(-0 54.432 24.624)">Same 21 checks, three milestones</text>
+  </g>
+  <g id="text_13">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #283238" x="54.432" y="47.196" transform="rotate(-0 54.432 47.196)">Retrospective results on the same 21 selected checks.</text>
+  </g>
+  <g id="text_14">
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #283238" x="54.432" y="383.724" transform="rotate(-0 54.432 383.724)">All dates: 2026. This measures case outcomes, not development speed.</text>
+  </g>
+  <g id="text_15">
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #283238" x="54.432" y="400.14" transform="rotate(-0 54.432 400.14)">Later rewrite snapshots retain 18/21. Source: historical replay, Sep 25.</text>
+  </g>
+  <g id="legend_1">
+   <g id="patch_9">
+    <path d="M 54.81 353.283539 
+L 75.81 353.283539 
+L 75.81 345.933539 
+L 54.81 345.933539 
+z
+" style="fill: #215e73"/>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #283238" x="84.21" y="353.283539" transform="rotate(-0 84.21 353.283539)">Pass without external timeout</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 262.050469 353.283539 
+L 283.050469 353.283539 
+L 283.050469 345.933539 
+L 262.050469 345.933539 
+z
+" style="fill: url(#hc26bd078a4); stroke: #7b5a24; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #283238" x="291.450469" y="353.283539" transform="rotate(-0 291.450469 353.283539)">Accepted timeout</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p89766af7ba">
+   <rect x="54.432" y="90.288" width="538.272" height="213.408"/>
+  </clipPath>
+ </defs>
+ <defs>
+  <pattern id="hc26bd078a4" patternUnits="userSpaceOnUse" x="0" y="0" width="72" height="72">
+   <rect x="0" y="0" width="73" height="73" fill="#ebca8e"/>
+   <path d="M -36 36 
+L 36 -36 
+M -32 40 
+L 40 -32 
+M -28 44 
+L 44 -28 
+M -24 48 
+L 48 -24 
+M -20 52 
+L 52 -20 
+M -16 56 
+L 56 -16 
+M -12 60 
+L 60 -12 
+M -8 64 
+L 64 -8 
+M -4 68 
+L 68 -4 
+M 0 72 
+L 72 0 
+M 4 76 
+L 76 4 
+M 8 80 
+L 80 8 
+M 12 84 
+L 84 12 
+M 16 88 
+L 88 16 
+M 20 92 
+L 92 20 
+M 24 96 
+L 96 24 
+M 28 100 
+L 100 28 
+M 32 104 
+L 104 32 
+M 36 108 
+L 108 36 
+" style="fill: #7b5a24; stroke: #7b5a24; stroke-width: 1.0; stroke-linecap: butt; stroke-linejoin: miter"/>
+  </pattern>
+ </defs>
+</svg>

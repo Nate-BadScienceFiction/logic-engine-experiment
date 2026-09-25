@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Detailed calculations, revision records, and replay instructions for the Cyclops Storm comparison.">
+  <title>Measurements and replay notes — Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1280px,calc(100% - 2rem)); margin-inline:auto; }
+    header,footer { padding-block:1rem; border-bottom:1px solid var(--line); }
+    footer { border-top:1px solid var(--line); border-bottom:0; font-size:.9rem; }
+    main { padding-block:2rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { font-size:clamp(1.8rem,4vw,2.4rem); margin:.4rem 0 1rem; }
+    h2 { font-size:1.3rem; margin:1.5rem 0 .8rem; }
+    h3 { font-size:1.1rem; }
+    p,ul,ol { max-width:85ch; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:focus-visible,.table-scroll:focus-visible,summary:focus-visible { outline:3px solid #9a5b1a; outline-offset:3px; }
+    .skip { position:absolute; left:-1000px; padding:.6rem 1rem; background:white; }
+    .skip:focus { left:1rem; }
+    .date { margin:0; color:var(--muted); font-size:.9rem; }
+    .links { display:flex; flex-wrap:wrap; gap:.5rem 1.2rem; }
+    .table-scroll { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    caption { text-align:left; padding-bottom:.6rem; font-size:.9rem; color:var(--muted); }
+    th,td { border-bottom:1px solid var(--line); text-align:left; padding:.65rem .6rem; vertical-align:top; }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+
+    .wrap { max-width:1050px; }
+    li { margin-bottom:.6rem; }
+    table { min-width:770px; }
+    .number { text-align:right; font-variant-numeric:tabular-nums; }
+    code { font:.88em ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+    pre { padding:1rem; background:#eef0ed; border:1px solid var(--line); overflow-x:auto; }
+    pre code { overflow-wrap:normal; }
+    details { margin-top:1.5rem; border-top:1px solid var(--line); padding-top:1rem; }
+    summary { color:var(--link); cursor:pointer; }
+
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header><div class="wrap"><a href="../index.html#punchline">Cyclops Storm / Lab notes</a></div></header>
+  <main id="main" class="wrap">
+    <p class="date">Historical replay measured <time datetime="2026-09-25">September 25, 2026</time></p>
+    <h1>Measurements and replay notes</h1>
+    <p>The detailed record behind the <a href="development-progress.html#method">progress overview</a>: calculations, saved versions, limits, and instructions for repeating the run.</p>
+    <nav class="links" aria-label="Measurement records"><a href="#numbers">Calculations</a><a href="#timeline">Saved versions</a><a href="#measurement-limits">Limits</a><a href="#method-details">Tools and sources</a><a href="#replay">Replay instructions</a></nav>
+
+    <h2 id="numbers">The measured differences</h2>
+    <ul>
+      <li><strong>Eight more passing checks:</strong> 18 − 10 = 8, or 38.1 percentage points on this 21-case set. Failures fall from 11 to 3: (11 − 3) / 11 = 72.7% fewer failing cases. This is a description of these selected checks.</li>
+      <li><strong>The advantage remains without timeout allowances:</strong> excluding both unbounded-search cases gives 16/19 for the rewrite and 10/19 for the earlier engine. The difference is six passing checks, or 31.6 percentage points.</li>
+      <li><strong>The first rewrite already has most of that result:</strong> 17/21 overall and 16/19 without the two unbounded-search cases. Its only later pass gain in this corpus is an open generator changing from a <code>RecursionError</code> to an external query timeout. The case permits that timeout; this does not demonstrate that the engine reports an incomplete search itself.</li>
+      <li><strong>The sampled earlier engine improves too:</strong> 8/21 on May 8, 9/21 on June 14, and 10/21 on August 30. The two observed gains are <a href="index.html#case-recursion.left-recursion-terminates-and-is-complete">left recursion</a> and <a href="index.html#case-resolution.facts-and-rules-for-one-predicate">combining facts and rules</a>. The sample endpoints are about 114 calendar days apart. These checks do not cover all the other work done during that period.</li>
+    </ul>
+    <h3>What the dates establish</h3>
+    <p>The <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/5fce203ca2da4d5942a8ed4a4217d8bf18c04544">seed prompt commit</a> is dated September 13 at 19:51:55 −04:00. The first kernel commit is September 14 at 05:56:51: an interval of <strong>10 hours, 4 minutes, 56 seconds</strong>. The September 15 commit, which retrospectively scores 18/21, is <strong>34 hours, 37 minutes, 54 seconds</strong> after the seed. Those are calendar intervals between recorded commits, not a time sheet or a measurement from zero prior work.</p>
+    <p>The first source commit includes the kernel, tests, and documentation together. The comparison corpus was added on September 22. I cannot assume the work began at the seed commit, treat the later-selected checks as a prospective target, or divide these intervals into a fair rewrite-versus-refactoring productivity ratio.</p>
+
+    <h2 id="timeline">All eleven snapshots</h2>
+    <p>Every row uses the same 21 cases and the same frozen harness. Dates below are commit dates, not dates when these tests were originally run. Timeout passes are included in the pass total. “Unassessable” means the harness could not judge the result.</p>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Historical results for both implementations">
+      <table>
+        <caption>Retrospective results, measured September 25, 2026</caption>
+        <thead><tr><th scope="col">Implementation</th><th scope="col">Commit date</th><th scope="col" class="number">Pass</th><th scope="col" class="number">Fail</th><th scope="col" class="number">Unassessable</th><th scope="col" class="number">Timeout passes</th><th scope="col">Revision</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Earlier</th><td>May 8, 2026</td><td class="number">8</td><td class="number">13</td><td class="number">0</td><td class="number">0</td><td><a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm/commit/7cfca576e5c4029338048d4511a85cc3c46b7a47"><code>7cfca57</code></a></td></tr>
+          <tr><th scope="row">Earlier</th><td>May 12, 2026</td><td class="number">8</td><td class="number">13</td><td class="number">0</td><td class="number">0</td><td><a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm/commit/b6b299185487bd3a3d3ac9e95f03ce98d58ea3dc"><code>b6b2991</code></a></td></tr>
+          <tr><th scope="row">Earlier</th><td>June 14, 2026</td><td class="number">9</td><td class="number">12</td><td class="number">0</td><td class="number">0</td><td><a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm/commit/9c06533c00b6d42da03e3a0f71c8e4012fe2b62d"><code>9c06533</code></a></td></tr>
+          <tr><th scope="row">Earlier</th><td>July 12, 2026</td><td class="number">9</td><td class="number">12</td><td class="number">0</td><td class="number">0</td><td><a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm/commit/9cff53c3c436e56495d1d37a87eeacdfe7ad6cfd"><code>9cff53c</code></a></td></tr>
+          <tr><th scope="row">Earlier</th><td>August 30, 2026</td><td class="number">10</td><td class="number">11</td><td class="number">0</td><td class="number">0</td><td><a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm/commit/e62758c23f66b26fa92c6d2dafaaf6bf3466499f"><code>e62758c</code></a></td></tr>
+          <tr><th scope="row">Rewrite</th><td>September 14, 2026</td><td class="number">17</td><td class="number">4</td><td class="number">0</td><td class="number">1</td><td><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/3ae199b04fdc7003646468661e9043845eb1b438"><code>3ae199b</code></a></td></tr>
+          <tr><th scope="row">Rewrite</th><td>September 15, 2026</td><td class="number">18</td><td class="number">3</td><td class="number">0</td><td class="number">2</td><td><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/0b231e62e42c0b80894f2bb1e7eabade04c11002"><code>0b231e6</code></a></td></tr>
+          <tr><th scope="row">Rewrite</th><td>September 16, 2026</td><td class="number">18</td><td class="number">3</td><td class="number">0</td><td class="number">2</td><td><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/08c64ff72247c3c1ae1240f408267007ecb8b75b"><code>08c64ff</code></a></td></tr>
+          <tr><th scope="row">Rewrite</th><td>September 16, 2026</td><td class="number">18</td><td class="number">3</td><td class="number">0</td><td class="number">2</td><td><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/f98ac6b24684c8dedc37bfc1fd4c7715cadda85a"><code>f98ac6b</code></a></td></tr>
+          <tr><th scope="row">Rewrite</th><td>September 22, 2026</td><td class="number">18</td><td class="number">3</td><td class="number">0</td><td class="number">2</td><td><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/6f4161a78c19c10f9e8ed9b3dbb06fd6a66e4e80"><code>6f4161a</code></a></td></tr>
+          <tr><th scope="row">Rewrite</th><td>September 24, 2026</td><td class="number">18</td><td class="number">3</td><td class="number">0</td><td class="number">2</td><td><a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/commit/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6"><code>9be7804</code></a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="measurement-limits">Why this is not a speed multiplier</h2>
+    <ul>
+      <li><strong>No comparable effort denominator.</strong> I found no project-wide record of active human hours, agent hours, or API cost for both approaches. Commit counts, lines changed, and calendar gaps do not supply one.</li>
+      <li><strong>The earlier repository begins with existing work.</strong> Its <a href="https://github.com/Nate-BadScienceFiction/BadScienceFiction-CyclopsStorm/commit/e49db7fafb4163d8ceced1d49fb542f42bced3f8">first source import</a> already includes an engine and a long test history. February 2026 is not its development start. The rewrite also benefits from the earlier requirements, models, tests, and mistakes.</li>
+      <li><strong>Scope and tests differ.</strong> The <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/blob/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6/docs/MIGRATION_MAP.md">migration map</a> records omitted and deferred responsibilities. Raw unit-test growth also mixes new engine checks with harness tests. The three remaining comparison failures concern explanations, including one capability the earlier engine passes.</li>
+      <li><strong>The cases were selected with knowledge of both implementations.</strong> They are not an independent or random sample. Sparse snapshots of the earlier engine can miss intermediate gains or regressions. A flat count on this set does not mean no other progress was made.</li>
+    </ul>
+    <p>To measure pace going forward, I would freeze an independent set of behavior targets before each work period, record active human and agent time and cost, and count targets met while retaining earlier passes. A fair strategy comparison would also need matched scope and comparable starting knowledge. This replay is a useful baseline for that work.</p>
+
+    <h2 id="method-details">Tools and version records</h2>
+    <p>The <a href="replay-development-progress.py">replay script</a> uses the worker, oracle, and scoring functions unchanged from harness revision <code>9be7804c933cc8a3c51af3d8a5e4f54b012c8be6</code>. It runs each engine snapshot in its own fresh local clone, each case in a separate process, with the original timeouts. SWI-Prolog expectations are obtained once and reused for all snapshots. Both published endpoints reproduce every verdict in the <a href="comparison-2026-09-24.json">September 24 comparison</a>, including reasons, answer rows, and completeness flags.</p>
+    <p>The revisions were selected before replaying: all five commits that changed the rewrite's <code>src</code> tree, plus its published endpoint; the earlier engine's first compatible import layout on May 8, then the last commit of each month through August. Earlier package layouts cannot be tested by this unchanged adapter and are outside this sample. Different sampling densities are explicit; this is not a search for the earliest passing old revision.</p>
+    <p>The run used Python 3.12.10 and SWI-Prolog 10.0.2 on Windows. The <a href="development-progress-2026-09-25.json">raw replay</a> includes every worker result, pass/fail/unassessable decision, timeout marker, commit timestamp, source-tree identity, script hash, and expected answer. The <a href="cases-2026-09-24.json">case corpus</a> and <a href="index.html#outcome-definitions">outcome definitions</a> explain what a pass means.</p>
+    <p>The graph is generated from that replay with <a href="render-development-progress.py">this Matplotlib script</a>. Standalone versions: <a href="../assets/development-progress.svg">SVG</a> and <a href="../assets/development-progress.png">PNG</a>.</p>
+    <details id="replay">
+      <summary>Commands for reproducing the measurements</summary>
+      <p>From a local checkout of this website repository, with Python 3.12+, Git, SWI-Prolog 10.0.2, and both engine repositories available locally, run:</p>
+      <pre><code>python evidence\replay-development-progress.py --old-repo C:\path\BadScienceFiction-CyclopsStorm --new-repo C:\path\AkiyaBlocks-CyclopsStorm --work-dir C:\temp\cyclops-replay --output C:\temp\cyclops-replay.json --swipl "C:\Program Files\swipl\bin\swipl.exe"</code></pre>
+      <p>Choose a new scratch directory and output file outside both input repositories. The script makes and retains its own clones; it does not change the input checkouts. The listed revisions must exist locally. Compare snapshot counts and case verdicts with the saved JSON; environment details and measurement timestamps may differ.</p>
+      <p>For the original two-version comparison, check out the earlier engine at <code>e62758c23f66b26fa92c6d2dafaaf6bf3466499f</code> and the rewrite at <code>9be7804c933cc8a3c51af3d8a5e4f54b012c8be6</code> in separate working copies. With the repositories side by side, run from the rewrite:</p>
+      <pre><code>python scripts\compare_implementations.py --output artifacts\comparison\reproduction</code></pre>
+      <p>For other locations, pass <code>--old-root</code>, <code>--new-root</code>, and <code>--corpus</code> explicitly. The <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/blob/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6/docs/COMPARISON_HARNESS.md">harness documentation</a> describes the complete comparison.</p>
+    </details>
+    <section id="reference" aria-labelledby="reference-title">
+      <h2 id="reference-title">Reference: the impact of agentic AI coding</h2>
+      <p><a href="https://www.youtube.com/watch?v=NYFGCESmikA">DHH on programming and AI — Lex Fridman Podcast #501</a>.</p>
+      <p>DHH describes how agentic AI changed his programming work: agents implement, test, and review code while he directs the work and decides what to accept. <a href="https://lexfridman.com/dhh-2-transcript/">Read the transcript</a>.</p>
+    </section>
+  </main>
+  <footer><div class="wrap links"><a href="../index.html">Lab notes</a><a href="index.html">Results by case</a><a href="https://natecombs.substack.com/">My Substack</a><a href="https://www.youtube.com/watch?v=NYFGCESmikA">DHH / Lex Fridman #501</a></div></footer>
+</body>
+</html>

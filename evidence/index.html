@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="All 21 case outcomes in the pinned Cyclops Storm implementation comparison.">
+  <title>Comparison results by case — Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1120px,calc(100% - 2rem)); margin-inline:auto; }
+    header { border-bottom:1px solid var(--line); padding:1rem 0; }
+    main { padding-block:2.5rem 3rem; }
+    h1 { font-size:clamp(1.8rem,4vw,2.4rem); line-height:1.3; font-weight:650; margin:.4rem 0 1rem; }
+    h2 { margin-top:2rem; font-size:1.4rem; font-weight:650; }
+    h3 { font-size:1.1rem; font-weight:650; }
+    p { max-width:850px; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:focus-visible,summary:focus-visible,.table-wrap:focus-visible { outline:3px solid #9a5b1a; outline-offset:3px; }
+    .date { font-size:.9rem; color:#586269; }
+    .links { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; margin:1.4rem 0 2rem; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; min-width:760px; }
+    caption { text-align:left; padding-bottom:.7rem; font-weight:650; }
+    th,td { padding:.8rem .9rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    thead { background:#eef0ed; }
+    tbody tr:last-child th,tbody tr:last-child td { border-bottom:0; }
+    tbody tr:target { background:#fff2d7; }
+    th[scope=row] { width:42%; font-weight:600; overflow-wrap:anywhere; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.84rem; overflow-wrap:anywhere; }
+    pre { max-width:850px; padding:1rem; border:1px solid var(--line); background:#eef0ed; overflow-x:auto; }
+    .outcomes { max-width:850px; }
+    .outcomes dt { font-weight:650; margin-top:.8rem; }
+    .outcomes dd { margin:.2rem 0 .6rem; }
+    .example-table { min-width:0; max-width:850px; }
+    .example-table th[scope=row] { width:30%; }
+    .case-summary th[scope=row] { width:29%; }
+    .case-summary .number { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .badge { font-weight:650; }
+    .badge.pass { color:#12583d; }
+    .badge.fail { color:#9b3924; }
+    .badge.unknown { color:#625200; }
+    details { max-width:26rem; margin-top:.35rem; }
+    summary { cursor:pointer; color:var(--link); font-size:.85rem; }
+    details p { margin:.4rem 0 .2rem; font-size:.82rem; overflow-wrap:anywhere; }
+    footer { border-top:1px solid var(--line); padding-block:1.5rem; font-size:.88rem; }
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><a href="../index.html">Cyclops Storm / Lab notes</a></div></header>
+  <main class="wrap">
+    <p class="date">Comparison run: <time datetime="2026-09-24">September 24, 2026</time></p>
+    <h1>Comparison results by case</h1>
+    <p>These are the 21 cases from the saved run, in corpus order. The earlier implementation passes 10; the reimplementation passes 18. Nine pass in both, nine pass only in the reimplementation, one passes only in the earlier implementation, and two fail in both. All cases were assessable.</p>
+    <p>The assessments below explain what each result means for behavior. The <a href="comparison-2026-09-24.json">raw report</a> preserves the exact answers and diagnostic messages.</p>
+    <nav class="links" aria-label="Results and evidence"><a href="#case-results">All 21 outcomes</a><a href="comparison-2026-09-24.json">Raw result JSON</a><a href="cases-2026-09-24.json">Case definitions (JSON)</a><a href="development-progress-notes.html#replay">Reproduction instructions</a></nav>
+    <h2 id="reading-results">What these cases test</h2>
+    <p>These 21 cases check basic promises I need the engine to keep before I build more game behavior around it: draw the expected conclusions from facts and rules, preserve the information in an answer, keep a caller's edits from changing later answers, and make errors and unfinished searches visible.</p>
+    <p>Each case gives both engines the same small program and queries or operations, judged by the same expected behavior. That lets me compare what a caller actually gets from two different implementations, separately from their own unit-test suites. The <a href="cases-2026-09-24.json">case definitions</a> record the inputs and expected behavior.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Comparison cases grouped by behavior">
+      <table class="case-summary" aria-describedby="case-summary-note">
+        <caption>Passing checks, grouped by what they test</caption>
+        <thead><tr><th scope="col">What is tested</th><th scope="col">Why it matters</th><th scope="col" class="number">Earlier</th><th scope="col" class="number">Rewrite</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Reasoning and finite recursion</th><td>Combining facts and rules, joining conditions, controlling a search, and following chains of relationships must return the expected conclusions.</td><td class="number">6 / 6</td><td class="number">6 / 6</td></tr>
+          <tr><th scope="row">Arithmetic, lists, and structured values</th><td>Misreading an expression, rejecting a valid rule, or mishandling repeated items can leave valid answers out.</td><td class="number">2 / 6</td><td class="number">6 / 6</td></tr>
+          <tr><th scope="row">Preserving data and isolating returned answers</th><td>Different values must stay distinct, structured data must survive a query, and adding to a returned list must not alter later answers.</td><td class="number">1 / 3</td><td class="number">3 / 3</td></tr>
+          <tr><th scope="row">Errors and unfinished searches</th><td>An invalid calculation or an unfinished search must not look like a valid result with nothing left to find.</td><td class="number">0 / 3</td><td class="number">3 / 3*</td></tr>
+          <tr><th scope="row">Explanation requests</th><td>To investigate a decision, I need an explanation request to respond when appropriate and reject a request about an unsupported result.</td><td class="number">1 / 3</td><td class="number">0 / 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p id="case-summary-note">* Two rewrite passes are external timeouts accepted for searches with no end. They do not demonstrate the engine reporting an incomplete search itself. The explanation checks assess whether requests get appropriate responses; they do not assess the contents of an explanation.</p>
+    <h3>Why the results matter</h3>
+    <p>The rewrite retains all six successes on reasoning and finite recursion while fixing failures in arithmetic, data handling, and isolation between returned answers. Those fixes address ways a game could keep running while making decisions from missing or altered information. The <a href="#worked-example">distinct-values example</a> and <a href="#case-mutation.a-returned-answer-list-is-the-callers-to-keep">returned-answer check</a> show two of those problems directly.</p>
+    <p>Even with both timeout cases removed, the rewrite passes <strong>16 of 19 checks, compared with 10</strong> for the earlier engine. That gives me a concrete reason to keep developing it: fewer known failures in the behaviors game code depends on. It also exposes a loss: one explanation check passes in the earlier engine and fails in the rewrite. These selected cases establish specific improvements and a remaining gap; broader coverage and development pace still need to be measured.</p>
+    <h3 id="outcome-definitions">How cases are counted</h3>
+    <dl class="outcomes">
+      <dt>Pass</dt><dd>The comparison script accepts the outcome under that case's rule. For an answer check, the returned values must match the expected values, including order or repeated answers when specified. Other cases expect an error, check that explanation predicates answer a valid probe and reject an invalid one, or check that changing a returned list does not affect later queries. The two unbounded-search cases allow a timeout during the query; both new-engine results used that rule in this run.</dd>
+      <dt>Fail</dt><dd>An observed result violates the case's rule: for example, an answer is missing, an invalid query silently returns no answers, or an explanation predicate answers the negative control.</dd>
+      <dt>Unassessable</dt><dd>The comparison script cannot judge the case, for example because an expected-result source is unavailable or a worker produces no usable result. There were no unassessable cases in this run.</dd>
+    </dl>
+    <p>The <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/blob/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6/docs/COMPARISON_HARNESS.md">comparison documentation</a> and <a href="https://github.com/Nate-BadScienceFiction/AkiyaBlocks-CyclopsStorm/blob/9be7804c933cc8a3c51af3d8a5e4f54b012c8be6/scripts/comparison/compare.py">scoring code</a> describe the rules at the revision used for this run.</p>
+    <h2 id="worked-example">Example: keeping three values distinct</h2>
+    <p>This case loads three facts under the name <code>p</code>. They contain an integer, an atom (a Prolog name), and a floating-point number:</p>
+    <pre><code>p(1).
+p('1').
+p(1.0).</code></pre>
+    <p>The query <code>p(X)</code> asks which values of <code>X</code> satisfy those facts. The expected result, obtained from SWI-Prolog 10.0.2, contains all three distinct values.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Worked example results"><table class="example-table"><caption>Expected and observed answers</caption><thead><tr><th scope="col">Source</th><th scope="col">Answers</th><th scope="col">Outcome</th></tr></thead><tbody>
+      <tr><th scope="row">Expected (SWI-Prolog)</th><td><code>X=1</code>, <code>X='1'</code>, <code>X=1.0</code></td><td>Reference</td></tr>
+      <tr><th scope="row">Earlier implementation</th><td><code>X=1</code></td><td>Fail: two values missing</td></tr>
+      <tr><th scope="row">Reimplementation</th><td><code>X=1</code>, <code>X='1'</code>, <code>X=1.0</code></td><td>Pass</td></tr>
+    </tbody></table></div>
+    <p>This contributes one pass to the reimplementation and one failure to the earlier implementation. Its <a href="#case-value-fidelity.an-integer-a-float-and-an-atom-are-three-facts">recorded outcome</a> appears in the full table below.</p>
+    <h2 id="case-results">All 21 outcomes</h2>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Results by case"><table><caption>Outcomes and sources of expected results</caption><thead><tr><th scope="col">Case</th><th scope="col">Expected result source</th><th scope="col">Earlier implementation</th><th scope="col">Reimplementation</th></tr></thead><tbody>
+<tr id="case-resolution.facts-and-rules-for-one-predicate"><th scope="row"><code>resolution.facts-and-rules-for-one-predicate</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-resolution.conjunction-join"><th scope="row"><code>resolution.conjunction-join</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-resolution.cut-commits-to-the-clause"><th scope="row"><code>resolution.cut-commits-to-the-clause</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-resolution.negation-binds-nothing"><th scope="row"><code>resolution.negation-binds-nothing</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-builtins.arithmetic-integer-division-on-negatives"><th scope="row"><code>builtins.arithmetic-integer-division-on-negatives</code></th><td>SWI-Prolog</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Could not read the valid arithmetic rule in this test, so the calculation never ran. This is a limitation in the input the engine accepts.</p></details></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-builtins.sort-deduplicates-msort-does-not"><th scope="row"><code>builtins.sort-deduplicates-msort-does-not</code></th><td>SWI-Prolog</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Returned no answer where sorted lists were expected. The test requires one sorting operation to remove repeated items and the other to keep them.</p></details></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-builtins.findall-keeps-multiplicity"><th scope="row"><code>builtins.findall-keeps-multiplicity</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-builtins.univ-decomposes-a-compound"><th scope="row"><code>builtins.univ-decomposes-a-compound</code></th><td>SWI-Prolog</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Could not read the valid rule for breaking a structured value into its parts. The test stopped before it could produce an answer.</p></details></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-syntax.operator-precedence-in-a-comparison"><th scope="row"><code>syntax.operator-precedence-in-a-comparison</code></th><td>SWI-Prolog</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Missed an answer to a valid comparison involving arithmetic. A query that should have matched instead returned nothing.</p></details></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-syntax.a-list-is-a-list-at-every-length"><th scope="row"><code>syntax.a-list-is-a-list-at-every-length</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-value-fidelity.an-integer-a-float-and-an-atom-are-three-facts"><th scope="row"><code>value-fidelity.an-integer-a-float-and-an-atom-are-three-facts</code></th><td>SWI-Prolog</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Merged three values that should remain distinct, leaving two answers out. This loses information supplied to the engine.</p></details></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-value-fidelity.a-compound-argument-survives-the-boundary"><th scope="row"><code>value-fidelity.a-compound-argument-survives-the-boundary</code></th><td>SWI-Prolog</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-recursion.transitive-closure-over-a-chain"><th scope="row"><code>recursion.transitive-closure-over-a-chain</code></th><td>Adjudicated</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-recursion.left-recursion-terminates-and-is-complete"><th scope="row"><code>recursion.left-recursion-terminates-and-is-complete</code></th><td>Adjudicated</td><td><span class="badge pass">pass</span></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-recursion.an-infinite-answer-set-must-not-be-called-complete"><th scope="row"><code>recursion.an-infinite-answer-set-must-not-be-called-complete</code></th><td>Adjudicated</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Returned only part of a result set that has no end, without warning that the search was incomplete. A caller could mistake the partial list for all the answers.</p></details></td><td><span class="badge pass">pass</span><details><summary>Assessment</summary><p>The test runner stopped waiting for this search, which has no end. That timeout is allowed by the case. It does not show the engine itself reporting an incomplete search.</p></details></td></tr>
+<tr id="case-errors.an-open-generator-must-not-read-as-false"><th scope="row"><code>errors.an-open-generator-must-not-read-as-false</code></th><td>Adjudicated</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Returned no answers for a search that can keep producing them, without marking the search as unfinished. A caller could mistake that for nothing matching.</p></details></td><td><span class="badge pass">pass</span><details><summary>Assessment</summary><p>The test runner stopped waiting for this search, which has no end. That timeout is allowed by the case. It does not show the engine itself reporting an incomplete search.</p></details></td></tr>
+<tr id="case-mutation.a-returned-answer-list-is-the-callers-to-keep"><th scope="row"><code>mutation.a-returned-answer-list-is-the-callers-to-keep</code></th><td>SWI + host API</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>An item added by the caller to a returned list appeared in a later answer. Using the results can accidentally change what the engine returns next.</p></details></td><td><span class="badge pass">pass</span></td></tr>
+<tr id="case-errors.arithmetic-on-a-non-number-is-an-error"><th scope="row"><code>errors.arithmetic-on-a-non-number-is-an-error</code></th><td>Adjudicated</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Treated an invalid calculation as a query with no answers. This hides the input error and makes it look like nothing matched.</p></details></td><td><span class="badge pass">pass</span><details><summary>Assessment</summary><p>Rejected the invalid calculation with an error, so the caller can identify and handle the problem.</p></details></td></tr>
+<tr id="case-capability.rule-level-explanation-of-a-derived-fact"><th scope="row"><code>capability.rule-level-explanation-of-a-derived-fact</code></th><td>Adjudicated</td><td><span class="badge pass">pass</span><details><summary>Assessment</summary><p>Responded to the valid explanation request and rejected the invalid one. This passes a basic capability check; the explanation&#x27;s contents were not assessed.</p></details></td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Did not answer the valid request to explain how a rule produced a result. This explanation check remains unmet.</p></details></td></tr>
+<tr id="case-capability.why-a-fact-holds"><th scope="row"><code>capability.why-a-fact-holds</code></th><td>Adjudicated</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Responded even to a request that should have been rejected. The response cannot reliably establish that the requested fact holds.</p></details></td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Did not answer the valid request to explain why a fact holds. This explanation check remains unmet.</p></details></td></tr>
+<tr id="case-capability.evidence-chain-for-a-derived-fact"><th scope="row"><code>capability.evidence-chain-for-a-derived-fact</code></th><td>Adjudicated</td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Responded to the invalid request as well as the valid one. It failed to distinguish a supported result from a request that should have no explanation.</p></details></td><td><span class="badge fail">fail</span><details><summary>Assessment</summary><p>Did not answer the valid request for the reasoning behind a derived result. This explanation check remains unmet.</p></details></td></tr>
+    </tbody></table></div>
+  </main>
+  <footer><div class="wrap"><a href="../index.html">Back to the lab notes</a></div></footer>
+</body>
+</html>

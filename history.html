@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The earlier Cyclops Storm README: refactoring notes, articles, tools, and charts through May 2026.">
+  <title>Earlier README — Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#faf9f6; color:#283238; font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2rem)); margin-inline:auto; }
+    header { border-bottom:1px solid #d6d9d8; padding:1rem 0; }
+    main { padding-block:2rem 3rem; }
+    a { color:#215e73; text-underline-offset:.18em; }
+    a:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; background:#fff; padding:.6rem 1rem; }
+    .skip:focus { left:1rem; }
+    aside { max-width:85ch; border-left:3px solid #a9b5b7; padding-left:1rem; color:#586269; }
+    h1 { font-size:clamp(1.8rem,4vw,2.4rem); line-height:1.3; font-weight:650; }
+    h2 { font-size:1.4rem; font-weight:650; margin-top:2rem; }
+    p,li { max-width:85ch; }
+    li { margin-block:.5rem; }
+    ul { padding-left:1.3rem; }
+    img { max-width:100%; height:auto; }
+    footer { border-top:1px solid #d6d9d8; padding-block:1.4rem; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the archived README</a>
+  <header><div class="wrap"><a href="index.html">Cyclops Storm / Current lab notes</a></div></header>
+  <main id="main" class="wrap">
+    <aside><p>This is the earlier README, whose latest update was May 28, 2026. Its notes and links describe the project during the refactoring period. The <a href="index.html#results">current comparison results</a> are on the main page.</p></aside>
+    <article id="archived-readme">
+<h1>&quot;Cyclops Storm&quot; Prolog</h1>
+<p><a href="https://en.wikipedia.org/wiki/Prolog">Prolog</a> (PROgrammation en LOGique, &quot;programming in logic&quot;).</p>
+<ul>
+<li>Open lab notes on using AI (mostly Claude Code) to help build a logic engine for science-fiction worlds. This is an ongoing attempt to <a href="https://medium.com/ai-advances/an-octopus-two-ais-and-the-problem-of-taste-877d2c427780">&quot;meet minds&quot; with an AI</a> over a sprawling logic-programming codebase and an unreasonable amount of coffee.
+</li>
+<li><a href="https://if50.textories.com/portal/posters.html">Aaron A. Reed: 50 Years of Text Games</a>
+</li>
+<li>Featured big idea: <a href="https://natecombs.substack.com/p/machining-the-ghost-ideating-in-the">&quot;Machining the Ghost: Ideating in the Age of AI&quot;</a>
+</li>
+<li>Reference: Knowledge Base Engine public source code repository (coming)
+</li></ul>
+<h2>Status in a Nutshell:</h2>
+<ul>
+<li>(4/09/2026) The engine code is in &quot;beta.&quot; As I detail <a href="https://ai.gopubby.com/my-brief-history-of-ai-coding-e9b0accc1593">here</a>: I hope to place Cyclops Storm Prolog into a public GitHub repository in 2026. I think it really needs to be accompanied by an application that clearly demonstrates its capabilities. If you have any favorites (something that Claude Code and I might be able to develop), leave your thoughts.
+</li></ul>
+<h2>Docs:</h2>
+<ul>
+<li><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_ARCHITECTURE_VS_SWI_PROLOG.md">Architectural comparison with SWI Prolog: a compare and contrast</a>. Updated 04/09/2026.
+</li>
+<li><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/KB_API_AND_DESIGN.md">KB Engine API and Design Document</a>. Updated 04/09/2026.
+</li></ul>
+<h2>Unit Tests:</h2>
+<ul>
+<li>Updated 05/28/2026
+<ul>
+<li><img width="450" height="225" alt="unit_test_progress" src="viz/unit_test_chart_05_28_2026.png" />
+</li></ul>
+</li></ul>
+<h2>Change in Code</h2>
+<ul>
+<li>Depicted are lines added/removed over time (per commits). Compare them with the unit tests graph. Updated 04/09/2026.
+</li>
+<li>Note the statistics were aggregated over two repositories -- Cyclops Storm Prolog graduated from a sandbox repository to a dedicated one in late Feb. 2026.
+<ul>
+<li><img width="450" height="225" alt="lines_of_code_added_removed" src="viz/cumulative_lines_combined_04_09_2026.png" />
+</li></ul>
+</li></ul>
+<h2>Status (Highlights):</h2>
+<ul>
+<li>Feb, 17, 2025: <a href="https://medium.com/ai-advances/my-brief-history-of-ai-coding-e9b0accc1593">&quot;My Brief History of AI Coding,&quot;</a>. AI Advances, Medium.
+</li>
+<li>Nov 14, 2025: <a href="https://natecombs.substack.com/p/marching-to-nines-with-a-robot">&quot;Marching to Nines with a Robot,&quot;</a>. Nate&#x27;s AI-ish Substack.
+</li>
+<li>Oct 17, 2025: <a href="https://natecombs.substack.com/p/when-heuristics-bite-back">&quot;When Heuristics Bite Back,&quot;</a> Nate&#x27;s AI-ish Substack.
+</li>
+<li>Sept 28, 2025: <a href="https://natecombs.substack.com/p/fly-by-wire-debugging">&quot;Fly-By-Wire Debugging,&quot;</a> Nate&#x27;s AI-ish Substack.
+</li>
+<li>Sept 18, 2025: <a href="https://natecombs.substack.com/p/the-death-of-prompt-engineering-and">&quot;The Death of Prompt Engineering And Was Carl the Murderer?&quot;</a> Nate&#x27;s AI-ish Substack.
+</li>
+<li>Aug 22, 2025: <a href="https://natecombs.substack.com/p/fly-by-wire-coding-with-ai">&quot;Fly-By-Wire Coding with AI,&quot;</a> Nate&#x27;s AI-ish Substack.
+</li></ul>
+<h2>Harriet AI:</h2>
+<ul>
+<li>Oct 24, 2025: <a href="https://natecombs.substack.com/p/harriets-field-guide-to-loops?r=9i5dq">&quot;Harriet&#x27;s Field Guide to Loops,&quot;</a>
+</li>
+<li>Sept 26, 2025: <a href="https://natecombs.substack.com/p/when-penelope-code-learned-to-build">“When Penelope Code Learned to Build,”</a> Nate’s AI-ish Substack.
+</li>
+<li>Jul 18, 2025: <a href="https://natecombs.substack.com/p/firewalls-and-kerosene">&quot;Firewalls and Kerosene,&quot;</a> Nate&#x27;s AI-ish Substack.
+</li>
+<li>Jul 8, 2025: <a href="https://natecombs.substack.com/p/friends-in-low-places">&quot;Friends in Low Places,&quot;</a> Nate&#x27;s AI-ish Substack.
+</li>
+<li>June 23, 2025: <a href="https://natecombs.substack.com/p/friends-in-low-places">&quot;Vacancy.exe, Akiya.exe,&quot;</a> Nate&#x27;s AI-ish Substack.
+</li></ul>
+<h2>(Featured tool:) The Spider </h2>
+<p>The Spider is a Claude Code implemented toolset that builds a representation of storyline by stepping from one event to another gleaned from prolog &quot;databases.&quot; The &quot;spider&#x27;s eye&quot; is a tool that reads the same event data and renders an interactive graph that lets you see which events in the story connect, how they cluster, and where the weakly connected gaps are. Here is an <a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/data/narrative.pl">example prolog datafile</a> that is also generated using scripts.</p>
+<ul>
+<li><img width="400" height="225" alt="unit_test_progress" src="viz/Eye_Spider_12_28_2025.png" />.
+</li>
+<li>Updated 12/28/2025.
+</li></ul>
+<h2>Codebase Metadata Resources:</h2>
+<ul>
+<li><a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/data/kb-codepack.json">Source code metadata &quot;codepack&quot;</a> Updated 03/19/2026.
+</li>
+<li>The codepack file contains a distillation of the codebase generated by a python utility that Claude Code implemented. Think metadata. The algorithm and schema used is described <a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/docs/ANALYZE_CODE_ALGORITHM_DESCRIPTION.md">in this document</a>. Updated 12/14/2025.
+</li>
+<li>The codepack feeds visualizations and analysis. The most recent quad-chart stack was generated from the codepack by another Python script we collaborated on together. Updated 03/19/2026:
+<ul>
+<li><img width="400" height="225" alt="unit_test_progress" src="viz/function_topology_quad_chart.png" />
+</li></ul>
+</li>
+<li>The quad charts slice these metrics in different ways; see the “algorithm and schema” document for definitions (mentioned earlier). <a href="https://nate-badsciencefiction.github.io/logic-engine-experiment/viz/quadchart.html">A sample Javascript quad chart stack is here</a>. Updated 03/19/2026.
+</li></ul>
+<h2>Other Links</h2>
+<p>Visit <a href="https://nate-badsciencefiction.github.io/logic-engine-experiment/">here</a> for better viewing.</p>
+    </article>
+  </main>
+  <footer><div class="wrap"><a href="index.html">Back to current lab notes</a></div></footer>
+</body>
+</html>
