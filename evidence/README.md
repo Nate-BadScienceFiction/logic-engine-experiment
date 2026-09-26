@@ -22,6 +22,8 @@ The measurements answer three different questions:
 
 ## Current comparison and migration
 
+The [SWI-Prolog feature comparison](../docs/PROLOG-COMPATIBILITY.md) is a separate inventory of 34 small probes against SWI and the rewrite, with [raw observations](prolog-features-2026-09-25.json) and a [reproduction script](probe-prolog-features.py). It documents compatibility differences without changing the original 21 cross-check scores.
+
 The [migration drill-down](../docs/MIGRATION.md) includes measured package/file/function counts and the test dispositions, backed by [raw measurements](migration-measurements-2026-09-25.json) and [a reproducible inventory script](measure-migration.py). The [revised comparison](comparison-revised-2026-09-25.md) reruns the same 21 cases with corrected timeout and refusal scoring: old **11 pass / 10 fail**, rewrite **16 pass / 3 fail / 2 unknown**.
 
 The [revised benchmarks](benchmarks-revised-2026-09-25.md) collect full bindings in both engines, validate exact answers and separately measure Python conversion. Earlier comparison/replay scores and original benchmark timings below are historical records under their original methods.

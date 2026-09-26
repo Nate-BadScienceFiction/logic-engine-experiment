@@ -72,11 +72,11 @@
 <p>Cyclops Storm is a Prolog-style engine that keeps track of what's true in a story, when it became true, and, for things that change over time, why. AI agents (mostly Claude, via Claude Code) wrote all of it while I directed.</p>
 <p>After a year, the engine passed 6,660 tests, but its architecture was more complex than I wanted. Much of that technical debt traced back to its beginnings in August 2025 when the engine was a playful toy and well before Opus 4.5 (arguably the agentic AI watershed moment, November 2025) marked a turning point with Claude Code's abilities to reason over large codebases. Retroactive refactoring of this product became expensive -- in tokens and time.</p>
 <p>So in September 2026 I had them rebuild it from scratch in a new repository, from <a href="docs/prompts/README.html">three prompts I wrote with GPT Pro's help</a> (<a href="docs/prompts/1-design-brief-2026-09-13.html">design brief</a>, <a href="docs/prompts/2-test-migration-audit-2026-09-14.html">test-migration audit</a>, <a href="docs/prompts/3-two-way-audit-2026-09-15.html">two-way audit</a>): goals, non-goals, and a verification regime of adversarial reviews, mutation testing and checks against deliberately broken engines. The old engine stayed available as a read-only reference. This repo is the record of both versions.</p>
-<p>This is a public record of the experiment. The engine code is still private; running it or reproducing the measurements requires access to those repositories (<a href="#status">status</a>). The Prolog engine is being applied to the AkiyaBlocks game world I'm developing with AIs, and that is still very much in flux.</p>
+<p>This is a public record of the experiment. The engine code is still private; running it or reproducing the measurements requires access to those repositories (<a href="#status">status</a>). The Prolog engine is being applied to the AkiyaBlocks game world I'm also developing with AIs, and that is still very much in flux.</p>
 </div>
 
 <section aria-labelledby="what-it-does"><h2 id="what-it-does">What it does</h2>
-<p>My story <a href="https://natecombs.substack.com/p/firewalls-and-kerosene">"Firewalls and Kerosene"</a> has a scene where Harriet hacks a carnival vending machine. The engine holds that story and two others as a small timeline (17 events across 18 moments), plus about 500 facts that store the stories' sentences and link the events to them. The timeline and its effects come from a separate world file; the links to the text were generated from annotated copies of the stories. You can question it. The questions below are paraphrased; the real calls are underneath.</p>
+<p>My mini story <a href="https://natecombs.substack.com/p/firewalls-and-kerosene">"Firewalls and Kerosene"</a> has a scene where Harriet hacks a carnival vending machine. The engine holds that story and two others as a small timeline (17 events across 18 moments), plus about 500 facts that store the stories' sentences and link the events to them. The timeline and its effects come from a separate world file; the links to the text were generated from annotated copies of the stories. You can question it. The questions below are paraphrased; the real calls are underneath.</p>
 <div class="table-scroll" tabindex="0" role="region" aria-label="What it does table"><table>
 <thead>
 <tr>
@@ -187,6 +187,7 @@ kb.explain(&quot;device_mode(vend_01, offline)&quot;, &quot;t_vend_entices&quot;
 <li><strong>It isn't a general Prolog, by design.</strong> There are no exceptions, modules, strings or I/O.</li>
 </ul>
 <p>Precise semantics and every known gap: <strong><a href="docs/ENGINE.html">ENGINE.md</a></strong>.</p>
+<p><strong>How much Prolog does it support?</strong> The <a href="docs/PROLOG-COMPATIBILITY.html">verified feature comparison with SWI-Prolog</a> uses 34 executable probes to distinguish matching behavior, different defaults, restrictions and unavailable features. Each row points to SWI documentation and identifies the saved probe evidence.</p>
 </section>
 <section aria-labelledby="migration-and-measured-comparisons"><h2 id="migration-and-measured-comparisons">Migration and measured comparisons</h2>
 <p>The rewrite has 7,426 package lines versus 54,387 in the earlier package, with narrower scope; the old tests divide into retained requirements, replacements, obsolete internals, omitted applications and open gaps. The <a href="docs/MIGRATION.html">migration drill-down</a> gives the measured comparison table, all six test dispositions, concrete examples, and what the counts do not prove.</p>
@@ -220,6 +221,10 @@ kb.explain(&quot;device_mode(vend_01, offline)&quot;, &quot;t_vend_entices&quot;
 <tr>
 <td>Precise semantics and known gaps, for Prolog people</td>
 <td><a href="docs/ENGINE.html">ENGINE.md</a></td>
+</tr>
+<tr>
+<td>Feature-by-feature compatibility with SWI-Prolog, verified with probes</td>
+<td><a href="docs/PROLOG-COMPATIBILITY.html">Prolog compatibility</a></td>
 </tr>
 <tr>
 <td>What this shows about building software with AI agents</td>

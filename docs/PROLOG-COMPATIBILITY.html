@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The rewrite supports a useful subset of Prolog, with important differences in defaults, recursion and available libraries. This comparison records 34…">
+  <title>Prolog features: SWI-Prolog and the rewrite · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="HISTORY.html">History</a><a href="ENGINE.html">How it works</a><a href="AI-DEVELOPMENT.html">Building it with AI</a><a href="MIGRATION.html">Migration</a><a href="../evidence/README.html">Evidence</a><a href="GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="prolog-features-swi-prolog-and-the-rewrite">Prolog features: SWI-Prolog and the rewrite</h1>
+<p>The rewrite supports a useful subset of Prolog, with important differences in defaults, recursion and available libraries. This comparison records <strong>34 executable probes</strong> against the September 2026 rewrite and SWI-Prolog 10.0.2. It describes observed behavior on those examples, not complete ISO conformance or a general correctness score.</p>
+<p><a href="../evidence/prolog-features-2026-09-25.json">Raw programs, answers and errors</a> · <a href="../evidence/probe-prolog-features.py">Reproduction script</a> · <a href="ENGINE.html">Engine design and known gaps</a> · <a href="../evidence/benchmarks-revised-2026-09-25.html">Performance measurements</a>.</p>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#how-to-read-the-comparison">How to read the comparison</a></li><li><a href="#terms-syntax-and-answers">Terms, syntax and answers</a></li><li><a href="#control-recursion-and-errors">Control, recursion and errors</a></li><li><a href="#arithmetic-and-data-predicates">Arithmetic and data predicates</a></li><li><a href="#database-libraries-and-extensions">Database, libraries and extensions</a></li><li><a href="#verification-and-reproduction">Verification and reproduction</a></li></ul></nav>
+<section aria-labelledby="how-to-read-the-comparison"><h2 id="how-to-read-the-comparison">How to read the comparison</h2>
+<p><strong>Match</strong> means the tested behavior agrees. <strong>Different default</strong> means ordinary use differs, sometimes with an option to change it. <strong>Restricted</strong> means the rewrite rejects a program SWI can run. <strong>Unavailable in probe</strong> means the feature did not work through the tested syntax or predicate; the row records whether it failed quietly or raised an error. A quiet failure marked complete is especially easy to mistake for a meaningful negative answer.</p>
+<p>Each row names its probe ID in the linked raw results. SWI links explain the reference behavior; the transcripts establish what the installed version actually did. Multiple predicates in one row are only checked in the modes shown in the probe. A match does not establish every argument mode, edge case, or interaction with tabling.</p>
+</section>
+<section aria-labelledby="terms-syntax-and-answers"><h2 id="terms-syntax-and-answers">Terms, syntax and answers</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Terms, syntax and answers table"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>SWI-Prolog</th>
+<th>Rewrite: observed behavior</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Facts, rules and conjunction</td>
+<td>Infers <code>g(a,c)</code> through two related facts. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Control</a></td>
+<td><strong>Match:</strong> the same inference succeeds.</td>
+<td><code>rules</code></td>
+</tr>
+<tr>
+<td>Cyclic unification</td>
+<td><code>X = f(X)</code> succeeds with the default occurs-check setting. <a href="https://www.swi-prolog.org/pldoc/man?section=compare">Unification</a></td>
+<td><strong>Different default:</strong> returns no answers; occurs checking is enabled.</td>
+<td><code>occurs-check</code></td>
+</tr>
+<tr>
+<td>Integer versus float</td>
+<td><code>1</code> does not unify with <code>1.0</code>. <a href="https://www.swi-prolog.org/pldoc/man?section=compare">Unification</a></td>
+<td><strong>Match:</strong> <code>1 \= 1.0</code> succeeds.</td>
+<td><code>numeric-types</code></td>
+</tr>
+<tr>
+<td>Double-quoted text</td>
+<td><code>atom("abc")</code> is false under the default string syntax. <a href="https://www.swi-prolog.org/pldoc/man?section=string">Strings</a></td>
+<td><strong>Different default:</strong> succeeds; double quotes produce an atom.</td>
+<td><code>double-quotes</code></td>
+</tr>
+<tr>
+<td>Character-code literal</td>
+<td><code>0'a</code> evaluates to 97. <a href="https://www.swi-prolog.org/pldoc/man?section=syntax">Syntax</a></td>
+<td><strong>Unavailable in probe:</strong> query parsing raises <code>SyntaxErrorInSource</code>.</td>
+<td><code>character-code</code></td>
+</tr>
+<tr>
+<td>Defining operators</td>
+<td><code>op(500,xfy,likes)</code> succeeds. <a href="https://www.swi-prolog.org/pldoc/doc_for?object=op/3">op/3</a></td>
+<td><strong>Unavailable in probe:</strong> no answers, status complete.</td>
+<td><code>operators</code></td>
+</tr>
+<tr>
+<td>Duplicate answers</td>
+<td>Two <code>p(a)</code> clauses yield two answers to <code>p(X)</code>. <a href="https://www.swi-prolog.org/pldoc/man?section=allsolutions">Collecting solutions</a></td>
+<td><strong>Different default:</strong> <code>ask</code> returns one; <code>ask(..., distinct=False)</code> returns two for this untabled predicate.</td>
+<td><code>duplicates</code>, <code>duplicates-opt-out</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The duplicate comparison concerns the Python query boundary: it does not mean duplicates disappear inside every Prolog construct. The <code>findall/3</code> probe below preserves them.</p>
+</section>
+<section aria-labelledby="control-recursion-and-errors"><h2 id="control-recursion-and-errors">Control, recursion and errors</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Control, recursion and errors table"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>SWI-Prolog</th>
+<th>Rewrite: observed behavior</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cut in an untabled predicate</td>
+<td>A cut in the first clause removes the later alternative. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Cut</a></td>
+<td><strong>Match:</strong> returns only <code>a</code>, not <code>b</code>.</td>
+<td><code>cut</code></td>
+</tr>
+<tr>
+<td>If-then-else</td>
+<td>A failing condition selects the else branch. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Control</a></td>
+<td><strong>Match</strong> on the tested branch.</td>
+<td><code>if-then-else</code></td>
+</tr>
+<tr>
+<td>Soft cut (<code>*-&gt;</code>)</td>
+<td>Preserves both successful condition bindings in the example. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Control</a></td>
+<td><strong>Match:</strong> returns <code>a</code> and <code>b</code>.</td>
+<td><code>soft-cut</code></td>
+</tr>
+<tr>
+<td>Negation as failure</td>
+<td>Failed inner search leaves <code>X</code> unbound. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Negation</a></td>
+<td><strong>Match</strong> on the binding-isolation example.</td>
+<td><code>negation</code></td>
+</tr>
+<tr>
+<td>Calling goals and taking one solution</td>
+<td><code>call/3</code> and <code>once/1</code> succeed in the example. <a href="https://www.swi-prolog.org/pldoc/man?section=metacall">Meta-calls</a></td>
+<td><strong>Match</strong> for these forms; higher call arities are not covered here.</td>
+<td><code>meta-call</code></td>
+</tr>
+<tr>
+<td>Left recursion with tabling</td>
+<td>With an explicit <code>table path/2</code> directive, finds both reachable nodes. <a href="https://www.swi-prolog.org/pldoc/man?section=tabling">Tabling</a></td>
+<td><strong>Different default:</strong> automatically tables the recursive predicate and finds the same two nodes without a directive.</td>
+<td><code>left-recursion</code></td>
+</tr>
+<tr>
+<td>Cut in a recursive predicate</td>
+<td>The untabled example succeeds and prunes its recursive alternative. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Cut</a></td>
+<td><strong>Restricted:</strong> automatic tabling causes a <code>SemanticConflict</code>. This does not compare cuts inside SWI tables.</td>
+<td><code>recursive-cut</code></td>
+</tr>
+<tr>
+<td>Recursion through negation</td>
+<td>The finite <code>win(b)</code> example succeeds under ordinary execution. <a href="https://www.swi-prolog.org/pldoc/man?section=control">Negation</a></td>
+<td><strong>Restricted:</strong> rejects the predicate's dependency on its own negation with <code>SemanticConflict</code>.</td>
+<td><code>recursive-negation</code></td>
+</tr>
+<tr>
+<td>Undefined predicate</td>
+<td>Raises an existence error. <a href="https://www.swi-prolog.org/pldoc/man?section=flags">Prolog flags</a></td>
+<td><strong>Different default:</strong> no answers, status complete. With <code>unknown_fails=False</code>, raises <code>UnknownPredicateError</code>.</td>
+<td><code>unknown</code>, <code>unknown-strict</code></td>
+</tr>
+<tr>
+<td>Prolog exception handling</td>
+<td><code>catch(throw(ball),ball,true)</code> succeeds. <a href="https://www.swi-prolog.org/pldoc/man?section=exception">Exceptions</a></td>
+<td><strong>Unavailable in probe:</strong> no answers, status complete. Python exceptions from the engine are a separate mechanism.</td>
+<td><code>exceptions</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The left-recursion probe has a finite set of calls and answers. It establishes neither unrestricted termination nor full equivalence with SWI's SLG tabling and well-founded negation. Resource limits and the rewrite's static restrictions remain relevant; see <a href="ENGINE.html#tabling">Tabling</a> and <a href="ENGINE.html#negation-and-stratification">Negation</a>.</p>
+</section>
+<section aria-labelledby="arithmetic-and-data-predicates"><h2 id="arithmetic-and-data-predicates">Arithmetic and data predicates</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Arithmetic and data predicates table"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>SWI-Prolog</th>
+<th>Rewrite: observed behavior</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Negative integer division</td>
+<td><code>-10 // 3</code> is <code>-3</code>; <code>-10 div 3</code> is <code>-4</code>. <a href="https://www.swi-prolog.org/pldoc/man?section=arith">Arithmetic</a></td>
+<td><strong>Match:</strong> truncation and floor division differ correctly.</td>
+<td><code>arithmetic</code></td>
+</tr>
+<tr>
+<td>Invalid arithmetic</td>
+<td><code>X is a + 1</code> raises an evaluable-type error. <a href="https://www.swi-prolog.org/pldoc/man?section=arith">Arithmetic</a></td>
+<td><strong>Match in error category:</strong> raises Python <code>TypeCheckError</code>; the exception representation differs.</td>
+<td><code>arithmetic-error</code></td>
+</tr>
+<tr>
+<td>List operations</td>
+<td>Append, membership and length satisfy the example's exact constraints. <a href="https://www.swi-prolog.org/pldoc/man?section=lists">Lists</a></td>
+<td><strong>Match</strong> for <code>append/3</code>, <code>member/2</code>, <code>length/2</code> in the tested modes.</td>
+<td><code>lists</code></td>
+</tr>
+<tr>
+<td><code>findall/3</code></td>
+<td>Collects <code>[a,a]</code> from duplicate clauses. <a href="https://www.swi-prolog.org/pldoc/man?section=allsolutions">All solutions</a></td>
+<td><strong>Match:</strong> preserves multiplicity inside the collected list.</td>
+<td><code>findall</code></td>
+</tr>
+<tr>
+<td><code>bagof/3</code> and <code>setof/3</code></td>
+<td>Produces <code>[b,a,a]</code> and <code>[a,b]</code>, respectively. <a href="https://www.swi-prolog.org/pldoc/man?section=allsolutions">All solutions</a></td>
+<td><strong>Match</strong> on this example; free-variable grouping and existential qualification are not exercised.</td>
+<td><code>bagof-setof</code></td>
+</tr>
+<tr>
+<td>Sorting</td>
+<td><code>sort/2</code> removes duplicates; <code>msort/2</code> retains them. <a href="https://www.swi-prolog.org/pldoc/man?section=compare">Term ordering and sorting</a></td>
+<td><strong>Match</strong> on the tested atom list. Mixed-type ordering is not tested here.</td>
+<td><code>sort</code></td>
+</tr>
+<tr>
+<td>Term inspection</td>
+<td>Decomposes <code>f(a,b)</code> and reads its functor, arity and second argument. <a href="https://www.swi-prolog.org/pldoc/man?section=manipterm">Terms</a></td>
+<td><strong>Match</strong> for <code>=../2</code>, <code>functor/3</code>, <code>arg/3</code> in these modes.</td>
+<td><code>term-inspection</code></td>
+</tr>
+<tr>
+<td>Atom operations</td>
+<td>Concatenation, length and atom-to-number conversion succeed. <a href="https://www.swi-prolog.org/pldoc/man?section=manipatom">Atoms</a></td>
+<td><strong>Match</strong> for the tested calls to <code>atom_concat/3</code>, <code>atom_length/2</code>, <code>atom_number/2</code>.</td>
+<td><code>atom-conversion</code></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section aria-labelledby="database-libraries-and-extensions"><h2 id="database-libraries-and-extensions">Database, libraries and extensions</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Database, libraries and extensions table"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>SWI-Prolog</th>
+<th>Rewrite: observed behavior</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Updating facts from a Prolog goal</td>
+<td>Asserts, queries and retracts a fact. <a href="https://www.swi-prolog.org/pldoc/doc_for?object=assertz/1">assertz/1</a></td>
+<td><strong>Unavailable in probe:</strong> the conjunction fails quietly at <code>assertz/1</code>; later goals are not reached. The Python update API is separate.</td>
+<td><code>dynamic-database</code></td>
+</tr>
+<tr>
+<td>DCG grammars</td>
+<td>Expands <code>s --&gt; [a]</code> and recognizes <code>[a]</code> with <code>phrase/2</code>. <a href="https://www.swi-prolog.org/pldoc/man?section=DCG">DCGs</a></td>
+<td><strong>Unavailable in probe:</strong> loading does not raise an error, but <code>phrase(s,[a])</code> returns no answers, complete. Accepted syntax alone does not demonstrate DCG support.</td>
+<td><code>dcg</code></td>
+</tr>
+<tr>
+<td>Module-qualified calls</td>
+<td><code>lists:member(a,[a])</code> succeeds. <a href="https://www.swi-prolog.org/pldoc/man?section=modules">Modules</a></td>
+<td><strong>Unavailable in probe:</strong> returns no answers, complete.</td>
+<td><code>modules</code></td>
+</tr>
+<tr>
+<td>Integer constraints</td>
+<td>With <code>library(clpfd)</code> loaded, <code>X #= 2, X #&gt; 1</code> succeeds. <a href="https://www.swi-prolog.org/pldoc/man?section=clpfd">CLP(FD)</a></td>
+<td><strong>Unavailable in probe:</strong> constraint syntax raises <code>SyntaxErrorInSource</code>.</td>
+<td><code>constraints</code></td>
+</tr>
+<tr>
+<td>Disequality constraint</td>
+<td><code>dif(X,a), X=b</code> succeeds. <a href="https://www.swi-prolog.org/pldoc/doc_for?object=dif/2">dif/2</a></td>
+<td><strong>Unavailable in probe:</strong> returns no answers, complete.</td>
+<td><code>dif</code></td>
+</tr>
+<tr>
+<td>Delayed goals</td>
+<td><code>freeze(X,X=b), X=b</code> succeeds. <a href="https://www.swi-prolog.org/pldoc/man?section=coroutining">Coroutining</a></td>
+<td><strong>Unavailable in probe:</strong> returns no answers, complete.</td>
+<td><code>freeze</code></td>
+</tr>
+<tr>
+<td>Prolog output</td>
+<td><code>write(probe_output)</code> prints text and succeeds. <a href="https://www.swi-prolog.org/pldoc/doc_for?object=write/1">write/1</a></td>
+<td><strong>Unavailable in probe:</strong> no output and no answers, complete.</td>
+<td><code>io</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>These probes cover selected Prolog-facing operations. They do not evaluate the Python embedding API, story-time reasoning, source-sentence provenance, or explanation quality. Those are documented separately in <a href="ENGINE.html#the-host-api">Engine</a> and the <a href="MIGRATION.html">migration comparison</a>. The older 21 shared cross-checks compare the two Python engines; this feature inventory is a separate experiment and does not change their scores.</p>
+</section>
+<section aria-labelledby="verification-and-reproduction"><h2 id="verification-and-reproduction">Verification and reproduction</h2>
+<p>Run September 25, 2026 in America/New_York (September 26 UTC), using Python 3.12.10 on Windows 11, SWI-Prolog 10.0.2, and clean rewrite commit <code>9be7804c933cc8a3c51af3d8a5e4f54b012c8be6</code>. The SWI documentation links are live reference pages and may describe a newer release; version-specific observations come from the saved run.</p>
+<p>Each of the 34 probes runs in a fresh subprocess for each engine, with a ten-second external deadline. No probe timed out. The rewrite uses a new <code>KnowledgeBase</code> and default <code>ask</code> settings, except the explicitly labeled duplicate and strict-unknown probes. SWI starts with <code>-f none</code>; only the left-recursion probe adds a table directive and only the constraint probe adds a library directive. Standard SWI autoloading remains enabled.</p>
+<p>The script records source programs, query strings, options, rewrite statuses and native answers, SWI canonical answer transcripts, errors, environment, timestamps and the script hash. The SWI wrapper collects instantiated copies of the whole goal; the rewrite records variable bindings. These representations are deliberately retained separately. The table's comparisons were reviewed against both transcripts; the script does not compute a compatibility percentage. Several queries contain exact-value constraints, while others expose values or duplicate counts for inspection.</p>
+<pre><code class="language-powershell">python -B evidence/probe-prolog-features.py --repo &quot;C:/path/to/AkiyaBlocks-CyclopsStorm&quot; --output &quot;prolog-features.json&quot;
+</code></pre>
+<p>The clean pinned private checkout is required. The script defaults to <code>C:/Program Files/swipl/bin/swipl.exe</code>; use <code>--swipl</code> for another installation. It changes neither engine. These examples are a reproducible starting point for compatibility work, not an exhaustive feature specification: threads, transactions, foreign interfaces, every built-in, and combinations of features remain outside this run.</p></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/PROLOG-COMPATIBILITY.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

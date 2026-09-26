@@ -7,17 +7,17 @@
   <figcaption>AkiyaBlocks, the game I hope to connect to Cyclops Storm. Integration is still planned.</figcaption>
 </figure>
 
-Cyclops Storm is a Prolog-style engine that keeps track of what's true in a story, when it became true, and, for things that change over time, why. AI agents (mostly Claude, via Claude Code) wrote nearly all of it while I directed.
+Cyclops Storm is a Prolog-style engine that keeps track of what's true in a story, when it became true, and, for things that change over time, why. AI agents (mostly Claude, via Claude Code) wrote all of it while I directed.
 
-After a year, the engine passed 6,660 tests, but its architecture was more complex than I wanted. Much of that technical debt traced back to its beginnings in August 2025 when the engine was a playful toy and well before Opus 4.8 (November 2025) marked a turning point with Claude Code's abilities to reason over large codebases. Retroactive refactoring of this product became expensive -- in tokens and time.
+After a year, the engine passed 6,660 tests, but its architecture was more complex than I wanted. Much of that technical debt traced back to its beginnings in August 2025 when the engine was a playful toy and well before Opus 4.5 (arguably the agentic AI watershed moment, November 2025) marked a turning point with Claude Code's abilities to reason over large codebases. Retroactive refactoring of this product became expensive -- in tokens and time.
 
 So in September 2026 I had them rebuild it from scratch in a new repository, from [three prompts I wrote with GPT Pro's help](docs/prompts/README.md) ([design brief](docs/prompts/1-design-brief-2026-09-13.md), [test-migration audit](docs/prompts/2-test-migration-audit-2026-09-14.md), [two-way audit](docs/prompts/3-two-way-audit-2026-09-15.md)): goals, non-goals, and a verification regime of adversarial reviews, mutation testing and checks against deliberately broken engines. The old engine stayed available as a read-only reference. This repo is the record of both versions.
 
-This is a public record of the experiment. The engine code is still private; running it or reproducing the measurements requires access to those repositories ([status](#status)).
+This is a public record of the experiment. The engine code is still private; running it or reproducing the measurements requires access to those repositories ([status](#status)). The Prolog engine is being applied to the AkiyaBlocks game world I'm also developing with AIs, and that is still very much in flux.
 
 ## What it does
 
-My story ["Firewalls and Kerosene"](https://natecombs.substack.com/p/firewalls-and-kerosene) has a scene where Harriet hacks a carnival vending machine. The engine holds that story and two others as a small timeline (17 events across 18 moments), plus about 500 facts that store the stories' sentences and link the events to them. The timeline and its effects come from a separate world file; the links to the text were generated from annotated copies of the stories. You can question it. The questions below are paraphrased; the real calls are underneath.
+My mini story ["Firewalls and Kerosene"](https://natecombs.substack.com/p/firewalls-and-kerosene) has a scene where Harriet hacks a carnival vending machine. The engine holds that story and two others as a small timeline (17 events across 18 moments), plus about 500 facts that store the stories' sentences and link the events to them. The timeline and its effects come from a separate world file; the links to the text were generated from annotated copies of the stories. You can question it. The questions below are paraphrased; the real calls are underneath.
 
 | Question | The engine's answer |
 |---|---|
@@ -85,6 +85,8 @@ The current engine is the September 2026 rewrite, about 7,400 lines of Python wi
 
 Precise semantics and every known gap: **[ENGINE.md](docs/ENGINE.md)**.
 
+**How much Prolog does it support?** The [verified feature comparison with SWI-Prolog](docs/PROLOG-COMPATIBILITY.md) uses 34 executable probes to distinguish matching behavior, different defaults, restrictions and unavailable features. Each row points to SWI documentation and identifies the saved probe evidence.
+
 ## Migration and measured comparisons
 
 The rewrite has 7,426 package lines versus 54,387 in the earlier package, with narrower scope; the old tests divide into retained requirements, replacements, obsolete internals, omitted applications and open gaps. The [migration drill-down](docs/MIGRATION.md) gives the measured comparison table, all six test dispositions, concrete examples, and what the counts do not prove.
@@ -117,6 +119,7 @@ The first engine grew from a weekend prototype in August 2025 into a roughly 54,
 |---|---|
 | The whole story, including the dead ends | [HISTORY.md](docs/HISTORY.md) |
 | Precise semantics and known gaps, for Prolog people | [ENGINE.md](docs/ENGINE.md) |
+| Feature-by-feature compatibility with SWI-Prolog, verified with probes | [Prolog compatibility](docs/PROLOG-COMPATIBILITY.md) |
 | What this shows about building software with AI agents | [AI-DEVELOPMENT.md](docs/AI-DEVELOPMENT.md) |
 | What migrated, what was omitted, and the measured size comparison | [MIGRATION.md](docs/MIGRATION.md) |
 | Current results from the 21 shared cross-checks | [Cross-check results](evidence/comparison-revised-2026-09-25.md) |

@@ -28,6 +28,8 @@ The Event Calculus adds changes over time. An event such as Harriet's hack switc
 
 ## Quick reference
 
+For a feature-by-feature table with SWI references and recorded executable probes, see [Prolog compatibility](PROLOG-COMPATIBILITY.md). The summary below describes the broader design; that page identifies exactly which examples were verified.
+
 | Area | Behavior | Versus ISO / SWI |
 |---|---|---|
 | Syntax | ISO operator table, fixed | No `op/3`. `"abc"` reads as the atom `abc`; no strings, no `0'c` |

@@ -22,7 +22,7 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parent.parent
 BLOB = 'https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/'
-PAGES = ['README.md', 'docs/HISTORY.md', 'docs/ENGINE.md', 'docs/MIGRATION.md', 'docs/AI-DEVELOPMENT.md', 'docs/GLOSSARY.md',
+PAGES = ['README.md', 'docs/HISTORY.md', 'docs/ENGINE.md', 'docs/PROLOG-COMPATIBILITY.md', 'docs/MIGRATION.md', 'docs/AI-DEVELOPMENT.md', 'docs/GLOSSARY.md',
          'docs/prompts/README.md', 'docs/prompts/1-design-brief-2026-09-13.md',
          'docs/prompts/2-test-migration-audit-2026-09-14.md', 'docs/prompts/3-two-way-audit-2026-09-15.md',
          'evidence/README.md', 'evidence/benchmarks-2026-09-25.md',
@@ -134,7 +134,7 @@ def render(source, text, output):
     sections = '\n'.join(f'<section aria-labelledby="{re.search(r'id="([^"]+)"', chunk).group(1)}">{chunk}</section>' for chunk in chunks[1:])
 
     contents = ''
-    if source in {'docs/HISTORY.md', 'docs/ENGINE.md', 'docs/MIGRATION.md',
+    if source in {'docs/HISTORY.md', 'docs/ENGINE.md', 'docs/PROLOG-COMPATIBILITY.md', 'docs/MIGRATION.md',
                   'docs/AI-DEVELOPMENT.md', 'evidence/README.md',
                   'evidence/comparison-revised-2026-09-25.md',
                   'evidence/benchmarks-revised-2026-09-25.md'}:
