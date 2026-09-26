@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="For anyone checking my work. Every number on the front page comes from a file in this folder or from a pinned commit in the engine&#x27;s private repositories.…">
+  <title>How the numbers were measured · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="../docs/HISTORY.html">History</a><a href="../docs/ENGINE.html">How it works</a><a href="../docs/AI-DEVELOPMENT.html">Building it with AI</a><a href="../docs/MIGRATION.html">Migration</a><a href="README.html" aria-current="page">Evidence</a><a href="../docs/GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="how-the-numbers-were-measured">How the numbers were measured</h1>
+<p><em>For anyone checking my work.</em> Every number on the front page comes from a file in this folder or from a pinned commit in the engine's private repositories. This page says which, how each number was produced, and what it can't tell you.</p>
+<p>The measurements answer three different questions:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="How the numbers were measured table"><table>
+<thead>
+<tr>
+<th>Evidence</th>
+<th>Question it answers</th>
+<th>Where to read it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Engine unit tests</td>
+<td>Does each version satisfy its own suite? The suites differ in scope.</td>
+<td><a href="#what-the-test-counts-mean">Test counts and their limits</a></td>
+</tr>
+<tr>
+<td>Shared cross-checks</td>
+<td>How do both versions handle the same 21 selected programs and API probes?</td>
+<td><a href="comparison-revised-2026-09-25.html">Current cross-check results</a></td>
+</tr>
+<tr>
+<td>Performance benchmarks</td>
+<td>How long do three queries take in the rewrite and SWI-Prolog?</td>
+<td><a href="benchmarks-revised-2026-09-25.html">Current timings and method</a></td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-scroll" tabindex="0" role="region" aria-label="How the numbers were measured table"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test-timeline-2026-09-25.csv</code></td>
+<td>Dated passing-test counts, Sep 2025–Sep 2026 (433 observations, each with its timestamp and source)</td>
+</tr>
+<tr>
+<td><code>render-test-timeline.py</code></td>
+<td>Draws <code>assets/test-timeline.png</code> from that CSV</td>
+</tr>
+<tr>
+<td><code>cases-2026-09-24.json</code></td>
+<td>The 21 comparison programs and their expected results</td>
+</tr>
+<tr>
+<td><code>comparison-2026-09-24.json</code>, <code>.md</code></td>
+<td>The comparison's raw results and the harness's own report</td>
+</tr>
+<tr>
+<td><code>development-progress-2026-09-25.json</code></td>
+<td>The same 21 checks replayed on 11 saved versions</td>
+</tr>
+<tr>
+<td><code>replay-development-progress.py</code>, <code>render-development-progress.py</code></td>
+<td>The replay and its chart</td>
+</tr>
+<tr>
+<td><code>index.html</code></td>
+<td>Historical results under the original scoring, case by case (<a href="https://nate-badsciencefiction.github.io/logic-engine-experiment/evidence/">web version</a>)</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#current-comparison-and-migration">Current comparison and migration</a></li><li><a href="#what-the-test-counts-mean">What the test counts mean</a></li><li><a href="#the-21-check-comparison">The 21-check comparison</a></li><li><a href="#semantic-probes">Semantic probes</a></li><li><a href="#code-size">Code size</a></li><li><a href="#what-isnt-measured">What isn't measured</a></li><li><a href="#reproducing">Reproducing</a></li></ul></nav>
+<section aria-labelledby="current-comparison-and-migration"><h2 id="current-comparison-and-migration">Current comparison and migration</h2>
+<p>The <a href="../docs/MIGRATION.html">migration drill-down</a> includes measured package/file/function counts and the test dispositions, backed by <a href="migration-measurements-2026-09-25.json">raw measurements</a> and <a href="measure-migration.py">a reproducible inventory script</a>. The <a href="comparison-revised-2026-09-25.html">revised comparison</a> reruns the same 21 cases with corrected timeout and refusal scoring: old <strong>11 pass / 10 fail</strong>, rewrite <strong>16 pass / 3 fail / 2 unknown</strong>.</p>
+<p>The <a href="benchmarks-revised-2026-09-25.html">revised benchmarks</a> collect full bindings in both engines, validate exact answers and separately measure Python conversion. Earlier comparison/replay scores and original benchmark timings below are historical records under their original methods.</p>
+</section>
+<section aria-labelledby="what-the-test-counts-mean"><h2 id="what-the-test-counts-mean">What the test counts mean</h2>
+<p><strong>Where they come from.</strong> From the start the project kept a log with one pytest summary line per test run, added by hand at first and later mostly in the agents' own commits. It holds 814 runs through Aug 30, 2026. Most lines carry no date. The 167 lines from Sep 7–25, 2025 carry their own timestamps; the rest I dated three ways:</p>
+<ul>
+<li><strong>Log history.</strong> Each commit to the log dates the lines it added, from Oct 25, 2025 on.</li>
+<li><strong>Commit messages.</strong> From Sep 8 to late Nov 2025, 114 commit messages include a pytest summary.</li>
+<li><strong>Anchors.</strong> Some log lines match those messages exactly. For example, run #168, "44 failed, 513 passed," is commit <code>f8f59f0</code> on Sep 8, 2025.</li>
+</ul>
+<p>The first 139 runs carry no date and can't be anchored; the count grew from about 90 to about 500 passing over them. About the first 60 probably predate the earliest surviving repository (Aug 30, 2025), whose first commit already had about 320 test functions. The rewrite's counts come from its <code>TestScores.md</code>. Its first commit was rebuilt and run to get 540.</p>
+<p><strong>What they count.</strong> Passing pytest cases in each engine's test suite, where a parameterized test counts once per case. The earlier engine's suite covered more than the reasoning core. At its final commit (6,759 cases collected), about 79% tested engine semantics, 8% the text parser, 5% narrative models, 4% the host API, and 3% the command-line game and ontology tools.</p>
+<p><strong>Why the final figure varies.</strong> The earlier engine's final suite is quoted four ways:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="What the test counts mean table"><table>
+<thead>
+<tr>
+<th style="text-align: right;">Figure</th>
+<th>What it counts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">6,660</td>
+<td>Passing, as logged by the project's runner, which excludes slow and benchmark tests</td>
+</tr>
+<tr>
+<td style="text-align: right;">6,683</td>
+<td>Passing under plain <code>pytest</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">6,759</td>
+<td>Collected</td>
+</tr>
+<tr>
+<td style="text-align: right;">6,778</td>
+<td>Collected, including benchmarks and one file skipped at collection. This is what the rewrite's audit classified, file by file</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What the counts don't tell you:</strong></p>
+<ul>
+<li><strong>Quality.</strong> The earlier engine passed 6,660 tests while getting textbook cut, negation and arithmetic cases wrong (<a href="../docs/HISTORY.html#same-programs-three-engines">HISTORY.md</a>). On July 12, 2026 it logged "6,477 passed" with no failures. Replayed later, that same commit passes 9 of the 21 cross-checks below.</li>
+<li><strong>Like-for-like runs.</strong> The log mixes several ways of invoking the suite, so neighboring lines aren't always comparable.</li>
+<li><strong>Real drops.</strong> The chart shows the last logged count on each day it has data, as steps, so most mid-refactor failure spikes don't appear. The worst logged was 149 passing, with 317 failures, on Sep 9, 2025. There are two visible dips in 2026:</li>
+<li><strong>June 14</strong> was dead code deleted along with the tests that only exercised it.</li>
+<li><strong>May 8</strong> was partly a silent loss. Deleting an unused parser module made one test file skip itself at import time, dropping 148 tests of built-ins that still existed. They stayed skipped to the end.</li>
+<li><strong>Cross-engine comparisons.</strong> The rewrite's suite was written fresh against a different design, so 1,144 versus 6,660 compares two different things.</li>
+</ul>
+</section>
+<section aria-labelledby="the-21-check-comparison"><h2 id="the-21-check-comparison">The 21-check comparison</h2>
+<p><strong>Historical scoring.</strong> This section explains the original report and replay. For the corrected policy and a fresh endpoint run, use the <a href="comparison-revised-2026-09-25.html">revised comparison</a>.</p>
+<p><strong>What it is.</strong> 21 small Prolog programs, each with an expected result, run on the earlier engine (<code>e62758c</code>, Aug 30) and the rewrite (<code>9be7804</code>, Sep 24). Each case runs in its own process with a timeout.</p>
+<p><strong>Where expected answers come from:</strong></p>
+<ul>
+<li>12 cases use <strong>SWI-Prolog 10.0.2</strong>.</li>
+<li>1 combines an SWI answer with a judgment about the Python API.</li>
+<li>8 use <strong>recorded rulings</strong>: a written judgment stored with each case. The harness labels them "human adjudication," but their authorship is not established in the available record. All are dated Sep 22, the day the harness was built.</li>
+</ul>
+<p>No case takes its expected answer from either engine's own documentation. The harness refuses that by name, after a review caught an early design draft doing it.</p>
+<p><strong>Results:</strong></p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="The 21-check comparison table"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Earlier engine</th>
+<th style="text-align: right;">Rewrite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pass</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>of which, passes by test-runner timeout</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>Pass, if a timeout counts as a failure</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr>
+<td>Pass, if the undecodable <code>why/1</code> refusal counts as correct</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">18</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The earlier engine's 11 failures, by kind:</strong></p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="The 21-check comparison table"><table>
+<thead>
+<tr>
+<th>Kind</th>
+<th style="text-align: right;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Couldn't parse the program (<code>div</code>, <code>=..</code>)</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>Wrong or missing answers: sort/msort, operator precedence, <code>1</code>/<code>'1'</code>/<code>1.0</code> merged</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td>Endless search returned as a short, final-looking list (2 answers; 0 answers)</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>Bad arithmetic answered "no" instead of raising an error</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>Shared cache: a caller's edit changed a later answer</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td><code>evidence_chain/1</code> called a non-fact "derived"</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td><code>why/1</code> replied "No derivation path found," which the harness couldn't decode and scored as an answer</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Read it with these caveats:</strong></p>
+<ul>
+<li><strong>Not a random sample.</strong> The cases were written after both engines existed, by people and agents who knew both. Some were added specifically for capabilities the rewrite lacks, to keep the set from flattering it. They net the earlier engine one case.</li>
+<li><strong>Timeouts.</strong> On the two endless-search cases, the rule accepts "stopping" of any kind, including the test runner's timeout. Under that rule a hung engine passes too. Both rewrite passes were timeouts, so the harness never saw the engine's own "stopped early" status.</li>
+<li>On <code>nat/1</code>, the engine's step budget hadn't run out after 25 seconds.</li>
+<li>On the open-list generator, the engine did stop, after about 6 seconds. Converting its 1,498 partial answers to Python took far longer than the timeout.</li>
+</ul>
+<p>The raw JSON records both as "stopped on an unbounded answer set, as required." Only the replay file's <code>timed_out</code> marker shows how they actually stopped.
+- <strong>One-sided coverage.</strong> The cases probe places where the earlier engine departs from ISO. They don't probe the rewrite's own departures from SWI, which are:
+  - default deduplication;
+  - the occurs check;
+  - no cut in recursive predicates;
+  - rejecting programs that are safe only because of their data;
+  - unsupported built-ins quietly failing;
+  - the non-classical reading of timed effect rules.</p>
+<p>None covers story time, source provenance or the game hooks, the things the engine is actually for.
+- <strong>Blind spots.</strong> The corpus missed some of the earlier engine's known bugs. Its cut case puts the cut after a goal in the clause body, which the earlier engine handled. The failing case is a cut that should stop a later <em>fact</em> clause from being tried. Its negation case negates a variable that's already bound.
+- <strong>Explanation probes check that a request gets an answer, not that the answer is right.</strong> Each probe has a negative control, a request that should get nothing. Only <code>derivation/1</code> passes. The rewrite has none of the three predicates.</p>
+<p><strong>The replay.</strong> The same 21 checks were rerun on 11 saved versions: 5 of the earlier engine (May–August 2026) and 6 of the rewrite.</p>
+<ul>
+<li><strong>Earlier engine: 8 → 8 → 9 → 9 → 10.</strong> The gains were left recursion, and facts and rules combined in one predicate.</li>
+<li><strong>Rewrite: 17, then 18 from the next version on.</strong> Its first commit already passed 17. The one later gain was the open-list case going from a Python <code>RecursionError</code> to a timeout.</li>
+</ul>
+<p>Both endpoints reproduce the published verdicts exactly. Dates are commit dates, and the intervals between commits aren't hours worked.</p>
+</section>
+<section aria-labelledby="semantic-probes"><h2 id="semantic-probes">Semantic probes</h2>
+<p>The "same programs, three engines" table in <a href="../docs/HISTORY.html#same-programs-three-engines">HISTORY.md</a> comes from small programs run against snapshots exported from the private repositories (<code>git archive</code> into scratch directories), with SWI-Prolog 10.0.2 as the reference. Every program is written out in full in that table. Reproducing the engine columns needs the engine code.</p>
+</section>
+<section aria-labelledby="code-size"><h2 id="code-size">Code size</h2>
+<p>Non-test Python lines, counted per commit with <code>git show</code> and <code>wc -l</code>:</p>
+<ul>
+<li><strong>Earlier package tree (<code>src/kb/</code>, excluding <code>src/tools/</code> at the final revision):</strong> 13,032 (Aug 30, 2025) → 61,359 (Feb 21, 2026) → 54,387 (Aug 30, 2026). The package also held a text parser, a command-line game and application tools. At the final revision, all Python under <code>src/</code> totals 61,715 lines, including 7,328 additional analysis-tool lines.</li>
+<li><strong>Rewrite:</strong> kernel 6,691 lines in 17 modules, plus 519 for the host boundary and 216 in package <code>__init__</code> files, for 7,426 in total.</li>
+</ul>
+</section>
+<section aria-labelledby="what-isnt-measured"><h2 id="what-isnt-measured">What isn't measured</h2>
+<ul>
+<li><strong>Speed, between the engines.</strong> The comparison's notes mention a warm, repeated-query benchmark on which the earlier engine looked about 3,500 times faster. The reason was its cross-query answer cache. The cache's <em>bug</em> was that it handed callers its own internal list; the <em>speed</em> came from caching itself. On a small ancestor query, measured for this write-up:</li>
+</ul>
+<div class="table-scroll" tabindex="0" role="region" aria-label="What isn&#x27;t measured table"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Earlier engine</th>
+<th style="text-align: right;">Rewrite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First (cold) query</td>
+<td style="text-align: right;">6.3 ms</td>
+<td style="text-align: right;">2.4 ms</td>
+</tr>
+<tr>
+<td>Repeated (warm) query</td>
+<td style="text-align: right;">0.004 ms</td>
+<td style="text-align: right;">0.44 ms</td>
+</tr>
+<tr>
+<td>Warm, deep-copying each answer (the bug fix)</td>
+<td style="text-align: right;">0.008 ms</td>
+<td style="text-align: right;">n/a</td>
+</tr>
+</tbody>
+</table></div>
+<p>So the old engine was faster on repeated queries because it cached, and it would have stayed that way with the bug fixed. The rewrite has no cross-query cache, by design, and is faster on a first query. Neither is a general benchmark. Revised full-binding timings for the rewrite against SWI-Prolog are in the <a href="benchmarks-revised-2026-09-25.html">benchmark detail page</a>.
+- <strong>Memory, effort and cost.</strong> Nothing comparable was recorded for either engine.</p>
+</section>
+<section aria-labelledby="reproducing"><h2 id="reproducing">Reproducing</h2>
+<p>Everything here can be rerun from local clones of the engine repositories, with Python 3.12+ and SWI-Prolog 10.0.2. The commands are in <a href="development-progress-notes.html#replay">development-progress-notes.html</a>. The replay script uses the comparison harness's scoring code from the private rewrite repository, so without access to those repositories, the JSON files here are the record.</p></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>evidence/README.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

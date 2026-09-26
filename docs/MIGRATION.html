@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The September rewrite is substantially smaller, but it is not a drop-in replacement for the earlier repository. It preserves much of the reasoning behavior,…">
+  <title>What survived the rewrite · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="HISTORY.html">History</a><a href="ENGINE.html">How it works</a><a href="AI-DEVELOPMENT.html">Building it with AI</a><a href="MIGRATION.html" aria-current="page">Migration</a><a href="../evidence/README.html">Evidence</a><a href="GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="what-survived-the-rewrite">What survived the rewrite</h1>
+<p>The September rewrite is substantially smaller, but it is not a drop-in replacement for the earlier repository. It preserves much of the reasoning behavior, deliberately changes some semantics, removes architecture-specific machinery, and currently leaves several useful capabilities outside its scope.</p>
+<p>This comparison uses the earlier engine at <code>e62758c23f66b26fa92c6d2dafaaf6bf3466499f</code> and the rewrite at <code>9be7804c933cc8a3c51af3d8a5e4f54b012c8be6</code>. Measurements and the migration inventory were checked on September 25, 2026. <a href="../evidence/migration-measurements-2026-09-25.json">Raw measurements and all 235 file dispositions</a> · <a href="../evidence/measure-migration.py">measurement script</a>.</p>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#measured-size-and-structural-complexity">Measured size and structural complexity</a></li><li><a href="#responsibilities-kept-changed-and-omitted">Responsibilities: kept, changed and omitted</a></li><li><a href="#do-all-the-old-tests-apply">Do all the old tests apply?</a></li><li><a href="#gaps-that-must-remain-visible">Gaps that must remain visible</a></li><li><a href="#what-the-evidence-establishes">What the evidence establishes</a></li><li><a href="#reproduce-the-measurements">Reproduce the measurements</a></li></ul></nav>
+<section aria-labelledby="measured-size-and-structural-complexity"><h2 id="measured-size-and-structural-complexity">Measured size and structural complexity</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Measured size and structural complexity table"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th style="text-align: right;">Earlier package: <code>src/kb/</code></th>
+<th style="text-align: right;">Rewrite: <code>src/cyclops/</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python files, including package initializers</td>
+<td style="text-align: right;">187</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>Physical lines</td>
+<td style="text-align: right;">54,387</td>
+<td style="text-align: right;">7,426</td>
+</tr>
+<tr>
+<td>Function and method definitions</td>
+<td style="text-align: right;">2,065</td>
+<td style="text-align: right;">353</td>
+</tr>
+<tr>
+<td>Class definitions</td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">54</td>
+</tr>
+<tr>
+<td>Median function span</td>
+<td style="text-align: right;">14 lines</td>
+<td style="text-align: right;">7 lines</td>
+</tr>
+<tr>
+<td>90th-percentile function span</td>
+<td style="text-align: right;">48 lines</td>
+<td style="text-align: right;">34 lines</td>
+</tr>
+<tr>
+<td>Longest function span</td>
+<td style="text-align: right;">284 lines</td>
+<td style="text-align: right;">221 lines</td>
+</tr>
+<tr>
+<td>Python files under <code>tests/</code>, including helpers</td>
+<td style="text-align: right;">276</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr>
+<td>Physical lines under <code>tests/</code></td>
+<td style="text-align: right;">96,478</td>
+<td style="text-align: right;">13,137</td>
+</tr>
+</tbody>
+</table></div>
+<p>The package has <strong>86.3% fewer physical lines</strong>. Counts include comments, docstrings and blanks. Functions include methods and nested definitions; their spans run from the definition line to its AST end line. The 90th percentile selects index <code>floor(0.9 × (n − 1))</code> in sorted spans. Counts come from pinned Git snapshots, not whatever happens to be in the working directories.</p>
+<p><strong>Scope matters.</strong> The old <code>src/kb/</code> includes a command-line game, ontology tools and other application code alongside the engine. It is not a pure reasoning-core denominator. All old Python under <code>src/</code> totals <strong>61,715 lines in 198 files</strong>, including another <strong>7,328 lines in 11 files</strong> under <code>src/tools/</code>. The rewrite's complete Python <code>src/</code> tree is the 7,426-line package. Neither comparison proves that the same feature set became 86.3% simpler.</p>
+<p>These measurements describe size and function length, not cyclomatic complexity, runtime complexity, maintainability, or correctness. The architectural evidence for simplification is more specific: fewer representations and dispatch paths, removal of dual-engine routing, one ordered clause store, and less long-lived mutable state. Large functions remain: the longest rewrite function still spans 221 lines. For execution costs, see the <a href="../evidence/benchmarks-revised-2026-09-25.html">revised benchmarks</a>; for answer behavior, see the <a href="../evidence/comparison-revised-2026-09-25.html">rescored comparison</a>.</p>
+</section>
+<section aria-labelledby="responsibilities-kept-changed-and-omitted"><h2 id="responsibilities-kept-changed-and-omitted">Responsibilities: kept, changed and omitted</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Responsibilities: kept, changed and omitted table"><table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Earlier implementation</th>
+<th>Rewrite disposition and consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Terms and unification</td>
+<td>Multiple representations and unification paths</td>
+<td>Reimplemented with shared term types and trail-based bindings; occurs check on by default</td>
+</tr>
+<tr>
+<td>Facts, rules and clause order</td>
+<td>Separate storage and evaluation infrastructure</td>
+<td>One ordered clause sequence per predicate, with first-argument indexing</td>
+</tr>
+<tr>
+<td>Goal evaluation</td>
+<td>Two evaluators plus routing and strategy machinery</td>
+<td>Shared solver machinery; SLD execution for untabled goals and fixpoint evaluation for tabled goals</td>
+</tr>
+<tr>
+<td>Cut and negation</td>
+<td>Distributed across evaluator paths</td>
+<td>Consolidated behavior; recursive/tabled cut rejected, negation no longer reordered</td>
+</tr>
+<tr>
+<td>Recursive reasoning</td>
+<td>Tabling plus legacy depth limits</td>
+<td>Automatic recursive-component tabling; query-local tables and explicit exhaustion status</td>
+</tr>
+<tr>
+<td>Temporal reasoning</td>
+<td>Several <code>holds_at</code> paths, separate explanation queries</td>
+<td>One native temporal decision procedure with explanations; timed effects retain a non-classical interpretation</td>
+</tr>
+<tr>
+<td>Source-text provenance</td>
+<td>Fact IDs/supports and an additional <code>source/2</code> lookup path</td>
+<td><code>spans_for</code> supports fact IDs/supports; direct <code>source/2</code> lookup needs an authored query</td>
+</tr>
+<tr>
+<td>General rule explanations</td>
+<td>Partial <code>derivation</code>, <code>why</code> and <code>evidence_chain</code> support</td>
+<td>Removed; temporal <code>explain</code> is not a replacement for a non-temporal proof tree</td>
+</tr>
+<tr>
+<td>JSON and game affordances</td>
+<td>Host integration layer</td>
+<td>Reimplemented: tagged values, allow/deny/abstain, and first unmet guard message</td>
+</tr>
+<tr>
+<td>Result caching</td>
+<td>Cross-query answer caching, including a returned-list aliasing bug</td>
+<td>No cross-query answer cache; repeated queries recompute, while analysis/timeline data are revision-tagged</td>
+</tr>
+<tr>
+<td>Parser and query infrastructure</td>
+<td>Parallel parsers, handlers and a multi-stage pipeline</td>
+<td>One syntax reader and shared term representation; old internal APIs disappear</td>
+</tr>
+<tr>
+<td>Authoring diagnostics</td>
+<td>Singleton-variable, unused-predicate and arity checks</td>
+<td>Deferred; these are real missing capabilities, not obsolete architecture</td>
+</tr>
+<tr>
+<td>Games and tools</td>
+<td>Rooms, CLI, gameplay, narrative applications and code analysis</td>
+<td>Omitted from the kernel; hosts must supply them separately</td>
+</tr>
+</tbody>
+</table></div>
+<p>Removing machinery does not remove its useful contracts. Tests for cache <em>objects</em> can retire while tests that mutations become visible, returned values remain isolated, and repeated queries stay deterministic must survive.</p>
+</section>
+<section aria-labelledby="do-all-the-old-tests-apply"><h2 id="do-all-the-old-tests-apply">Do all the old tests apply?</h2>
+<p><strong>No.</strong> Many behavioral requirements remain applicable, but the old tests import classes and private methods that no longer exist. Other tests assert semantics the rewrite intentionally changed, and some exercise applications outside its scope. The old suite also contains integration, narrative and performance tests; its headline count is not a count of isolated unit tests.</p>
+<p>The rewrite's private <code>docs/TEST_MIGRATION_LEDGER.md</code> assigns each source file one disposition. Its appendix and every test-definition count were independently rechecked against the pinned predecessor. The case counts below are the ledger's historical pytest collection counts, not a fresh execution of the old suite.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Do all the old tests apply? table"><table>
+<thead>
+<tr>
+<th>Disposition</th>
+<th>Meaning</th>
+<th style="text-align: right;">Files</th>
+<th style="text-align: right;">Definitions</th>
+<th style="text-align: right;">Historical cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A — Adapt</td>
+<td>Retain the requirement through a named destination test</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">593</td>
+<td style="text-align: right;">696</td>
+</tr>
+<tr>
+<td>C — Already covered</td>
+<td>Destination tests already address the file's behavior</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">789</td>
+<td style="text-align: right;">857</td>
+</tr>
+<tr>
+<td>R — Replace/consolidate</td>
+<td>Rewrite weak or overlapping tests into stricter checks</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">913</td>
+<td style="text-align: right;">966</td>
+</tr>
+<tr>
+<td>O — Retire obsolete internals</td>
+<td>Removed classes, private APIs or architectural mechanisms</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">3,294</td>
+<td style="text-align: right;">3,421</td>
+</tr>
+<tr>
+<td>X — Retire out of scope</td>
+<td>Application layers, datasets, tooling or performance scope</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">827</td>
+<td style="text-align: right;">800</td>
+</tr>
+<tr>
+<td>B — Blocked/deferred</td>
+<td>Authoring diagnostics not implemented</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td style="text-align: right;"><strong>235</strong></td>
+<td style="text-align: right;"><strong>6,454</strong></td>
+<td style="text-align: right;"><strong>6,778</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>This is a file-level classification, not an assertion-by-assertion equivalence proof.</strong> A/C/R contain 2,519 old cases, but that is not a measured count of preserved requirements. O/X contain 4,221 old cases, but some retired files also contain surviving behavior mapped elsewhere. The 38 B cases are not the total of all missing capabilities: general explanations, for example, are recorded as a gap within retired provenance files.</p>
+<p>Current collection at the pinned rewrite finds <strong>1,397 selected cases: 1,144 engine correctness cases plus 253 comparison-harness tests</strong>, with <strong>36 deselected optional cases</strong> (8 benchmarks and 28 predecessor comparisons). These are collection counts; this publication update did not rerun the full correctness suites. The historical passing results and their limits remain in the <a href="../evidence/README.html#what-the-test-counts-mean">evidence overview</a>.</p>
+<h3 id="examples-of-migration-decisions">Examples of migration decisions</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Examples of migration decisions table"><table>
+<thead>
+<tr>
+<th>Old tests or requirement</th>
+<th>What should carry forward</th>
+<th>Why copying the test is insufficient</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_cut_regression.py</code></td>
+<td>Exact answers, including pruning later clauses and caller cut boundaries</td>
+<td>A yes/no success check cannot detect an extra answer; recursive cut is now rejected</td>
+</tr>
+<tr>
+<td><code>test_facts_rules_union.py</code></td>
+<td>Both facts and rules contribute answers inside rule bodies</td>
+<td>The old fact/rule separation no longer exists, but the observable requirement remains</td>
+</tr>
+<tr>
+<td><code>test_member_predicate.py</code></td>
+<td>Undo a partial failed match before trying the next list element</td>
+<td>Requires a discriminating binding test, not merely finding one successful member</td>
+</tr>
+<tr>
+<td><code>test_arithmetic_evaluator.py</code></td>
+<td>Correct values and typed arithmetic errors</td>
+<td>Old expectations of <code>[]</code> for division by zero or nonnumeric arithmetic are intentionally invalid here</td>
+</tr>
+<tr>
+<td><code>test_naf_semantics.py</code></td>
+<td>Binding isolation and the chosen left-to-right negation behavior</td>
+<td>The old non-ground floundering/reordering expectations differ from the new contract</td>
+</tr>
+<tr>
+<td>Temporal semantics matrix</td>
+<td>Boundary times, simultaneous initiation/termination and exclusivity</td>
+<td>Preserve the requirement, but state the explicit exclusivity policy and effect-time interpretation</td>
+</tr>
+<tr>
+<td>Router/cache/strategy unit tests</td>
+<td>Determinism, mutation visibility, result isolation where relevant</td>
+<td>Removed implementation classes cannot be meaningful destinations</td>
+</tr>
+<tr>
+<td><code>test_semantic_analysis.py</code></td>
+<td>Authoring warnings for singleton variables, unused predicates and arity</td>
+<td>Deferred functionality; no claim of replacement coverage</td>
+</tr>
+<tr>
+<td>Provenance handler tests</td>
+<td>Source lookup and, separately, general proof explanations</td>
+<td>Temporal explanations survive; general rule explanations do not</td>
+</tr>
+</tbody>
+</table></div>
+<p>The old <code>tests/narratives/test_dynamic_generation.py</code> contains <strong>52 definitions but collects zero cases</strong> in the audited predecessor: it skips at import because <code>kb_parser_extended</code> is absent. Its dormant definitions should not be counted as passing protection. The ledger maps surviving syntax/builtin subjects separately.</p>
+<h3 id="intentional-semantic-changes">Intentional semantic changes</h3>
+<ul>
+<li>Negation is evaluated in authored goal order; it does not reorder an unbound negative goal to make it succeed.</li>
+<li>Integers, floating-point values and numeric-looking atoms remain distinct terms.</li>
+<li>Bad arithmetic raises a typed error instead of returning no answers; <code>//</code> truncates and <code>div</code> floors.</li>
+<li>Exclusivity requires a declaration or explicit compatibility options. An initiated <code>neg(F)</code> is ordinary domain data, not an implicit termination of <code>F</code>.</li>
+<li>Named times such as <code>t9</code> and <code>t10</code> do not acquire an order from their digits; authored ordering matters.</li>
+<li>Recursive cut and predicate-level negative cycles are rejected globally. This is a limitation even when a particular dataset would permit safe execution.</li>
+<li>Default top-level answer deduplication remains a dialect choice. Untabled multiplicity is available with <code>distinct=False</code>; tabled answers remain sets.</li>
+</ul>
+<p>The detailed current contract is in <a href="ENGINE.html">ENGINE.md</a>. Passing a rewritten test must mean satisfying an explicit retained or revised requirement, not matching whatever the rewrite happens to do.</p>
+</section>
+<section aria-labelledby="gaps-that-must-remain-visible"><h2 id="gaps-that-must-remain-visible">Gaps that must remain visible</h2>
+<p>The migration ledger records seven gaps: deferred authoring diagnostics; the missing direct <code>source/2</code> provenance path; deep-term formatting that can reach Python's recursion limit; exhaustion on very long list unification; loss of otherwise available partial answers in some growing-call tabled searches; missing general rule explanations; and model-pack loading that is atomic per file rather than per pack. The precise depth observations are environment-dependent.</p>
+<p>The later public audit also exposed timed-effect semantics that differ from classical Event Calculus. The exhaustive temporal tests use an oracle transcribed from the rewrite's own behavior specification: they can verify consistency with that specification without independently establishing classical conformance. Similarly, agreeing with an intentionally changed old test is not an independent oracle.</p>
+</section>
+<section aria-labelledby="what-the-evidence-establishes"><h2 id="what-the-evidence-establishes">What the evidence establishes</h2>
+<p>The inventory is complete at the file/definition level, and the rewrite is measurably smaller. Named destination tests and recorded review campaigns provide useful evidence of retained behavior, but do not prove every old assertion has an equivalent, or that every retired file was correctly classified. Mutation/reviewer reports described by the private documents were not independently rerun for this page.</p>
+<p>A stronger next audit would map high-value source assertions to explicit requirements and destination cases, including surviving requirements inside O/X files, then show those cases reject plausible broken implementations. That work is not claimed by the totals above. The separate <a href="../evidence/comparison-revised-2026-09-25.html">rescored 21-case comparison</a> is deliberately narrower than a migration-coverage score.</p>
+</section>
+<section aria-labelledby="reproduce-the-measurements"><h2 id="reproduce-the-measurements">Reproduce the measurements</h2>
+<p>Requires Python 3.12+, Git and local clones containing the pinned revisions. No source checkout is changed.</p>
+<pre><code class="language-powershell">python -B evidence/measure-migration.py --old-repo &lt;old-checkout&gt; --new-repo &lt;rewrite-checkout&gt; --output migration.json
+</code></pre>
+<p>The JSON includes the counting method, revisions, script and ledger hashes, directory totals, and every file disposition. Public readers can inspect those results; recreating them requires the private repositories.</p></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/MIGRATION.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

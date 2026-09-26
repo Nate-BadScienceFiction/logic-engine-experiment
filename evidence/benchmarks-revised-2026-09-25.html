@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Measured September 25, 2026, after correcting the answer materialization mismatch in the original benchmark. Both engines now retain every requested…">
+  <title>Speed with full answer bindings · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="../docs/HISTORY.html">History</a><a href="../docs/ENGINE.html">How it works</a><a href="../docs/AI-DEVELOPMENT.html">Building it with AI</a><a href="../docs/MIGRATION.html">Migration</a><a href="README.html">Evidence</a><a href="../docs/GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="speed-with-full-answer-bindings">Speed with full answer bindings</h1>
+<p>Measured September 25, 2026, after correcting the answer materialization mismatch in the original benchmark. Both engines now retain every requested binding, and every workload must match exact independently constructed answers before its timings are accepted.</p>
+<p><a href="benchmarks-revised-2026-09-25.json">Raw batches and expected answers</a> · <a href="benchmark-vs-swi.py">script</a> · <a href="benchmarks-2026-09-25.html">original measurements</a> · <a href="comparison-revised-2026-09-25.html">shared cross-check results</a>.</p>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#time-to-return-all-query-values">Time to return all query values</a></li><li><a href="#python-value-conversion-measured-separately">Python value conversion, measured separately</a></li><li><a href="#variability-and-limits">Variability and limits</a></li><li><a href="#what-changed-in-the-method">What changed in the method</a></li><li><a href="#timing-protocol">Timing protocol</a></li><li><a href="#programs-and-reproduction">Programs and reproduction</a></li></ul></nav>
+<section aria-labelledby="time-to-return-all-query-values"><h2 id="time-to-return-all-query-values">Time to return all query values</h2>
+<p>Median milliseconds per query across five batches. Here, native answers means values in each engine's own term representation, before any conversion to Python host values. Displayed timings are rounded to three significant figures; the raw JSON retains full precision. The rewrite uses <code>ask(..., distinct=False)</code> and retains its native answer terms; SWI uses <code>findall</code> with a template containing <strong>all query variables</strong>, not a constant placeholder. Both include query execution and complete answer construction. These are runtime/API measurements, not isolated solver timings.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Time to return all query values table"><table>
+<thead>
+<tr>
+<th>Workload</th>
+<th style="text-align: right;">Exact answers</th>
+<th style="text-align: right;">Rewrite, automatic tabling</th>
+<th style="text-align: right;">Rewrite, tabling off</th>
+<th style="text-align: right;">SWI-Prolog</th>
+<th style="text-align: right;">Rewrite/SWI, off to automatic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Naive reverse of a 30-element list</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">9.2</td>
+<td style="text-align: right;">0.00807</td>
+<td style="text-align: right;">1,140×–13,368×</td>
+</tr>
+<tr>
+<td>All solutions of 6-queens</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">508</td>
+<td style="text-align: right;">206</td>
+<td style="text-align: right;">0.552</td>
+<td style="text-align: right;">373×–920×</td>
+</tr>
+<tr>
+<td>All ways to split a 100-item list with app/3</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">4,200</td>
+<td style="text-align: right;">18.6</td>
+<td style="text-align: right;">0.221</td>
+<td style="text-align: right;">84×–19,025×</td>
+</tr>
+</tbody>
+</table></div>
+<p>On naive reverse and six queens, the rewrite is approximately <strong>373–13,368 times slower</strong> in this run, depending on workload and tabling settings. List splitting spans <strong>84–19,025 times slower</strong>. These are three small workloads on one Windows 11 machine, not a general speed ranking or a comparison against the old Python engine.</p>
+</section>
+<section aria-labelledby="python-value-conversion-measured-separately"><h2 id="python-value-conversion-measured-separately">Python value conversion, measured separately</h2>
+<p>This is the same rewrite query with conversion of its answer terms to Python values included. There is no SWI ratio for this column: a Prolog answer term and a Python host representation are different API products. Measurements are separate batches; noise can make the conversion-inclusive median slightly lower than the native median, so subtracting the medians is not a reliable conversion-only cost estimate.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Python value conversion, measured separately table"><table>
+<thead>
+<tr>
+<th>Workload</th>
+<th style="text-align: right;">Python values, automatic tabling (ms)</th>
+<th style="text-align: right;">Python values, tabling off (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reverse a 30-item list (<code>nrev30</code>)</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">9.04</td>
+</tr>
+<tr>
+<td>Solve six queens (<code>queens6</code>)</td>
+<td style="text-align: right;">511</td>
+<td style="text-align: right;">204</td>
+</tr>
+<tr>
+<td>Split a 100-item list (<code>split100</code>)</td>
+<td style="text-align: right;">6,860</td>
+<td style="text-align: right;">42.9</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section aria-labelledby="variability-and-limits"><h2 id="variability-and-limits">Variability and limits</h2>
+<p>Batch ranges below are minimum–maximum <strong>batch means</strong>, not confidence intervals. The list-split conversion and SWI measurements varied substantially; retain that uncertainty when interpreting their ratios. We do not infer that Python interpreter overhead accounts for a measured share of the gap. Algorithm, tabling policy, parsing, representation, allocation and runtime all contribute.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Variability and limits table"><table>
+<thead>
+<tr>
+<th>Workload</th>
+<th style="text-align: right;">Rewrite native/default range (ms)</th>
+<th style="text-align: right;">SWI range (ms)</th>
+<th style="text-align: right;">Python values/default range (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reverse a 30-item list (<code>nrev30</code>)</td>
+<td style="text-align: right;">106–119</td>
+<td style="text-align: right;">0.00801–0.00842</td>
+<td style="text-align: right;">106–108</td>
+</tr>
+<tr>
+<td>Solve six queens (<code>queens6</code>)</td>
+<td style="text-align: right;">507–514</td>
+<td style="text-align: right;">0.547–0.557</td>
+<td style="text-align: right;">507–513</td>
+</tr>
+<tr>
+<td>Split a 100-item list (<code>split100</code>)</td>
+<td style="text-align: right;">4,120–4,370</td>
+<td style="text-align: right;">0.205–0.282</td>
+<td style="text-align: right;">4,190–9,730</td>
+</tr>
+</tbody>
+</table></div>
+<p>The rewrite parses the query on each <code>ask</code> call; SWI executes a compiled goal. Setup/compilation and process startup are excluded from the timed loops, but this API difference remains. SWI uses ordinary untabled execution here. Automatic tabling versus no tabling is shown explicitly for the rewrite; the table is not a same-algorithm experiment. Wall-clock measurements on a shared desktop include scheduling and runtime noise.</p>
+</section>
+<section aria-labelledby="what-changed-in-the-method"><h2 id="what-changed-in-the-method">What changed in the method</h2>
+<ol>
+<li><strong>Full bindings in both engines.</strong> SWI collects <code>[R]</code>, <code>[Qs]</code>, or <code>[X,Y]</code>. The original <code>findall(x, Goal, _)</code> discarded those values, especially understating the materialization work for 101 list splits.</li>
+<li><strong>Exact results, not counts alone.</strong> Expected reverse is the reversed input; splits are all prefix/suffix pairs; queens are Python permutations filtered by an independent diagonal test. Comparison is a multiset: row order is ignored, duplicate multiplicity and values are checked. A failed correctness check aborts publication of the timings.</li>
+<li><strong>Status checked.</strong> The rewrite must complete each validation and timed query. A partial answer set is not timed as a successful result.</li>
+<li><strong>Separate native and host results.</strong> Python conversion has its own timing, instead of being silently included on only one side of a solver-speed claim.</li>
+<li><strong>Pinned inputs and raw observations.</strong> The script requires clean source at rewrite <code>9be7804c933cc8a3c51af3d8a5e4f54b012c8be6</code>, records its own hash and runtime versions, and saves programs, exact expected rows, batch sizes and all batch means.</li>
+</ol>
+</section>
+<section aria-labelledby="timing-protocol"><h2 id="timing-protocol">Timing protocol</h2>
+<p>Python 3.12.10; SWI-Prolog 10.0.2 for x64-win64; Windows 11; Intel64 Family 6 Model 151 Stepping 5. Each mode loads its program once. An initial correctness query precedes two warm-up queries. Five timed batches follow; the headline is the median of their per-query means. Python uses <code>perf_counter</code>, SWI uses <code>get_time</code> around a failure-driven loop; the loop overhead remains included. SWI outputs its exact answers outside the timed batches, and Python verifies them before accepting the results.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Timing protocol table"><table>
+<thead>
+<tr>
+<th>Runs per batch</th>
+<th style="text-align: right;">Automatic tabling</th>
+<th style="text-align: right;">Tabling off</th>
+<th style="text-align: right;">SWI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reverse a 30-item list (<code>nrev30</code>)</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">20000</td>
+</tr>
+<tr>
+<td>Solve six queens (<code>queens6</code>)</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1000</td>
+</tr>
+<tr>
+<td>Split a 100-item list (<code>split100</code>)</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">5000</td>
+</tr>
+</tbody>
+</table></div>
+<p>The same batch sizes apply to the Python-conversion mode. The historical old/new warm-cache observations in the evidence overview are a different experiment and are not folded into these ratios. Caching can provide a real speed advantage even when an implementation also has a result-aliasing bug.</p>
+</section>
+<section aria-labelledby="programs-and-reproduction"><h2 id="programs-and-reproduction">Programs and reproduction</h2>
+<p>The complete programs and queries are stored in the raw JSON and the script. Naive reverse reverses 1 through 30; six queens enumerates all four solutions; list splitting enumerates all 101 splits of 1 through 100.</p>
+<pre><code class="language-powershell">python -B evidence/benchmark-vs-swi.py &lt;rewrite-checkout&gt; --json timings.json
+</code></pre>
+<p>Reproduction requires the private rewrite checkout and SWI-Prolog. The old timestamped JSON is retained as historical data, but its placeholder-answer ratios are superseded for full-binding comparisons.</p></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>evidence/benchmarks-revised-2026-09-25.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

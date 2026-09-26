@@ -1,0 +1,1507 @@
+{
+  "revisions": {
+    "old": "e62758c23f66b26fa92c6d2dafaaf6bf3466499f",
+    "new": "9be7804c933cc8a3c51af3d8a5e4f54b012c8be6"
+  },
+  "script_sha256": "efb663c284c2600d996ff54aae21388672fce5d4a53feda27ae61e7b8c189625",
+  "ledger_sha256": "411a59c7b1ed1892c0ea6f2af19543ba58c42140e32cd344f4db5c0fd55c697b",
+  "method": "splitlines; AST definitions; p90 indexed at floor(.9*(n-1)); historical cases from ledger",
+  "old_package": {
+    "files": 187,
+    "physical_lines": 54387,
+    "functions": 2065,
+    "classes": 320,
+    "function_span_median": 14,
+    "function_span_p90": 48,
+    "function_span_max": 284
+  },
+  "old_all_src": {
+    "files": 198,
+    "physical_lines": 61715,
+    "functions": 2271,
+    "classes": 334,
+    "function_span_median": 14,
+    "function_span_p90": 49,
+    "function_span_max": 1582
+  },
+  "old_tools": {
+    "files": 11,
+    "physical_lines": 7328,
+    "functions": 206,
+    "classes": 14,
+    "function_span_median": 12.0,
+    "function_span_p90": 59,
+    "function_span_max": 1582
+  },
+  "new_package": {
+    "files": 25,
+    "physical_lines": 7426,
+    "functions": 353,
+    "classes": 54,
+    "function_span_median": 7,
+    "function_span_p90": 34,
+    "function_span_max": 221
+  },
+  "old_tests": {
+    "files": 276,
+    "physical_lines": 96478,
+    "functions": 7414,
+    "classes": 1409,
+    "function_span_median": 7.0,
+    "function_span_p90": 20,
+    "function_span_max": 131
+  },
+  "new_tests": {
+    "files": 38,
+    "physical_lines": 13137,
+    "functions": 874,
+    "classes": 7,
+    "function_span_median": 8.0,
+    "function_span_p90": 18,
+    "function_span_max": 50
+  },
+  "dispositions": {
+    "X": {
+      "files": 43,
+      "definitions": 827,
+      "historical_collected_cases": 800
+    },
+    "O": {
+      "files": 87,
+      "definitions": 3294,
+      "historical_collected_cases": 3421
+    },
+    "A": {
+      "files": 25,
+      "definitions": 593,
+      "historical_collected_cases": 696
+    },
+    "R": {
+      "files": 35,
+      "definitions": 913,
+      "historical_collected_cases": 966
+    },
+    "C": {
+      "files": 44,
+      "definitions": 789,
+      "historical_collected_cases": 857
+    },
+    "B": {
+      "files": 1,
+      "definitions": 38,
+      "historical_collected_cases": 38
+    }
+  },
+  "inventory": [
+    {
+      "file": "cli/test_cli_interactive.py",
+      "disposition": "X",
+      "definitions": 13,
+      "historical_collected_cases": 13
+    },
+    {
+      "file": "cli/test_cli_query_engine.py",
+      "disposition": "X",
+      "definitions": 14,
+      "historical_collected_cases": 14
+    },
+    {
+      "file": "cli/test_help_integration.py",
+      "disposition": "X",
+      "definitions": 1,
+      "historical_collected_cases": 1
+    },
+    {
+      "file": "engine/bootstrapping/test_engine_bootstrapper.py",
+      "disposition": "O",
+      "definitions": 17,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "engine/caching/test_cache_interaction.py",
+      "disposition": "O",
+      "definitions": 35,
+      "historical_collected_cases": 35
+    },
+    {
+      "file": "engine/caching/test_canonical_cache.py",
+      "disposition": "O",
+      "definitions": 12,
+      "historical_collected_cases": 12
+    },
+    {
+      "file": "engine/caching/test_epoch_manager.py",
+      "disposition": "O",
+      "definitions": 59,
+      "historical_collected_cases": 59
+    },
+    {
+      "file": "engine/caching/test_fast_hash_value_caching.py",
+      "disposition": "O",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/caching/test_query_cache.py",
+      "disposition": "O",
+      "definitions": 24,
+      "historical_collected_cases": 24
+    },
+    {
+      "file": "engine/caching/test_query_cache_isolation.py",
+      "disposition": "O",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "engine/conversion/test_body_item_converters.py",
+      "disposition": "O",
+      "definitions": 71,
+      "historical_collected_cases": 71
+    },
+    {
+      "file": "engine/debugging/test_debugging_functionality.py",
+      "disposition": "O",
+      "definitions": 14,
+      "historical_collected_cases": 14
+    },
+    {
+      "file": "engine/derived_evaluation/test_holds_at_integration.py",
+      "disposition": "A",
+      "definitions": 13,
+      "historical_collected_cases": 13
+    },
+    {
+      "file": "engine/derived_evaluation/test_legacy_evaluator.py",
+      "disposition": "O",
+      "definitions": 60,
+      "historical_collected_cases": 60
+    },
+    {
+      "file": "engine/derived_evaluation/test_template.py",
+      "disposition": "O",
+      "definitions": 43,
+      "historical_collected_cases": 43
+    },
+    {
+      "file": "engine/diagnostics/test_harriet_detector.py",
+      "disposition": "O",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/diagnostics/test_harriet_v2.py",
+      "disposition": "O",
+      "definitions": 18,
+      "historical_collected_cases": 18
+    },
+    {
+      "file": "engine/evaluation/test_arithmetic_evaluator.py",
+      "disposition": "R",
+      "definitions": 61,
+      "historical_collected_cases": 61
+    },
+    {
+      "file": "engine/evaluation/test_binding_plan_barriers.py",
+      "disposition": "O",
+      "definitions": 20,
+      "historical_collected_cases": 20
+    },
+    {
+      "file": "engine/evaluation/test_body_strategies.py",
+      "disposition": "O",
+      "definitions": 52,
+      "historical_collected_cases": 61
+    },
+    {
+      "file": "engine/evaluation/test_cut_regression.py",
+      "disposition": "R",
+      "definitions": 34,
+      "historical_collected_cases": 34
+    },
+    {
+      "file": "engine/evaluation/test_disjunction_ast.py",
+      "disposition": "O",
+      "definitions": 33,
+      "historical_collected_cases": 40
+    },
+    {
+      "file": "engine/evaluation/test_disjunction_correctness.py",
+      "disposition": "R",
+      "definitions": 39,
+      "historical_collected_cases": 39
+    },
+    {
+      "file": "engine/evaluation/test_disjunction_performance.py",
+      "disposition": "O",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "engine/evaluation/test_facts_rules_union.py",
+      "disposition": "A",
+      "definitions": 25,
+      "historical_collected_cases": 25
+    },
+    {
+      "file": "engine/evaluation/test_findall_evaluator.py",
+      "disposition": "O",
+      "definitions": 44,
+      "historical_collected_cases": 44
+    },
+    {
+      "file": "engine/evaluation/test_forall_predicate.py",
+      "disposition": "A",
+      "definitions": 67,
+      "historical_collected_cases": 75
+    },
+    {
+      "file": "engine/evaluation/test_if_then_else.py",
+      "disposition": "R",
+      "definitions": 34,
+      "historical_collected_cases": 34
+    },
+    {
+      "file": "engine/evaluation/test_integer_division_operator.py",
+      "disposition": "C",
+      "definitions": 25,
+      "historical_collected_cases": 32
+    },
+    {
+      "file": "engine/evaluation/test_list_pattern_matching.py",
+      "disposition": "R",
+      "definitions": 57,
+      "historical_collected_cases": 57
+    },
+    {
+      "file": "engine/evaluation/test_list_predicates.py",
+      "disposition": "C",
+      "definitions": 14,
+      "historical_collected_cases": 14
+    },
+    {
+      "file": "engine/evaluation/test_list_predicates_extended.py",
+      "disposition": "A",
+      "definitions": 40,
+      "historical_collected_cases": 40
+    },
+    {
+      "file": "engine/evaluation/test_literal_dispatcher.py",
+      "disposition": "O",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/evaluation/test_member_predicate.py",
+      "disposition": "A",
+      "definitions": 36,
+      "historical_collected_cases": 36
+    },
+    {
+      "file": "engine/evaluation/test_naf_conjunction.py",
+      "disposition": "A",
+      "definitions": 24,
+      "historical_collected_cases": 24
+    },
+    {
+      "file": "engine/evaluation/test_naf_disjunction_query.py",
+      "disposition": "A",
+      "definitions": 26,
+      "historical_collected_cases": 26
+    },
+    {
+      "file": "engine/evaluation/test_naf_path_parity.py",
+      "disposition": "R",
+      "definitions": 30,
+      "historical_collected_cases": 30
+    },
+    {
+      "file": "engine/evaluation/test_naf_rule_body.py",
+      "disposition": "C",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/evaluation/test_naf_semantics.py",
+      "disposition": "A",
+      "definitions": 18,
+      "historical_collected_cases": 18
+    },
+    {
+      "file": "engine/evaluation/test_negation_semantics.py",
+      "disposition": "C",
+      "definitions": 14,
+      "historical_collected_cases": 14
+    },
+    {
+      "file": "engine/evaluation/test_predicate_evaluator.py",
+      "disposition": "O",
+      "definitions": 33,
+      "historical_collected_cases": 33
+    },
+    {
+      "file": "engine/evaluation/test_rule_evaluation.py",
+      "disposition": "C",
+      "definitions": 5,
+      "historical_collected_cases": 5
+    },
+    {
+      "file": "engine/evaluation/test_rule_evaluation_advanced.py",
+      "disposition": "C",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "engine/evaluation/test_rule_evaluation_detailed.py",
+      "disposition": "C",
+      "definitions": 22,
+      "historical_collected_cases": 22
+    },
+    {
+      "file": "engine/evaluation/test_sequence_strategies.py",
+      "disposition": "O",
+      "definitions": 52,
+      "historical_collected_cases": 61
+    },
+    {
+      "file": "engine/evaluation/test_stratification_analyzer.py",
+      "disposition": "R",
+      "definitions": 18,
+      "historical_collected_cases": 18
+    },
+    {
+      "file": "engine/fluents/test_fluent_candidate_generator.py",
+      "disposition": "O",
+      "definitions": 6,
+      "historical_collected_cases": 6
+    },
+    {
+      "file": "engine/parsing/test_anonymous_var_handler.py",
+      "disposition": "R",
+      "definitions": 25,
+      "historical_collected_cases": 25
+    },
+    {
+      "file": "engine/parsing/test_body_parser.py",
+      "disposition": "O",
+      "definitions": 78,
+      "historical_collected_cases": 108
+    },
+    {
+      "file": "engine/parsing/test_disjunction_handler.py",
+      "disposition": "O",
+      "definitions": 49,
+      "historical_collected_cases": 49
+    },
+    {
+      "file": "engine/parsing/test_kb_parsing.py",
+      "disposition": "O",
+      "definitions": 24,
+      "historical_collected_cases": 24
+    },
+    {
+      "file": "engine/parsing/test_term_parser.py",
+      "disposition": "O",
+      "definitions": 24,
+      "historical_collected_cases": 24
+    },
+    {
+      "file": "engine/parsing/test_term_service.py",
+      "disposition": "O",
+      "definitions": 39,
+      "historical_collected_cases": 39
+    },
+    {
+      "file": "engine/policies/test_temporal_policy.py",
+      "disposition": "O",
+      "definitions": 24,
+      "historical_collected_cases": 24
+    },
+    {
+      "file": "engine/query/test_handler_registry.py",
+      "disposition": "O",
+      "definitions": 22,
+      "historical_collected_cases": 22
+    },
+    {
+      "file": "engine/query/test_handler_setup.py",
+      "disposition": "O",
+      "definitions": 16,
+      "historical_collected_cases": 16
+    },
+    {
+      "file": "engine/query/test_holds_at_determinism.py",
+      "disposition": "A",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "engine/query/test_if_then_else_query_api.py",
+      "disposition": "R",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "engine/query/test_pipeline.py",
+      "disposition": "O",
+      "definitions": 39,
+      "historical_collected_cases": 39
+    },
+    {
+      "file": "engine/query/test_query_handlers.py",
+      "disposition": "O",
+      "definitions": 37,
+      "historical_collected_cases": 37
+    },
+    {
+      "file": "engine/query/test_result_processor.py",
+      "disposition": "O",
+      "definitions": 42,
+      "historical_collected_cases": 42
+    },
+    {
+      "file": "engine/reasoning/substitution/test_substitution_manager.py",
+      "disposition": "O",
+      "definitions": 88,
+      "historical_collected_cases": 88
+    },
+    {
+      "file": "engine/reasoning/substitution/test_variable_manager.py",
+      "disposition": "O",
+      "definitions": 41,
+      "historical_collected_cases": 41
+    },
+    {
+      "file": "engine/reasoning/substitution/test_variable_mapper.py",
+      "disposition": "O",
+      "definitions": 42,
+      "historical_collected_cases": 42
+    },
+    {
+      "file": "engine/reasoning/temporal/test_before_temporal.py",
+      "disposition": "A",
+      "definitions": 26,
+      "historical_collected_cases": 26
+    },
+    {
+      "file": "engine/reasoning/temporal/test_boundary_semantics.py",
+      "disposition": "R",
+      "definitions": 28,
+      "historical_collected_cases": 28
+    },
+    {
+      "file": "engine/reasoning/temporal/test_dense_time_ordering.py",
+      "disposition": "R",
+      "definitions": 16,
+      "historical_collected_cases": 16
+    },
+    {
+      "file": "engine/reasoning/temporal/test_event_calculus_location_tracking.py",
+      "disposition": "C",
+      "definitions": 34,
+      "historical_collected_cases": 34
+    },
+    {
+      "file": "engine/reasoning/temporal/test_event_calculus_semantics_matrix.py",
+      "disposition": "A",
+      "definitions": 16,
+      "historical_collected_cases": 86
+    },
+    {
+      "file": "engine/reasoning/temporal/test_event_hints.py",
+      "disposition": "X",
+      "definitions": 23,
+      "historical_collected_cases": 23
+    },
+    {
+      "file": "engine/reasoning/temporal/test_exclusivity_handler.py",
+      "disposition": "R",
+      "definitions": 95,
+      "historical_collected_cases": 103
+    },
+    {
+      "file": "engine/reasoning/temporal/test_fluent_evaluator.py",
+      "disposition": "O",
+      "definitions": 26,
+      "historical_collected_cases": 26
+    },
+    {
+      "file": "engine/reasoning/temporal/test_holds_at_evaluation.py",
+      "disposition": "C",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "engine/reasoning/temporal/test_initiates_rule_arity.py",
+      "disposition": "A",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "engine/reasoning/temporal/test_persistence.py",
+      "disposition": "O",
+      "definitions": 22,
+      "historical_collected_cases": 22
+    },
+    {
+      "file": "engine/reasoning/temporal/test_rule_body_clipping.py",
+      "disposition": "A",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "engine/reasoning/temporal/test_temporal_edge_cases.py",
+      "disposition": "R",
+      "definitions": 23,
+      "historical_collected_cases": 23
+    },
+    {
+      "file": "engine/reasoning/temporal/test_temporal_reasoner.py",
+      "disposition": "O",
+      "definitions": 114,
+      "historical_collected_cases": 114
+    },
+    {
+      "file": "engine/reasoning/temporal/test_temporal_semantics.py",
+      "disposition": "C",
+      "definitions": 12,
+      "historical_collected_cases": 12
+    },
+    {
+      "file": "engine/reasoning/temporal/test_weakref_mixin.py",
+      "disposition": "O",
+      "definitions": 51,
+      "historical_collected_cases": 51
+    },
+    {
+      "file": "engine/reasoning/test_kb_reasoner.py",
+      "disposition": "O",
+      "definitions": 62,
+      "historical_collected_cases": 62
+    },
+    {
+      "file": "engine/reasoning/test_reasoning_capabilities.py",
+      "disposition": "C",
+      "definitions": 32,
+      "historical_collected_cases": 32
+    },
+    {
+      "file": "engine/reasoning/test_recursive_rules.py",
+      "disposition": "C",
+      "definitions": 9,
+      "historical_collected_cases": 9
+    },
+    {
+      "file": "engine/reasoning/test_rule_chains.py",
+      "disposition": "C",
+      "definitions": 54,
+      "historical_collected_cases": 67
+    },
+    {
+      "file": "engine/reasoning/test_semantic_analysis.py",
+      "disposition": "B",
+      "definitions": 38,
+      "historical_collected_cases": 38
+    },
+    {
+      "file": "engine/reasoning/utils/test_binding_planner.py",
+      "disposition": "O",
+      "definitions": 55,
+      "historical_collected_cases": 62
+    },
+    {
+      "file": "engine/reasoning/utils/test_cache_manager.py",
+      "disposition": "O",
+      "definitions": 34,
+      "historical_collected_cases": 34
+    },
+    {
+      "file": "engine/reasoning/utils/test_negation_opposites.py",
+      "disposition": "O",
+      "definitions": 38,
+      "historical_collected_cases": 38
+    },
+    {
+      "file": "engine/reasoning/utils/test_result_processor.py",
+      "disposition": "O",
+      "definitions": 49,
+      "historical_collected_cases": 49
+    },
+    {
+      "file": "engine/reasoning/utils/test_temporal_helpers.py",
+      "disposition": "O",
+      "definitions": 31,
+      "historical_collected_cases": 31
+    },
+    {
+      "file": "engine/reasoning/utils/test_term_helpers.py",
+      "disposition": "O",
+      "definitions": 59,
+      "historical_collected_cases": 59
+    },
+    {
+      "file": "engine/routing/test_cross_engine_coordinator.py",
+      "disposition": "O",
+      "definitions": 67,
+      "historical_collected_cases": 67
+    },
+    {
+      "file": "engine/routing/test_hybrid_internals.py",
+      "disposition": "O",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/routing/test_hybrid_routing.py",
+      "disposition": "O",
+      "definitions": 52,
+      "historical_collected_cases": 52
+    },
+    {
+      "file": "engine/routing/test_route_observability.py",
+      "disposition": "O",
+      "definitions": 13,
+      "historical_collected_cases": 13
+    },
+    {
+      "file": "engine/routing/test_routing_frame_consistency.py",
+      "disposition": "O",
+      "definitions": 19,
+      "historical_collected_cases": 19
+    },
+    {
+      "file": "engine/routing/test_routing_fsm.py",
+      "disposition": "O",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/structured_logging/test_structured_logger.py",
+      "disposition": "O",
+      "definitions": 6,
+      "historical_collected_cases": 6
+    },
+    {
+      "file": "engine/tabling/test_answer_utils_caching.py",
+      "disposition": "O",
+      "definitions": 28,
+      "historical_collected_cases": 28
+    },
+    {
+      "file": "engine/tabling/test_table_directive.py",
+      "disposition": "A",
+      "definitions": 44,
+      "historical_collected_cases": 44
+    },
+    {
+      "file": "engine/tabling/test_tabling.py",
+      "disposition": "O",
+      "definitions": 143,
+      "historical_collected_cases": 148
+    },
+    {
+      "file": "engine/test_atom_concat_modes.py",
+      "disposition": "R",
+      "definitions": 12,
+      "historical_collected_cases": 18
+    },
+    {
+      "file": "engine/test_between_predicate.py",
+      "disposition": "R",
+      "definitions": 11,
+      "historical_collected_cases": 14
+    },
+    {
+      "file": "engine/test_builtin_parity.py",
+      "disposition": "C",
+      "definitions": 2,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "engine/test_canonical_key_var_semantics.py",
+      "disposition": "O",
+      "definitions": 36,
+      "historical_collected_cases": 36
+    },
+    {
+      "file": "engine/test_compound_queries.py",
+      "disposition": "C",
+      "definitions": 27,
+      "historical_collected_cases": 31
+    },
+    {
+      "file": "engine/test_compound_rule_backtracking.py",
+      "disposition": "C",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "engine/test_constraint_engine.py",
+      "disposition": "O",
+      "definitions": 25,
+      "historical_collected_cases": 25
+    },
+    {
+      "file": "engine/test_dfs_engine.py",
+      "disposition": "O",
+      "definitions": 75,
+      "historical_collected_cases": 75
+    },
+    {
+      "file": "engine/test_engine_internal_invariants.py",
+      "disposition": "O",
+      "definitions": 32,
+      "historical_collected_cases": 32
+    },
+    {
+      "file": "engine/test_engine_regression_suite.py",
+      "disposition": "O",
+      "definitions": 54,
+      "historical_collected_cases": 54
+    },
+    {
+      "file": "engine/test_enumeration_dynamic_agents.py",
+      "disposition": "A",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "engine/test_enumeration_reliability.py",
+      "disposition": "C",
+      "definitions": 18,
+      "historical_collected_cases": 20
+    },
+    {
+      "file": "engine/test_evaluation.py",
+      "disposition": "O",
+      "definitions": 51,
+      "historical_collected_cases": 51
+    },
+    {
+      "file": "engine/test_extended_dfs_engine.py",
+      "disposition": "O",
+      "definitions": 56,
+      "historical_collected_cases": 112
+    },
+    {
+      "file": "engine/test_kb_engine_core.py",
+      "disposition": "C",
+      "definitions": 27,
+      "historical_collected_cases": 28
+    },
+    {
+      "file": "engine/test_kb_engine_edges.py",
+      "disposition": "A",
+      "definitions": 19,
+      "historical_collected_cases": 19
+    },
+    {
+      "file": "engine/test_kb_engine_perf.py",
+      "disposition": "X",
+      "definitions": 12,
+      "historical_collected_cases": 12
+    },
+    {
+      "file": "engine/test_kb_store_temporal_dedup.py",
+      "disposition": "O",
+      "definitions": 15,
+      "historical_collected_cases": 15
+    },
+    {
+      "file": "engine/test_negation_with_caching.py",
+      "disposition": "R",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "engine/test_projection.py",
+      "disposition": "R",
+      "definitions": 45,
+      "historical_collected_cases": 45
+    },
+    {
+      "file": "engine/test_query_variable_projection.py",
+      "disposition": "R",
+      "definitions": 12,
+      "historical_collected_cases": 12
+    },
+    {
+      "file": "engine/test_result_deduplication.py",
+      "disposition": "R",
+      "definitions": 26,
+      "historical_collected_cases": 26
+    },
+    {
+      "file": "engine/test_routing.py",
+      "disposition": "O",
+      "definitions": 36,
+      "historical_collected_cases": 36
+    },
+    {
+      "file": "engine/test_selective_cache_invalidation.py",
+      "disposition": "R",
+      "definitions": 8,
+      "historical_collected_cases": 8
+    },
+    {
+      "file": "engine/test_storage.py",
+      "disposition": "O",
+      "definitions": 64,
+      "historical_collected_cases": 64
+    },
+    {
+      "file": "engine/test_theory_generation.py",
+      "disposition": "R",
+      "definitions": 9,
+      "historical_collected_cases": 18
+    },
+    {
+      "file": "engine/test_theory_generation_algorithms.py",
+      "disposition": "R",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "engine/test_variable_leakage_regression.py",
+      "disposition": "C",
+      "definitions": 41,
+      "historical_collected_cases": 41
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_comm_fact_provenance.py",
+      "disposition": "X",
+      "definitions": 2,
+      "historical_collected_cases": 2
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_demo_spans_selfcontained.py",
+      "disposition": "X",
+      "definitions": 5,
+      "historical_collected_cases": 5
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_generated_spans_only.py",
+      "disposition": "X",
+      "definitions": 2,
+      "historical_collected_cases": 2
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_provenance_report.py",
+      "disposition": "X",
+      "definitions": 1,
+      "historical_collected_cases": 1
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_provenance_roundtrip.py",
+      "disposition": "X",
+      "definitions": 5,
+      "historical_collected_cases": 5
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_provenance_spans.py",
+      "disposition": "X",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_provenance_spans_filtered.py",
+      "disposition": "X",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_relationships.py",
+      "disposition": "X",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_rooms_data_integrity.py",
+      "disposition": "X",
+      "definitions": 17,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_rooms_integrity.py",
+      "disposition": "X",
+      "definitions": 20,
+      "historical_collected_cases": 20
+    },
+    {
+      "file": "fixtures/models/vacancy_exe_demo/tests/test_span_builder_dry_run.py",
+      "disposition": "X",
+      "definitions": 2,
+      "historical_collected_cases": 2
+    },
+    {
+      "file": "fluents/test_causality.py",
+      "disposition": "C",
+      "definitions": 15,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "fluents/test_composition.py",
+      "disposition": "C",
+      "definitions": 9,
+      "historical_collected_cases": 9
+    },
+    {
+      "file": "fluents/test_conditional_causality.py",
+      "disposition": "C",
+      "definitions": 8,
+      "historical_collected_cases": 8
+    },
+    {
+      "file": "fluents/test_conditional_causality_refactored.py",
+      "disposition": "C",
+      "definitions": 20,
+      "historical_collected_cases": 22
+    },
+    {
+      "file": "fluents/test_exclusive_fluent_mechanism.py",
+      "disposition": "R",
+      "definitions": 33,
+      "historical_collected_cases": 33
+    },
+    {
+      "file": "fluents/test_exclusivity.py",
+      "disposition": "R",
+      "definitions": 8,
+      "historical_collected_cases": 8
+    },
+    {
+      "file": "fluents/test_exclusivity_constraints.py",
+      "disposition": "R",
+      "definitions": 5,
+      "historical_collected_cases": 5
+    },
+    {
+      "file": "fluents/test_exclusivity_detailed.py",
+      "disposition": "R",
+      "definitions": 9,
+      "historical_collected_cases": 12
+    },
+    {
+      "file": "fluents/test_exclusivity_integration.py",
+      "disposition": "R",
+      "definitions": 22,
+      "historical_collected_cases": 22
+    },
+    {
+      "file": "fluents/test_gap_scenarios.py",
+      "disposition": "A",
+      "definitions": 4,
+      "historical_collected_cases": 6
+    },
+    {
+      "file": "fluents/test_naf_cutoff_time.py",
+      "disposition": "A",
+      "definitions": 3,
+      "historical_collected_cases": 3
+    },
+    {
+      "file": "fluents/test_negative_causality_prestate.py",
+      "disposition": "A",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "fluents/test_performance.py",
+      "disposition": "X",
+      "definitions": 8,
+      "historical_collected_cases": 8
+    },
+    {
+      "file": "fluents/test_provenance.py",
+      "disposition": "C",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "fluents/test_runtime_errors.py",
+      "disposition": "R",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "fluents/test_semantics.py",
+      "disposition": "C",
+      "definitions": 9,
+      "historical_collected_cases": 9
+    },
+    {
+      "file": "fluents/test_temporal_edges.py",
+      "disposition": "R",
+      "definitions": 18,
+      "historical_collected_cases": 26
+    },
+    {
+      "file": "fluents/test_termination_boundaries.py",
+      "disposition": "C",
+      "definitions": 3,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "fluents/test_trust_level_progression.py",
+      "disposition": "C",
+      "definitions": 31,
+      "historical_collected_cases": 41
+    },
+    {
+      "file": "gameplay/test_graph.py",
+      "disposition": "X",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "integration/test_complete_workflow.py",
+      "disposition": "X",
+      "definitions": 21,
+      "historical_collected_cases": 21
+    },
+    {
+      "file": "integration/test_compound_queries_e2e.py",
+      "disposition": "C",
+      "definitions": 31,
+      "historical_collected_cases": 31
+    },
+    {
+      "file": "integration/test_cross_models.py",
+      "disposition": "C",
+      "definitions": 8,
+      "historical_collected_cases": 8
+    },
+    {
+      "file": "integration/test_engine_api_correctness.py",
+      "disposition": "C",
+      "definitions": 24,
+      "historical_collected_cases": 30
+    },
+    {
+      "file": "integration/test_final_integration.py",
+      "disposition": "C",
+      "definitions": 19,
+      "historical_collected_cases": 19
+    },
+    {
+      "file": "integration/test_integration_reliability.py",
+      "disposition": "C",
+      "definitions": 9,
+      "historical_collected_cases": 9
+    },
+    {
+      "file": "integration/test_julie_ruin.py",
+      "disposition": "X",
+      "definitions": 1,
+      "historical_collected_cases": 1
+    },
+    {
+      "file": "integration/test_murder_mystery_analysis.py",
+      "disposition": "X",
+      "definitions": 23,
+      "historical_collected_cases": 26
+    },
+    {
+      "file": "integration/test_performance_integration.py",
+      "disposition": "X",
+      "definitions": 1,
+      "historical_collected_cases": 1
+    },
+    {
+      "file": "integration/test_solver_cli_parity.py",
+      "disposition": "X",
+      "definitions": 14,
+      "historical_collected_cases": 23
+    },
+    {
+      "file": "integration/test_temporal_integration.py",
+      "disposition": "C",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "integration/test_type_stability_integration.py",
+      "disposition": "A",
+      "definitions": 31,
+      "historical_collected_cases": 31
+    },
+    {
+      "file": "integration_api/test_affordance.py",
+      "disposition": "C",
+      "definitions": 17,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "integration_api/test_affordance_demo_model.py",
+      "disposition": "C",
+      "definitions": 5,
+      "historical_collected_cases": 5
+    },
+    {
+      "file": "integration_api/test_json_api.py",
+      "disposition": "C",
+      "definitions": 14,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "kb_core/test_core_load_from_file.py",
+      "disposition": "O",
+      "definitions": 13,
+      "historical_collected_cases": 13
+    },
+    {
+      "file": "kb_core/test_model_packs.py",
+      "disposition": "O",
+      "definitions": 31,
+      "historical_collected_cases": 31
+    },
+    {
+      "file": "kb_core/test_model_type_contracts.py",
+      "disposition": "O",
+      "definitions": 37,
+      "historical_collected_cases": 37
+    },
+    {
+      "file": "narratives/test_carnival_trojan_mystery.py",
+      "disposition": "X",
+      "definitions": 39,
+      "historical_collected_cases": 39
+    },
+    {
+      "file": "narratives/test_dynamic_generation.py",
+      "disposition": "X",
+      "definitions": 52,
+      "historical_collected_cases": 0
+    },
+    {
+      "file": "narratives/test_gallup_demo_spider.py",
+      "disposition": "X",
+      "definitions": 55,
+      "historical_collected_cases": 55
+    },
+    {
+      "file": "narratives/test_murder_mystery.py",
+      "disposition": "X",
+      "definitions": 12,
+      "historical_collected_cases": 16
+    },
+    {
+      "file": "narratives/test_murder_mystery_ec.py",
+      "disposition": "X",
+      "definitions": 11,
+      "historical_collected_cases": 11
+    },
+    {
+      "file": "narratives/test_murder_mystery_generator.py",
+      "disposition": "X",
+      "definitions": 19,
+      "historical_collected_cases": 19
+    },
+    {
+      "file": "narratives/test_murder_mystery_solver.py",
+      "disposition": "X",
+      "definitions": 15,
+      "historical_collected_cases": 15
+    },
+    {
+      "file": "narratives/test_narrative_chains.py",
+      "disposition": "X",
+      "definitions": 56,
+      "historical_collected_cases": 56
+    },
+    {
+      "file": "narratives/test_narrative_provenance.py",
+      "disposition": "X",
+      "definitions": 25,
+      "historical_collected_cases": 25
+    },
+    {
+      "file": "properties/test_hypothesis_predicate_patterns.py",
+      "disposition": "X",
+      "definitions": 28,
+      "historical_collected_cases": 28
+    },
+    {
+      "file": "properties/test_retroactive_cache_invalidation.py",
+      "disposition": "R",
+      "definitions": 3,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "properties/test_temporal_properties.py",
+      "disposition": "A",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "properties/test_unification_properties.py",
+      "disposition": "A",
+      "definitions": 6,
+      "historical_collected_cases": 6
+    },
+    {
+      "file": "provenance/test_canonical_key.py",
+      "disposition": "O",
+      "definitions": 11,
+      "historical_collected_cases": 11
+    },
+    {
+      "file": "provenance/test_evidence_lookup.py",
+      "disposition": "O",
+      "definitions": 16,
+      "historical_collected_cases": 16
+    },
+    {
+      "file": "provenance/test_fact_id_unification_diagnostics.py",
+      "disposition": "O",
+      "definitions": 11,
+      "historical_collected_cases": 11
+    },
+    {
+      "file": "provenance/test_factstore_canonical.py",
+      "disposition": "O",
+      "definitions": 23,
+      "historical_collected_cases": 23
+    },
+    {
+      "file": "provenance/test_provenance_doc_examples.py",
+      "disposition": "O",
+      "definitions": 40,
+      "historical_collected_cases": 40
+    },
+    {
+      "file": "provenance/test_provenance_handlers.py",
+      "disposition": "O",
+      "definitions": 49,
+      "historical_collected_cases": 49
+    },
+    {
+      "file": "provenance/test_provenance_reliability.py",
+      "disposition": "O",
+      "definitions": 33,
+      "historical_collected_cases": 33
+    },
+    {
+      "file": "query_decomposer/test_query_decomposer.py",
+      "disposition": "O",
+      "definitions": 80,
+      "historical_collected_cases": 80
+    },
+    {
+      "file": "rooms/test_rooms.py",
+      "disposition": "X",
+      "definitions": 94,
+      "historical_collected_cases": 94
+    },
+    {
+      "file": "rooms/test_rooms_comprehensive.py",
+      "disposition": "X",
+      "definitions": 66,
+      "historical_collected_cases": 66
+    },
+    {
+      "file": "semantic_diagnostics/test_canonical_keys.py",
+      "disposition": "O",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "semantic_diagnostics/test_exclusive_termination.py",
+      "disposition": "A",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "semantic_diagnostics/test_nonground_enumeration.py",
+      "disposition": "C",
+      "definitions": 16,
+      "historical_collected_cases": 16
+    },
+    {
+      "file": "semantic_diagnostics/test_performance_scaling.py",
+      "disposition": "O",
+      "definitions": 9,
+      "historical_collected_cases": 9
+    },
+    {
+      "file": "semantic_diagnostics/test_rule_negation.py",
+      "disposition": "C",
+      "definitions": 5,
+      "historical_collected_cases": 5
+    },
+    {
+      "file": "semantic_diagnostics/test_t_plus_semantics.py",
+      "disposition": "C",
+      "definitions": 9,
+      "historical_collected_cases": 9
+    },
+    {
+      "file": "semantic_diagnostics/test_variable_scoping.py",
+      "disposition": "C",
+      "definitions": 16,
+      "historical_collected_cases": 16
+    },
+    {
+      "file": "test_action_definitions.py",
+      "disposition": "X",
+      "definitions": 24,
+      "historical_collected_cases": 28
+    },
+    {
+      "file": "test_consolidation_guards.py",
+      "disposition": "X",
+      "definitions": 27,
+      "historical_collected_cases": 32
+    },
+    {
+      "file": "test_isolation_improvements.py",
+      "disposition": "X",
+      "definitions": 22,
+      "historical_collected_cases": 22
+    },
+    {
+      "file": "test_marker_hygiene.py",
+      "disposition": "X",
+      "definitions": 3,
+      "historical_collected_cases": 3
+    },
+    {
+      "file": "test_ontology_validator.py",
+      "disposition": "X",
+      "definitions": 23,
+      "historical_collected_cases": 23
+    },
+    {
+      "file": "test_performance_scaling.py",
+      "disposition": "X",
+      "definitions": 6,
+      "historical_collected_cases": 6
+    },
+    {
+      "file": "test_setup.py",
+      "disposition": "X",
+      "definitions": 4,
+      "historical_collected_cases": 4
+    },
+    {
+      "file": "test_user_defined_predicates.py",
+      "disposition": "C",
+      "definitions": 38,
+      "historical_collected_cases": 38
+    },
+    {
+      "file": "text_parser/test_arithmetic_parentheses.py",
+      "disposition": "C",
+      "definitions": 27,
+      "historical_collected_cases": 27
+    },
+    {
+      "file": "text_parser/test_canonicalization_and_parsing.py",
+      "disposition": "O",
+      "definitions": 50,
+      "historical_collected_cases": 54
+    },
+    {
+      "file": "text_parser/test_codec.py",
+      "disposition": "O",
+      "definitions": 33,
+      "historical_collected_cases": 33
+    },
+    {
+      "file": "text_parser/test_compound_fluent_parsing.py",
+      "disposition": "C",
+      "definitions": 44,
+      "historical_collected_cases": 44
+    },
+    {
+      "file": "text_parser/test_parser_edge_cases.py",
+      "disposition": "A",
+      "definitions": 107,
+      "historical_collected_cases": 130
+    },
+    {
+      "file": "text_parser/test_parser_integration.py",
+      "disposition": "R",
+      "definitions": 17,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "text_parser/test_parser_tokenizer_caching.py",
+      "disposition": "O",
+      "definitions": 8,
+      "historical_collected_cases": 8
+    },
+    {
+      "file": "text_parser/test_parsing_verification.py",
+      "disposition": "R",
+      "definitions": 10,
+      "historical_collected_cases": 10
+    },
+    {
+      "file": "text_parser/test_term_codec.py",
+      "disposition": "O",
+      "definitions": 42,
+      "historical_collected_cases": 42
+    },
+    {
+      "file": "text_parser/test_term_normalization_regression.py",
+      "disposition": "O",
+      "definitions": 7,
+      "historical_collected_cases": 7
+    },
+    {
+      "file": "text_parser/test_tokenizer.py",
+      "disposition": "R",
+      "definitions": 56,
+      "historical_collected_cases": 60
+    },
+    {
+      "file": "text_parser/test_type_normalization.py",
+      "disposition": "O",
+      "definitions": 59,
+      "historical_collected_cases": 59
+    },
+    {
+      "file": "text_parser/test_unified_parser.py",
+      "disposition": "R",
+      "definitions": 24,
+      "historical_collected_cases": 24
+    },
+    {
+      "file": "unify/test_clean_substitution.py",
+      "disposition": "O",
+      "definitions": 36,
+      "historical_collected_cases": 36
+    },
+    {
+      "file": "unify/test_compound_atom_soundness.py",
+      "disposition": "C",
+      "definitions": 8,
+      "historical_collected_cases": 17
+    },
+    {
+      "file": "unify/test_substitution_integrity.py",
+      "disposition": "O",
+      "definitions": 73,
+      "historical_collected_cases": 73
+    },
+    {
+      "file": "unify/test_unification_reliability.py",
+      "disposition": "A",
+      "definitions": 39,
+      "historical_collected_cases": 39
+    },
+    {
+      "file": "unify/test_variable_extraction.py",
+      "disposition": "R",
+      "definitions": 54,
+      "historical_collected_cases": 65
+    },
+    {
+      "file": "utils/test_utils.py",
+      "disposition": "X",
+      "definitions": 39,
+      "historical_collected_cases": 39
+    }
+  ]
+}

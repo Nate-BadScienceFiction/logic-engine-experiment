@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="September 14, 2026 · All three prompts · Previous: design brief · Next: two-way audit of code and tests">
+  <title>Prompt 2: test-migration audit · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="../HISTORY.html">History</a><a href="../ENGINE.html">How it works</a><a href="../AI-DEVELOPMENT.html">Building it with AI</a><a href="../MIGRATION.html">Migration</a><a href="../../evidence/README.html">Evidence</a><a href="../GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="prompt-2-test-migration-audit">Prompt 2: test-migration audit</h1>
+<p>September 14, 2026 · <a href="README.html">All three prompts</a> · Previous: <a href="1-design-brief-2026-09-13.html">design brief</a> · Next: <a href="3-two-way-audit-2026-09-15.html">two-way audit of code and tests</a></p>
+<blockquote>
+<p>As I wrote it, from <code>prompt.md</code> in the rewrite's repository (AkiyaBlocks-CyclopsStorm, private for now), commit <code>467dbb8</code>. Two changes: local folder paths are replaced with repository names, and numbered section titles are shown as headings.</p>
+</blockquote>
+<hr />
+<p>Treat this as a <strong>test migration and adversarial coverage audit</strong>, not a bulk copy. Every source test must receive a disposition, but matching the old test count is not the objective: the new suite should provide stronger evidence that the new engine behaves correctly.</p>
+<p>SOURCE REPOSITORY:\
+BadScienceFiction-CyclopsStorm</p>
+<p>DESTINATION REPOSITORY:\
+AkiyaBlocks-CyclopsStorm</p>
+<p>Translate the source repository’s unit tests into a comprehensive, trustworthy test suite for the destination’s rearchitected Python implementation.</p>
+<p>Review EVERY individual source test for relevance, correctness, quality, and coverage. Adapt useful tests to the new architecture, replace weak tests with meaningful checks, retire obsolete implementation-specific tests with justification, and fill coverage gaps.</p>
+<p>This is not a mechanical migration or an exercise in reproducing the source test count. The objective is confidence in the destination’s intended behavior and architectural invariants.</p>
+<p>Choose the detailed testing approach and organization yourself, respecting the destination’s existing conventions. Complete the inventory and audit rather than stopping after a representative sample.</p>
+<h3 id="1-establish-the-baseline-and-complete-inventory">1. ESTABLISH THE BASELINE AND COMPLETE INVENTORY</h3>
+<p>Read the instructions in both repositories and inspect their current implementations, documentation, tests, fixtures, and test configuration.</p>
+<p>Treat BadScienceFiction-CyclopsStorm as read-only. Preserve unrelated destination changes. Keep any source execution or mutation experiments isolated from the original repository.</p>
+<p>Run the destination’s existing relevant tests to establish a baseline. Record pre-existing failures separately from problems introduced or discovered by this task.</p>
+<p>Inventory all source unit tests, including parameterized and generated cases, skipped tests, expected failures, and tests outside the obvious directories. Inspect shared fixtures and helpers that affect what those tests actually exercise.</p>
+<p>Also inventory existing destination coverage. Do not add a redundant test simply because the equivalent source test has not been copied over.</p>
+<p>Distinguish test definitions from collected test cases. Confirm that the inventory is complete against actual test discovery where possible, and report discovery failures rather than treating undiscovered tests as absent.</p>
+<p>Maintain a concise migration ledger identifying each source test, the behavior it is intended to protect, its disposition and rationale, and the corresponding destination coverage or unresolved gap.</p>
+<p>Several source tests may map to one stronger destination test, or one source test may require several replacements. Preserve traceability in either case. Parameterized cases may share a rationale only when their individual behavioral coverage has been considered.</p>
+<h3 id="2-double-check-each-test-against-the-destination">2. DOUBLE-CHECK EACH TEST AGAINST THE DESTINATION</h3>
+<p>For every source test, perform two distinct reviews.</p>
+<p>RELEVANCE AND SEMANTIC REVIEW:\
+Determine what requirement the test actually protects, whether that requirement applies to the destination, and whether its expected result is justified.</p>
+<p>Distinguish intended public behavior and genuine internal invariants from obsolete classes, private methods, historical workarounds, or accidental behavior.</p>
+<p>Inspect the code path exercised, not just the test name and comments. Compare the test with the destination’s actual architecture and documented behavior.</p>
+<p>QUALITY AND COVERAGE REVIEW:\
+Determine whether the test would detect a plausible defect in the behavior it claims to protect.</p>
+<p>Look for assertion-free tests without a meaningful no-error contract, tautologies, swallowed exceptions, circular expectations, mocks that only verify themselves, weak type or non-null checks, and assertions that succeed vacuously when the engine returns nothing.</p>
+<p>A test need not contain a literal assert statement to be meaningful. Exception checks and deliberate smoke tests can be valid. The question is whether an incorrect implementation can pass unnoticed.</p>
+<p>Check that setup, fixtures, helpers, and result normalization do not hide the behavior under test. Sorting results, for example, is inappropriate when answer order is part of the contract.</p>
+<p>Use dispositions such as adapt, already covered, replace or consolidate, retire as obsolete, and blocked by missing behavior. Explain each decision.</p>
+<p>Do not label a behavior obsolete merely because the destination has not implemented it yet.</p>
+<h3 id="3-migrate-behavior-without-restoring-the-old-architecture">3. MIGRATE BEHAVIOR WITHOUT RESTORING THE OLD ARCHITECTURE</h3>
+<p>Write tests against appropriate destination interfaces and invariants. Prefer public behavior for semantic requirements and focused internal tests where they genuinely protect the new design.</p>
+<p>Do not recreate old classes, compatibility shims, private APIs, or dependency structures solely to accommodate source tests.</p>
+<p>The destination architecture determines how behavior is exercised. Intended semantics determine what results are correct. Neither the source implementation nor the destination’s current output is automatically the truth.</p>
+<p>Reuse sound fixtures and independently justified expectations where appropriate. Keep required test assets self-contained in the destination. Do not change authored .pl models to make tests pass.</p>
+<p>Create small, understandable regression fixtures where needed and permitted. Avoid importing large legacy fixtures when a focused example would isolate the behavior more clearly.</p>
+<p>Ordinary destination tests must not require the source repository, import its reasoning internals, or fall back to its engine. Keep optional differential comparisons separate and explicit.</p>
+<p>Organize tests according to the destination’s responsibilities. Preserve distinctions among unit, integration, semantic conformance, and performance tests rather than calling everything a unit test.</p>
+<h3 id="4-fill-holes-from-the-destination-outward">4. FILL HOLES FROM THE DESTINATION OUTWARD</h3>
+<p>Do not limit this task to gaps visible in the source suite. Inspect the destination implementation and its behavioral contract for requirements that have no meaningful tests.</p>
+<p>Build a concise coverage map connecting required behavior and important invariants to tests. Use code-coverage reports as supporting evidence where useful, not as proof of correctness or a percentage to optimize blindly.</p>
+<p>Investigate missing branches, boundaries, negative cases, and interactions. Pay particular attention to:
+- Variable identity, unification, substitutions, clause ordering, and mixed facts and rules.
+- Recursive evaluation, mutual recursion, negation, and supported procedural control.
+- Temporal boundaries, competing effects, persistence, and historical queries.
+- Mutation, knowledge revisions, cache validity, and query-state isolation.
+- Deterministic answers, provenance, malformed input, and completion or error status.</p>
+<p>These are review prompts, not a fixed test checklist. Derive the actual cases from the destination’s requirements and supported features.</p>
+<p>Test equivalent query forms where they should agree. Include relevant sequences of operations, not just fresh-engine queries. Check cold and repeated execution, mutation followed by querying, and multiple independent engine instances where applicable.</p>
+<p>Ensure tests of “all results satisfy a condition” also establish the expected existence and completeness of results. Include negative cases that distinguish a correct implementation from an always-empty or always-successful one.</p>
+<p>Add coverage for architectural promises unique to the rewrite, including independence from the source engine and isolation of transient query state.</p>
+<h3 id="5-handle-failures-and-semantic-disagreements-honestly">5. HANDLE FAILURES AND SEMANTIC DISAGREEMENTS HONESTLY</h3>
+<p>Investigate failures rather than adjusting expected values to match current output.</p>
+<p>Classify discrepancies as test defects, source defects, destination defects, intentional semantic changes, missing functionality, or unresolved requirements.</p>
+<p>Use documented contracts, authored examples, and independently derived expectations to resolve disagreements. The source engine is useful comparison evidence, not an infallible oracle.</p>
+<p>Make focused destination fixes when a valid test demonstrates a clear defect within the agreed behavior. Keep implementation changes narrow and explain them separately from test migration.</p>
+<p>Do not broaden this task into another rearchitecture, introduce legacy fallbacks, or weaken the intended contract to obtain a green run.</p>
+<p>Do not bury required but unimplemented behavior behind silent skips or permissive assertions. Record it explicitly as a gap. Any justified skip or expected failure must be narrowly scoped, explained, and included in the final accounting.</p>
+<p>Where semantics cannot be responsibly resolved, document the conflicting evidence and affected cases. Do not invent an expectation and present it as established behavior.</p>
+<h3 id="6-independently-challenge-the-resulting-suite">6. INDEPENDENTLY CHALLENGE THE RESULTING SUITE</h3>
+<p>Use an independent reviewer or testing agent where available to review migration decisions and the destination tests, especially retired tests, consolidated coverage, and claims that a gap is now closed.</p>
+<p>Require evidence that critical tests detect plausible incorrect behavior. Use targeted mutation checks, controlled fault injection, or another appropriate method where it adds value.</p>
+<p>Keep these experiments isolated and restore all changes. Do not mutate the original source repository or a shared working tree used by other agents.</p>
+<p>Review shared fixtures for leakage, hidden dependencies, and global state changes. Check that scoped test runs and the complete suite behave consistently and that test ordering does not conceal defects.</p>
+<p>Verify that every new test is actually collected by the intended runner. A useful test that never runs is not coverage.</p>
+<h3 id="7-integrate-with-the-windows-test-runners">7. INTEGRATE WITH THE WINDOWS TEST RUNNERS</h3>
+<p>Preserve or provide these destination launchers:
+- run_unit_tests.bat for the unit-test suite.
+- run_tests.bat for the complete correctness suite.</p>
+<p>Ensure migrated and newly added tests are included in the appropriate runs. Keep performance benchmarks opt-in and optional source comparisons separate.</p>
+<p>The launchers must work from another working directory, handle paths containing spaces, use the documented Python environment, forward additional test arguments, and propagate failure exit codes.</p>
+<p>Keep them thin and aligned with the project’s normal test configuration. Avoid unconditional pauses, hidden dependency installation, and swallowed errors.</p>
+<p>Run the relevant scoped tests throughout the work, then run the complete destination correctness suite. Verify the .bat files on Windows when available; otherwise state precisely what was and was not verified.</p>
+<h3 id="8-complete-the-accounting-and-report">8. COMPLETE THE ACCOUNTING AND REPORT</h3>
+<p>Reconcile the final migration ledger against the source inventory. Every source test must have an explicit disposition. Do not leave unexplained omissions or imply that a sample audit covered the whole suite.</p>
+<p>Confirm that the destination remains self-contained and that no migrated tests depend accidentally on the source checkout.</p>
+<p>Provide a concise final report covering:
+- Baseline and final test results.
+- Tests adapted, already covered, replaced or consolidated, retired, and blocked.
+- Important weak tests corrected and how their replacements are stronger.
+- Coverage holes found and filled.
+- Destination defects fixed.
+- Remaining gaps, skips, expected failures, and unresolved semantic decisions.
+- Independent review and test-strength evidence.
+- Exact commands for running the unit and complete correctness suites.</p>
+<p>Report test definitions and collected cases clearly where counts differ. Do not use test-count parity or a coverage percentage as the primary claim of success.</p>
+<p>Proceed autonomously on reversible choices. Respect repository policies and obtain permission for destructive actions, commits, or pushes when required.</p>
+<p>Guiding principle:\
+Every source test must be understood.\
+Every retained requirement must have meaningful destination coverage.\
+Every claimed gap closure must have evidence.</p></div>
+
+
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/prompts/2-test-migration-audit-2026-09-14.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

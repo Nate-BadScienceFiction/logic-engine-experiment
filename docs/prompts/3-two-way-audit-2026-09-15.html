@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="September 15, 2026 · All three prompts · Previous: test-migration audit">
+  <title>Prompt 3: two-way audit of code and tests · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="../HISTORY.html">History</a><a href="../ENGINE.html">How it works</a><a href="../AI-DEVELOPMENT.html">Building it with AI</a><a href="../MIGRATION.html">Migration</a><a href="../../evidence/README.html">Evidence</a><a href="../GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="prompt-3-two-way-audit-of-code-and-tests">Prompt 3: two-way audit of code and tests</h1>
+<p>September 15, 2026 · <a href="README.html">All three prompts</a> · Previous: <a href="2-test-migration-audit-2026-09-14.html">test-migration audit</a></p>
+<blockquote>
+<p>As I wrote it, from <code>prompt.md</code> in the rewrite's repository (AkiyaBlocks-CyclopsStorm, private for now), commit <code>beb6179</code>. Two changes: local folder paths are replaced with repository names, and numbered section titles are shown as headings.</p>
+</blockquote>
+<hr />
+<p>REPOSITORY:\
+AkiyaBlocks-CyclopsStorm</p>
+<p>Perform a comprehensive, bidirectional audit of the current implementation and its unit tests:</p>
+<ol>
+<li>Work from EVERY test toward the behavior it claims to verify.</li>
+<li>Work from EVERY production component back toward the tests that should protect it.</li>
+</ol>
+<p>Identify faulty tests, weak assertions, logical fallacies, missing coverage, and implementation defects. Develop a careful remediation plan, adversarially review that plan, then implement and verify it.</p>
+<p>Do not stop at findings, a proposal, a representative sample, or the first green test run. Carry the task through the complete audit, reviewed plan, implementation, and final adversarial verification.</p>
+<p>This is a correctness and test-quality exercise, not a test-count or coverage-percentage exercise. Choose the detailed methods and tools yourself, respecting the repository’s architecture and conventions.</p>
+<h3 id="1-establish-the-baseline-and-audit-scope">1. ESTABLISH THE BASELINE AND AUDIT SCOPE</h3>
+<p>Read the repository instructions, current architectural and behavioral documentation, implementation, test configuration, fixtures, and test runners.</p>
+<p>Inspect the working tree and preserve unrelated changes. Establish the existing test baseline and distinguish pre-existing failures from failures introduced or discovered during this work.</p>
+<p>Inventory all unit tests, including parameterized cases, generated tests, skipped tests, expected failures, and tests outside the obvious directories. Reconcile the source inventory with actual test collection so undiscovered or accidentally overwritten tests do not disappear from the audit.</p>
+<p>Inventory the first-party production code as well. Include relevant host boundaries, loaders, error handling, and supporting code, not just the central reasoning algorithms.</p>
+<p>Maintain a compact audit ledger showing what has been inspected, what behavior is involved, findings, planned action, and verification evidence. Batch work sensibly, but ensure every test and production component receives an explicit disposition rather than a blanket “reviewed” label.</p>
+<p>The historical BadScienceFiction-CyclopsStorm repository may be consulted as read-only context if needed. Its implementation and tests are not automatically authoritative, and the destination must remain independent of it.</p>
+<h3 id="2-audit-every-test-for-meaning-correctness-and-strength">2. AUDIT EVERY TEST FOR MEANING, CORRECTNESS, AND STRENGTH</h3>
+<p>For each test, identify the requirement or invariant it is intended to protect. Trace what it actually executes, including shared fixtures, helpers, mocks, and result transformations.</p>
+<p>Ask two separate questions:
+- Is the expected behavior correct and relevant to the current implementation’s intended contract?
+- Would this test fail for a plausible violation of that behavior?</p>
+<p>Look for:
+- Tautologies, circular expectations, and expected values derived from the same potentially faulty logic being tested.
+- Vacuous success, including assertions that pass because no results were produced or the important branch never executed.
+- Weak assertions that do not establish the claimed behavior, missing negative cases, and incomplete checks of returned answers.
+- Mocks that replace the behavior supposedly under test or merely verify their own configuration.
+- Swallowed exceptions, overly broad exception expectations, and skips or expected failures that conceal unrelated defects.
+- Setup errors, misleading names or comments, incorrect parameterization, and tests that exercise a different code path from the one claimed.
+- Sorting, deduplication, normalization, or helper behavior that hides ordering, multiplicity, identity, provenance, or other meaningful differences.
+- Shared state, fixture leakage, accidental ordering dependencies, and environmental assumptions.</p>
+<p>Do not use simplistic rules such as “every test needs an assert statement” or “all mocks are bad.” Exception tests, interaction tests, and intentional smoke tests can be meaningful. Evaluate what each test actually proves.</p>
+<p>Classify tests as sound, needing correction, needing strengthening, redundant with identified coverage, obsolete with justification, or blocked by missing or disputed behavior.</p>
+<p>Do not retire a requirement merely because its test fails or the destination does not implement it yet. Do not preserve an incorrect expectation merely because it came from the original suite.</p>
+<h3 id="3-audit-the-code-backward-to-coverage">3. AUDIT THE CODE BACKWARD TO COVERAGE</h3>
+<p>Independently review every production component and identify the behaviors, invariants, branches, boundaries, failure modes, and interactions that need protection.</p>
+<p>Then locate the tests that meaningfully establish those properties. Reading or executing a line is not evidence that its behavior has been checked.</p>
+<p>Look for:
+- Untested behavior and tests that reach code without asserting its effects.
+- Missing boundary, negative, malformed-input, and error-propagation cases.
+- State transitions and sequences of operations absent from fresh-instance tests.
+- Interactions that isolated component tests cannot establish.
+- Architectural promises that have no executable protection.
+- Dead, unreachable, or obsolete code mistakenly treated as useful functionality.</p>
+<p>For CyclopsStorm, challenge the relevant contracts around variable identity, unification, substitutions, facts and rules, answer ordering, recursive evaluation, supported negation and control constructs, temporal boundaries, competing fluent effects, persistence, provenance, mutation, caching, and query-state isolation.</p>
+<p>Check the distinction between complete logical failure and incomplete computation or execution failure wherever the engine promises it.</p>
+<p>Derive cases from actual supported or required behavior. Do not invent new language features merely to create tests.</p>
+<p>Use code coverage as a navigation aid, not proof of correctness. Use unit tests for isolated responsibilities and integration or conformance tests where the property crosses boundaries. Do not force every missing check into the unit-test category.</p>
+<h3 id="4-develop-and-adversarially-review-the-plan">4. DEVELOP AND ADVERSARIALLY REVIEW THE PLAN</h3>
+<p>Before substantial changes, consolidate the findings into a prioritized remediation plan.</p>
+<p>For each change, identify:
+- The defect or coverage gap and supporting evidence.
+- The intended behavior and why that expectation is justified.
+- Whether the remedy belongs in tests, fixtures, production code, documentation, or test infrastructure.
+- The risks and the evidence required to verify completion.</p>
+<p>Prioritize semantic correctness and tests that can pass against broken behavior. Avoid adding redundant tests or undertaking unrelated refactoring.</p>
+<p>Have an independent reviewer or agent challenge the plan where available. Otherwise perform a distinct adversarial review pass.</p>
+<p>The reviewer should try to refute findings, expose unjustified expectations, identify missing interactions, and determine whether proposed tests could still pass with an incorrect implementation.</p>
+<p>Revise the plan before implementation. Record substantive disagreements and their resolution. Do not treat reviewer agreement as a substitute for evidence.</p>
+<h3 id="5-implement-the-reviewed-changes">5. IMPLEMENT THE REVIEWED CHANGES</h3>
+<p>Implement the approved-by-review plan in coherent, verifiable batches.</p>
+<p>Correct faulty tests, strengthen weak ones, add missing coverage, and repair fixtures or helpers that undermine multiple tests. Preserve traceability when consolidating or retiring tests.</p>
+<p>When valid tests expose clear destination defects, make focused production fixes consistent with the intended contract. Keep those changes distinguishable from test corrections.</p>
+<p>Do not change expected values to match current output without independent justification. Do not weaken assertions, rewrite authored models, introduce legacy fallbacks, or broadly redesign the engine to obtain a green suite.</p>
+<p>When requirements genuinely conflict or remain unresolved, investigate the available evidence and document the issue explicitly. Do not invent certainty or silently encode a new semantic policy.</p>
+<p>Ensure all new tests are collected and included in the appropriate runners. Keep performance benchmarks opt-in and historical-engine comparisons separate from ordinary correctness tests.</p>
+<h3 id="6-verify-that-the-tests-can-detect-errors">6. VERIFY THAT THE TESTS CAN DETECT ERRORS</h3>
+<p>For critical tests and important gap closures, demonstrate sensitivity to plausible defects using targeted mutation checks, controlled fault injection, pre-fix execution, or another appropriate technique.</p>
+<p>Challenge both new tests and existing tests retained as important evidence. A green test against the correct implementation alone does not establish that it protects the intended behavior.</p>
+<p>Keep source-mutating experiments isolated. Do not allow parallel agents or reviewers to contaminate one another’s working trees. Restore all experimental changes before final verification.</p>
+<p>Check test isolation through appropriate scoped, full-suite, and alternate-order runs. Verify that fixtures and mocks do not leave global state behind.</p>
+<p>Use an independent review pass to inspect the implementation changes and resulting assertions. Pay particular attention to removed tests, relaxed expectations, newly introduced skips, and claims that a difficult gap has been closed.</p>
+<h3 id="7-run-the-final-verification-and-audit-your-own-conclusions">7. RUN THE FINAL VERIFICATION AND AUDIT YOUR OWN CONCLUSIONS</h3>
+<p>Preserve or update the destination’s Windows runners:
+- run_unit_tests.bat
+- run_tests.bat</p>
+<p>Verify that they invoke the intended suites, include the new tests, accept additional test arguments, and propagate failure exit codes. They must not depend on the historical repository.</p>
+<p>Run the unit suite and complete correctness suite after the final substantive changes. Run the project’s relevant configured quality checks. Verify the batch files on Windows when available and distinguish native verification from inspection or non-Windows execution.</p>
+<p>Adversarially review the final diff, audit ledger, coverage claims, and proposed completion report.</p>
+<p>Specifically ask:
+- Was every inventoried test and production component actually reviewed?
+- Does each claimed fix have evidence beyond a passing test?
+- Could an always-empty, always-successful, stale-state, or otherwise plausible broken implementation still satisfy the important assertions?
+- Were requirements accidentally weakened or meaningful cases lost?
+- Are any tests uncollected, unjustifiably skipped, or dependent on unavailable assets?
+- Do the final reported results correspond to the final working tree?</p>
+<p>Correct any issues found and rerun affected verification. Do not stop while actionable, in-scope defects remain.</p>
+<h3 id="8-completion-and-reporting">8. COMPLETION AND REPORTING</h3>
+<p>Finish only after the complete inventories have been reconciled, the reviewed remediation plan has been implemented, and final verification has been performed.</p>
+<p>For genuinely external blockers or unresolved requirements, complete all unblocked work and state precisely what remains. Never describe a blocked audit or unverified change as complete.</p>
+<p>Provide a concise final report covering:
+- Baseline and final test results.
+- Audit scope and accounting for all tests and production components.
+- Important test defects corrected.
+- Coverage gaps filled and production defects fixed.
+- Adversarial findings and evidence that critical tests detect errors.
+- Remaining failures, justified skips, expected failures, blockers, or semantic questions.
+- Exact commands for running the unit and complete correctness suites.</p>
+<p>Distinguish test definitions from collected parameterized cases when reporting counts. Do not present test-count growth or a coverage percentage as the principal evidence of success.</p>
+<p>Proceed autonomously on reversible decisions. Respect repository policies, preserve unrelated work, and obtain permission for destructive actions, commits, or pushes when required.</p>
+<p>Guiding principle:\
+A test is valuable because of the incorrect behavior it can detect.\
+Coverage is meaningful only when the right behavior is actually asserted.\
+Completion requires evidence, not merely a green summary.</p></div>
+
+
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/prompts/3-two-way-audit-2026-09-15.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

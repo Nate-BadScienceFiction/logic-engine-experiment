@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="For readers who know Prolog, or want to. This page covers the current engine, the September 2026 rewrite (commit 9be7804): what it does, where it departs…">
+  <title>The engine, precisely · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="HISTORY.html">History</a><a href="ENGINE.html" aria-current="page">How it works</a><a href="AI-DEVELOPMENT.html">Building it with AI</a><a href="MIGRATION.html">Migration</a><a href="../evidence/README.html">Evidence</a><a href="GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="the-engine-precisely">The engine, precisely</h1>
+<p><em>For readers who know Prolog, or want to.</em> This page covers the current engine, the September 2026 rewrite (commit <code>9be7804</code>): what it does, where it departs from ISO Prolog and SWI-Prolog, and where it's known to fall short. Behavior described here was checked by running programs against that commit, with SWI-Prolog 10.0.2 as the reference. Terms are in the <a href="GLOSSARY.html">glossary</a>.</p>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#in-brief">In brief</a></li><li><a href="#facts-rules-and-story-events">Facts, rules and story events</a></li><li><a href="#quick-reference">Quick reference</a></li><li><a href="#negation-and-stratification">Negation and stratification</a></li><li><a href="#tabling">Tabling</a></li><li><a href="#result-status">Result status</a></li><li><a href="#story-time-the-event-calculus">Story time: the Event Calculus</a></li><li><a href="#explanations-and-provenance">Explanations and provenance</a></li><li><a href="#known-gaps">Known gaps</a></li><li><a href="#the-host-api">The host API</a></li><li><a href="#performance">Performance</a></li><li><a href="#design-in-one-paragraph">Design in one paragraph</a></li><li><a href="#what-changed-from-the-earlier-engine">What changed from the earlier engine</a></li><li><a href="#compared-with-swi-prolog">Compared with SWI-Prolog</a></li></ul></nav>
+<section aria-labelledby="in-brief"><h2 id="in-brief">In brief</h2>
+<p>A small, deterministic Python kernel (about 7,400 lines, no runtime dependencies) for a Prolog dialect aimed at story worlds:</p>
+<ul>
+<li><strong>Two execution paths.</strong> Non-recursive predicates run by ordinary SLD resolution with backtracking. Recursive predicates are detected and tabled automatically, then evaluated by naive fixpoint iteration. On that path cut is rejected, and answers are sets.</li>
+<li><strong>Stratified negation, checked per predicate before any query runs.</strong></li>
+<li><strong>A native Event Calculus</strong> (<code>holds_at/2</code>) with explanations produced by the same procedure that answers the query.</li>
+<li><strong>Every result carries a status:</strong> <code>COMPLETE</code> or <code>EXHAUSTED</code>.</li>
+</ul>
+<p>It deliberately isn't a general-purpose Prolog. By default, undefined and unsupported predicates fail quietly, with status <code>COMPLETE</code>. <a href="#known-gaps">Known gaps</a> lists the places where it can be wrong without saying so.</p>
+</section>
+<section aria-labelledby="facts-rules-and-story-events"><h2 id="facts-rules-and-story-events">Facts, rules and story events</h2>
+<p>Facts record relationships; rules infer new ones:</p>
+<pre><code class="language-prolog">parent(alice, bob).    parent(alice, carol).    parent(bob, dave).
+grandparent(X, Z) :- parent(X, Y), parent(Y, Z).
+</code></pre>
+<p>Ask <code>grandparent(alice, Who)</code>. The engine finds bob among alice's children, then dave among bob's children. It backs up to try carol, who has no recorded children. The answer is <code>dave</code>, a relationship nobody explicitly wrote down. Backtracking explores those alternatives; tabling remembers answers for recursive rules, subject to the finiteness and budget limits below.</p>
+<p>The Event Calculus adds changes over time. An event such as Harriet's hack switches a property such as the vending machine being offline on or off. The engine follows that property's persistence through the named story moments. Its explanation identifies the initiating event and, when recorded in the model, a supporting sentence. The <a href="#story-time-the-event-calculus">timed-rule example below</a> explains the limits of this interpretation.</p>
+</section>
+<section aria-labelledby="quick-reference"><h2 id="quick-reference">Quick reference</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Quick reference table"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Behavior</th>
+<th>Versus ISO / SWI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td>ISO operator table, fixed</td>
+<td>No <code>op/3</code>. <code>"abc"</code> reads as the atom <code>abc</code>; no strings, no <code>0'c</code></td>
+</tr>
+<tr>
+<td>Unification</td>
+<td>Trail-based; <strong>occurs check on</strong></td>
+<td>Off by default in SWI. <code>X = f(X)</code> fails</td>
+</tr>
+<tr>
+<td>Numbers</td>
+<td><code>1 = 1.0</code> fails; <code>1</code>, <code>'1'</code>, <code>1.0</code> are distinct</td>
+<td>As ISO</td>
+</tr>
+<tr>
+<td>Resolution</td>
+<td>SLD, depth-first, clause order; one ordered clause list per predicate; first-argument indexing</td>
+<td>Standard, for non-recursive predicates</td>
+</tr>
+<tr>
+<td>Answers</td>
+<td><strong>Deduplicated at the top level by default</strong>; <code>ask(goal, distinct=False)</code> reports SLD multiplicity for untabled goals</td>
+<td>SWI reports every derivation. <code>findall/3</code> keeps duplicates, so top level and rule body can disagree on multiplicity</td>
+</tr>
+<tr>
+<td>Control</td>
+<td><code>,</code> <code>;</code> <code>-&gt;</code> <code>*-&gt;</code> <code>\+</code>/<code>not</code> <code>!</code> <code>call/1..8</code> <code>once</code> <code>ignore</code> <code>forall</code></td>
+<td>No <code>catch/throw</code></td>
+</tr>
+<tr>
+<td>Cut</td>
+<td>Local to the clause; local inside if-then-else conditions and <code>call/N</code></td>
+<td><strong>Rejected in any recursive (tabled) predicate</strong>, which is more conservative than XSB. If-then-else and <code>once/1</code> are allowed</td>
+</tr>
+<tr>
+<td>Negation</td>
+<td>ISO <code>\+</code>: no reordering, no floundering check</td>
+<td>Programs must be stratified <em>per predicate</em>; see below</td>
+</tr>
+<tr>
+<td>Arithmetic</td>
+<td><code>//</code> truncates, <code>div</code> floors, typed errors</td>
+<td><code>X is a + 1</code> raises a type error, as in SWI</td>
+</tr>
+<tr>
+<td>Built-ins</td>
+<td>74 built-in predicates (counting <code>once/1</code>, <code>forall/2</code>, <code>ignore/1</code> and <code>holds_at/2</code>): lists, <code>findall/bagof/setof/aggregate_all</code>, <code>sort/msort</code>, <code>=..</code>, <code>functor/arg/copy_term</code>, atom and number conversion</td>
+<td>No <code>assert/retract</code> as goals, exceptions, I/O, DCG, modules, constraints, <code>dif/freeze</code>, threads</td>
+</tr>
+<tr>
+<td>Unknown predicates</td>
+<td><strong>Fail with status <code>COMPLETE</code></strong> by default</td>
+<td>ISO raises an existence error; <code>KnowledgeBase(unknown_fails=False)</code> does too</td>
+</tr>
+<tr>
+<td>Recursion</td>
+<td>Tabled automatically; left and mutual recursion terminate</td>
+<td>See <a href="#tabling">Tabling</a> for the conditions</td>
+</tr>
+<tr>
+<td>Result status</td>
+<td>Every result is <code>COMPLETE</code> or <code>EXHAUSTED</code></td>
+<td>SWI can do similar things per call (<code>call_with_inference_limit/3</code>, tabling restraints); here it's on every answer</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>Native <code>holds_at/2</code> over <code>happens/initiates/terminates</code></td>
+<td>Not part of Prolog; see <a href="#story-time-the-event-calculus">Story time</a></td>
+</tr>
+<tr>
+<td>Explanation</td>
+<td><code>explain(fluent, time)</code>, <code>spans_for(fact)</code></td>
+<td>No rule-level proof trees</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section aria-labelledby="negation-and-stratification"><h2 id="negation-and-stratification">Negation and stratification</h2>
+<p><code>\+ G</code> succeeds if <code>G</code> has no solution. As in ISO, it binds nothing and doesn't check for floundering. The engine also doesn't reorder goals around negation. The earlier engine did, which sometimes gave the declaratively right answer, but not Prolog's.</p>
+<p>Before any query runs, the program is checked for stratification: no predicate may depend on its own negation through any non-monotone construct. Those constructs are <code>\+</code>, <code>forall</code>, aggregates, if-then-else and soft-cut <em>with an else branch</em>, and <code>ignore/1</code>. The check looks through <code>^/2</code> and statically known <code>call/N</code> goals.</p>
+<p>The check works at the level of predicates, not ground atoms. So programs that are safe only because of their data are rejected (in the literature, programs that are modularly but not predicate-stratified):</p>
+<pre><code class="language-prolog">move(a, b).  move(b, c).
+win(X) :- move(X, Y), \+ win(Y).
+% SemanticConflict: negation is not stratified: {win/1} depends on its own negation
+</code></pre>
+<p>SWI answers this program (<code>win(b)</code>), and with tabling it would use the well-founded semantics. This engine refuses it rather than guess. A dependency hidden behind a runtime <code>call/1</code> can slip past the static check. It's caught at run time and reported as <code>EXHAUSTED</code>, which overloads a status that otherwise means "a budget ran out."</p>
+</section>
+<section aria-labelledby="tabling"><h2 id="tabling">Tabling</h2>
+<p>Recursive strongly connected components are tabled automatically (<code>auto_table=True</code>); <code>:- table</code> also works. Tables are keyed by call variant and filled by naive iteration. All the tables in a stratum iterate together until nothing changes, which makes left and mutual recursion complete:</p>
+<pre><code class="language-prolog">road(a, b). road(b, c). road(c, a). road(c, d).
+reach(X, Y) :- reach(X, Z), road(Z, Y).
+reach(X, Y) :- road(X, Y).
+% ?- reach(a, W).   W = b ; c ; a ; d      (terminates despite the cycle)
+</code></pre>
+<p>The conditions and costs:</p>
+<ul>
+<li><strong>Termination needs finiteness.</strong> Recursion terminates and is complete when there are finitely many call variants and answers. An infinite answer set, such as <code>nat(z). nat(s(X)) :- nat(X).</code>, runs until the budget, as it would under tabling in SWI.</li>
+<li><strong>Answers from tabled predicates are sets.</strong> Their order and multiplicity differ from plain SLD resolution.</li>
+<li><strong>Tables are query-local.</strong> Nothing is reused across queries.</li>
+<li><strong>There's no semi-naive evaluation,</strong> so later passes can repeat work on answers already found. The cost depends on the rules, call variants and term sizes; answer count alone does not determine it. The algorithm is closer to iterated (linear) tabling than to SLG.</li>
+<li><strong>No answer subsumption and no incremental tabling.</strong></li>
+<li><strong>Cut is rejected in tabled predicates, and the rejection is global.</strong> Loading succeeds, but from then on <em>every</em> query on that knowledge base raises <code>SemanticConflict</code>, even <code>1 =:= 1</code>, until the clause is removed. A predicate that fails the stratification check does the same. Set <code>auto_table=False</code> to allow cut; left recursion then runs until the budget.</li>
+<li><strong>Tabling everything recursive has a price.</strong> Ordinary recursive list code pays for it:</li>
+</ul>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Tabling table"><table>
+<thead>
+<tr>
+<th>Query</th>
+<th style="text-align: right;">Auto-tabled</th>
+<th style="text-align: right;"><code>auto_table=False</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Splitting a 100-element list with a user-defined <code>append/3</code></td>
+<td style="text-align: right;">4.3 s</td>
+<td style="text-align: right;">0.05 s</td>
+</tr>
+<tr>
+<td>Same, 50 elements</td>
+<td style="text-align: right;">0.4 s</td>
+<td style="text-align: right;">0.01 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>A left-recursive all-pairs "reaches" rule over a 160-link chain (12,880 answers) exhausts the default budget at 11,169 answers, correctly marked <code>EXHAUSTED</code>. The same rule written right-recursively finishes in 0.3 seconds, and the left-recursive form over 80 links completes in 1.6.</p>
+</section>
+<section aria-labelledby="result-status"><h2 id="result-status">Result status</h2>
+<p>Every query result carries a status (the code calls it <code>Completion</code>; it has nothing to do with Clark's completion):</p>
+<ul>
+<li><code>COMPLETE</code>: the search ran to the end.</li>
+<li><code>EXHAUSTED</code>: a budget ran out. The defaults are 2,000,000 resolution steps and a depth of 1,200. The answers found so far are returned; anything else is unknown.</li>
+</ul>
+<p><code>kb.query()</code> raises <code>IncompleteResult</code> rather than return an <code>EXHAUSTED</code> result, so an empty list never means "gave up." It can still mean "no such predicate," because of the quiet default for unknown predicates. <code>kb.ask()</code> returns partial answers with the status attached.</p>
+<p><strong>Weak spots:</strong></p>
+<ul>
+<li><strong>The default budget is generous.</strong> <code>nat(z). nat(s(X)) :- nat(X).</code> reports <code>EXHAUSTED</code> after 198 answers in about 5 seconds with a 20,000-step budget. With the default budget it would take, by extrapolation, around an hour.</li>
+<li><strong>Converting partial answers can be slow.</strong> <code>gen(L) :- member(_, L).</code> reports <code>EXHAUSTED</code> in about 6 seconds, but converting its 1,498 partial lists to Python values takes about 100 more.</li>
+<li><strong>Integer arithmetic isn't budgeted.</strong> <code>X is 10^5000000</code> counts as one step.</li>
+</ul>
+</section>
+<section aria-labelledby="story-time-the-event-calculus"><h2 id="story-time-the-event-calculus">Story time: the Event Calculus</h2>
+<pre><code class="language-prolog">time(t1). time(t2). time(t3). time(t4).
+before(t1, t2). before(t2, t3). before(t3, t4).
+happens(switch_on, t1).    initiates(switch_on, light_on).
+happens(switch_off, t3).   terminates(switch_off, light_on).
+% ?- holds_at(light_on, T).    T = t2 ; t3
+</code></pre>
+<p>The engine implements a simplified Event Calculus in the style of the 1990s formulations (Shanahan's among them), evaluated natively rather than by Prolog axioms.</p>
+<ul>
+<li><strong>Vocabulary.</strong> <code>happens/2</code>, <code>initiates/2,3</code>, <code>terminates/2,3</code> (facts or rules), <code>initially/1</code>, <code>holds_at/2</code>.</li>
+<li><strong>Time.</strong> Time points are named by <code>time/1</code>, by <code>before/2</code>, by <code>happens/2</code>, or by the ground time in an <code>initiates/3</code>/<code>terminates/3</code> clause. Plain numbers work too. <code>T1 ≺ T2</code> means reachability in <code>before/2</code>, or numeric order. Points on unconnected chains are incomparable, and a cycle in <code>before/2</code> is reported.</li>
+<li><strong>When effects are visible.</strong> A fluent initiated at <em>T1</em> and terminated at <em>T2</em> holds on (<em>T1</em>, <em>T2</em>]: strictly after it starts, up to and including the moment it ends. This is the standard reading. A rule body that asks <code>holds_at(G, T)</code> therefore sees the state <em>before</em> anything that happens at <code>T</code>.</li>
+<li><strong>Simultaneity.</strong> <code>tie_break="init_wins"</code> (the default) or <code>"term_wins"</code> decides a tick where the same fluent is both initiated and terminated.</li>
+<li><strong>Exclusive fluents.</strong> Only by declaration. <code>exclusive_fluent(f)</code> means <code>f</code> holds at most one value per slot, where a slot is the functor plus every argument except the last. Initiating <code>f(a, v2)</code> ends <code>f(a, v1)</code>. On a contested tick the first-authored initiation wins.</li>
+</ul>
+<p><strong>Where it departs from the classical Event Calculus.</strong> In the textbook axioms, the third argument of <code>initiates/3</code> and <code>terminates/3</code> is the <em>occurrence time</em> of an event that must also appear in <code>happens/2</code>. Here it's the time the effect lands, and <code>happens/2</code> isn't required. That lets a model be written entirely in the <code>/3</code> form. But conditional effect rules written the classical way mean something different:</p>
+<pre><code class="language-prolog">happens(flip, 1).  happens(flip, 3).  time(1). time(2). time(3). time(4). time(5).
+initiates(flip, on, T)  :- \+ holds_at(on, T).     % a toggle
+terminates(flip, on, T) :- holds_at(on, T).
+% Classical reading (SWI with the textbook axioms):  on holds at 2, 3
+% This engine:                                       on holds at 2, 4, explained by a
+%                                                    termination at 2, when flip didn't happen
+</code></pre>
+<p>The answer comes back <code>COMPLETE</code>, with no warning. The same applies to any conditional timed rule. <code>terminates(check, on, T) :- holds_at(g, T).</code> fires at every moment <code>g</code> holds, not only when <code>check</code> happens. Even <code>terminates(check, on, _)</code> misfires.</p>
+<p>Here, a timed effect rule has to say when its event happens:</p>
+<pre><code class="language-prolog">terminates(check, on, T) :- happens(check, T), holds_at(g, T).
+</code></pre>
+<p>The rewrite's own docs describe the 3-argument forms but never flag this departure from the classical reading.</p>
+</section>
+<section aria-labelledby="explanations-and-provenance"><h2 id="explanations-and-provenance">Explanations and provenance</h2>
+<ul>
+<li><strong><code>kb.explain(fluent, time)</code></strong> says why a fluent does or doesn't hold. It comes from the same decision procedure as <code>holds_at</code>, not reconstructed afterwards. The reasons are <code>initially</code>, <code>initiated</code> (by which event, when), <code>clipped</code> (by which event, when), <code>never_initiated</code>, and <code>unexplained</code> (a budget ran out).</li>
+<li><strong><code>kb.spans_for(fact)</code></strong> returns the source-text spans the model records as supporting a fact, through authored <code>fact_id/2</code> and <code>supports/2</code> facts.</li>
+<li><strong>There are no rule-level derivations.</strong> The engine doesn't record which clauses and bindings produced an answer. It has no <code>why/1</code>, <code>derivation/1</code> or <code>evidence_chain/1</code>, which is why it fails the three explanation probes in the <a href="../evidence/README.html#the-21-check-comparison">comparison</a>. And <code>explain()</code> on a fact that isn't a fluent reports <code>never_initiated</code>, even when the fact is true.</li>
+</ul>
+</section>
+<section aria-labelledby="known-gaps"><h2 id="known-gaps">Known gaps</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Known gaps table"><table>
+<thead>
+<tr>
+<th>Gap</th>
+<th>Example</th>
+<th>Fails loudly?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unknown or unsupported predicates fail</td>
+<td><code>catch(p, _, true)</code>, <code>assertz(q(1))</code> → no answers</td>
+<td><strong>No</strong>: status <code>COMPLETE</code>. Use <code>unknown_fails=False</code> while authoring</td>
+</tr>
+<tr>
+<td>Timed effect rules use the effect-time reading</td>
+<td>The toggle above</td>
+<td><strong>No</strong></td>
+</tr>
+<tr>
+<td>Effects at time points the model never names are invisible</td>
+<td><code>terminates(off, f, T2) :- happens(off, T), T2 is T + 1.</code> with <code>T2</code> unnamed</td>
+<td><strong>No</strong>: a conformance test pins this as a known limit</td>
+</tr>
+<tr>
+<td><code>explain()</code> on a non-fluent</td>
+<td><code>explain("anc(tom, bob)", …)</code> → <code>never_initiated</code></td>
+<td><strong>No</strong></td>
+</tr>
+<tr>
+<td>Predicate-level stratification</td>
+<td><code>win/move</code> above</td>
+<td>Yes, but globally: every query on the knowledge base raises <code>SemanticConflict</code></td>
+</tr>
+<tr>
+<td>Cut in a recursive predicate</td>
+<td><code>r(X,Y) :- e(X,Y), !.</code> plus a recursive clause</td>
+<td>Yes, but globally, as above</td>
+</tr>
+<tr>
+<td>Auto-tabling slows recursive list code</td>
+<td>User-defined <code>append/3</code> on 100 elements: 4.3 s</td>
+<td>No error; turn off <code>auto_table</code> for such code</td>
+</tr>
+<tr>
+<td>Left-recursive closures over long chains exceed the default budget</td>
+<td>All-pairs "reaches" over a 160-link chain</td>
+<td>Yes (<code>EXHAUSTED</code>); the right-recursive form is fine</td>
+</tr>
+<tr>
+<td>Infinite answer sets</td>
+<td><code>nat/1</code></td>
+<td>Yes (<code>EXHAUSTED</code>), but only after the budget, which can take a long time</td>
+</tr>
+<tr>
+<td>No rule-level explanations</td>
+<td><code>why/1</code></td>
+<td>Yes: the predicate doesn't exist (and fails quietly, see row 1)</td>
+</tr>
+<tr>
+<td>No concurrency support</td>
+<td>Querying while another thread adds facts</td>
+<td>Not designed for it; deferred</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section aria-labelledby="the-host-api"><h2 id="the-host-api">The host API</h2>
+<pre><code class="language-python">from cyclops import KnowledgeBase
+
+kb = KnowledgeBase()                     # options: occurs_check, tie_break, unknown_fails, auto_table, ...
+kb.load(text) / kb.consult(path)         # add clauses
+kb.query(goal)                           # answers as Python values; raises if the search didn't finish
+kb.ask(goal, limits=..., distinct=...)   # Solutions: answers + status + notes
+kb.holds(goal)                           # bool; raises if it gave up before finding an answer
+kb.explain(fluent, time)                 # see above
+kb.assert_(clause) / kb.retract(clause); kb.snapshot() / kb.restore(s)
+</code></pre>
+<ul>
+<li><strong>Answer order</strong> is part of the contract and is tested across processes and hash seeds.</li>
+<li><strong>JSON output</strong> tags atoms and compounds and includes the status.</li>
+<li><strong>Game hooks.</strong> <code>affords(Action, Site)</code>, <code>guard(Action, Order, Condition, Message)</code> and <code>action_label/2</code> let a host ask "may I do this here, and if not, what do I say?" Guards are checked in the author's order, and the first unmet one supplies the message. An action the site doesn't offer <em>abstains</em>, which is different from being denied.</li>
+</ul>
+</section>
+<section aria-labelledby="performance"><h2 id="performance">Performance</h2>
+<p>Revised full-binding timings on one Windows machine, September 25, 2026. Both engines materialize every requested variable; the rewrite uses native answer terms, with Python value conversion measured separately. See the <a href="../evidence/benchmarks-revised-2026-09-25.html">method, exact-answer checks, batch ranges and raw timings</a>.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Performance table"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Rewrite, automatic tabling</th>
+<th style="text-align: right;">Rewrite, <code>auto_table=False</code></th>
+<th style="text-align: right;">SWI-Prolog 10.0.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Naive reverse of a 30-element list</td>
+<td style="text-align: right;">107.88 ms</td>
+<td style="text-align: right;">9.20 ms</td>
+<td style="text-align: right;">0.00807 ms</td>
+</tr>
+<tr>
+<td>All solutions of 6-queens</td>
+<td style="text-align: right;">507.74 ms</td>
+<td style="text-align: right;">205.68 ms</td>
+<td style="text-align: right;">0.55199 ms</td>
+</tr>
+<tr>
+<td>All splits of a 100-element list</td>
+<td style="text-align: right;">4,201.41 ms</td>
+<td style="text-align: right;">18.60 ms</td>
+<td style="text-align: right;">0.22084 ms</td>
+</tr>
+</tbody>
+</table></div>
+<p>These measurements include query setup and result construction, and do not isolate interpreter overhead. SWI executes compiled goals; the rewrite parses each query. The list-split SWI and Python-conversion measurements varied substantially. The original placeholder-answer SWI ratios are superseded.</p>
+<p>The earlier story-model audit measured about 20 ms to load 748 facts and 1–16 ms for example queries/explanations; those particular observations were not retimed in this benchmark run. There is no cross-query answer cache. The old engine's cache was fast and had a separate result-aliasing bug: fixing that bug would not eliminate the caching advantage.</p>
+</section>
+<section aria-labelledby="design-in-one-paragraph"><h2 id="design-in-one-paragraph">Design in one paragraph</h2>
+<p>There is one term representation, one reader, and one clause list per predicate holding facts and rules together. One solver serves top-level queries and rule bodies, and there is one <code>holds_at</code>. All long-lived state belongs to the program and is versioned by a single revision counter. Everything query-local lives in a context created per query and thrown away. Derived data (static analysis, the timeline, diagnostics) is tagged with the revision it came from, so staleness is detected by comparing one integer.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Design in one paragraph table"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th style="text-align: right;">Lines</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kernel: 17 modules for terms, syntax, bindings, program, solver, built-ins, arithmetic, tabling, analysis, temporal</td>
+<td style="text-align: right;">6,691</td>
+</tr>
+<tr>
+<td>Host boundary: values, JSON, affordances</td>
+<td style="text-align: right;">519</td>
+</tr>
+<tr>
+<td>Package <code>__init__</code> files</td>
+<td style="text-align: right;">216</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>7,426</strong></td>
+</tr>
+<tr>
+<td>Tests: 38 files; 1,144 correctness cases, plus 253 for the comparison harness</td>
+<td style="text-align: right;">13,137</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section aria-labelledby="what-changed-from-the-earlier-engine"><h2 id="what-changed-from-the-earlier-engine">What changed from the earlier engine</h2>
+<p>The <a href="MIGRATION.html">migration drill-down</a> supplies the measured comparison, test dispositions and capability gaps; the <a href="../evidence/comparison-revised-2026-09-25.html">revised 21-case run</a> separates observed correctness from timeout uncertainty.</p>
+<p><strong>Semantics the rewrite chose differently:</strong></p>
+<ul>
+<li>ISO <code>\+</code> with no goal reordering;</li>
+<li>ISO precedence for <code>,</code>, <code>;</code> and <code>\+</code>;</li>
+<li><code>1</code> and <code>1.0</code> kept distinct;</li>
+<li><code>//</code> truncates;</li>
+<li>exclusivity only by declaration;</li>
+<li>no <code>why</code>/<code>derivation</code>/<code>evidence_chain</code> predicates.</li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul>
+<li>two-evaluator routing;</li>
+<li>a seven-stage query pipeline;</li>
+<li>a handler registry;</li>
+<li>a six-level cache hierarchy;</li>
+<li>five parsers.</li>
+</ul>
+<p><strong>Left out:</strong> the text parser, the command-line game, the narrative tools and the analysis tools.</p>
+<p><strong>Deferred:</strong> semi-naive tabling, cross-query caching, rule-level explanation and concurrency.</p>
+<p><a href="HISTORY.html">HISTORY.md</a> runs the same programs on both.</p>
+</section>
+<section aria-labelledby="compared-with-swi-prolog"><h2 id="compared-with-swi-prolog">Compared with SWI-Prolog</h2>
+<p>SWI-Prolog is a complete, fast, largely ISO-conformant system with nearly 40 years of engineering behind it. For almost anything, use SWI; for Python, its <code>janus</code> bridge works well.</p>
+<p>This engine is for one job: reasoning about authored story worlds, with answers you can explain. For that job it offers:</p>
+<ul>
+<li>a native Event Calculus whose explanations come from the decision procedure itself;</li>
+<li>source-sentence provenance;</li>
+<li>a result status on every answer by default;</li>
+<li>a small, dependency-free Python package.</li>
+</ul></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/ENGINE.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

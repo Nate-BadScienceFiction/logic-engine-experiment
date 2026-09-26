@@ -50,10 +50,11 @@
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
-  <header><div class="wrap"><a href="../index.html#punchline">Cyclops Storm / Lab notes</a></div></header>
+  <header><div class="wrap"><a href="../index.html#how-it-got-here">Cyclops Storm / Lab notes</a></div></header>
   <main id="main" class="wrap">
     <p class="date">Comparison measured <time datetime="2026-09-25">September 25, 2026</time></p>
     <h1 id="method">What the rewrite improves</h1>
+    <aside aria-label="Historical scoring notice" style="border-left:4px solid #9a5b1a; background:#f1eee5; padding:1rem; margin:1rem 0;"><strong>Historical scoring — superseded.</strong> The figures and calculations below retain the original rules, which counted external timeouts as passes and misread one refusal. The <a href="comparison-revised-2026-09-25.html">current cross-check results</a> are earlier engine: <strong>11 pass / 10 fail</strong>; rewrite: <strong>16 pass / 3 fail / 2 unknown</strong>. These are scoring corrections, not engine changes.</aside>
     <p class="lead">I used the same 21 checks to compare saved versions of both engines. The rewrite fixes several ways to lose information or get a misleading answer. That gives me a more useful starting point for game behavior; explanation support remains unfinished.</p>
     <div class="comparison">
       <section aria-labelledby="progress">
@@ -79,7 +80,7 @@
       </section>
     </div>
     <aside id="limits" class="reading-note" aria-label="How to read these results">
-      <p>Without the two timeout cases, the rewrite passes <strong>16 of 19 checks; the earlier engine passes 10</strong>. Those two passes come from the test runner stopping endless searches. They do not show the engine reporting an incomplete search.</p>
+      <p>Without the two timeout cases, the rewrite passes <strong>16 of 19 checks; the earlier engine passes 10</strong>. Those two passes come from the test runner stopping endless searches. They do not show the engine reporting an incomplete search, and under the case rule a hung engine would pass as well: on one case the engine’s step budget had not run out after 25 seconds; on the other it stopped after about 6 seconds, but converting its 1,498 partial answers outlasted the timeout.</p>
       <p id="measurement-limits" class="limits">The checks were selected with knowledge of both engines. They establish specific behavior improvements; comparable working hours and costs have not been recorded.</p>
     </aside>
     <div id="technical-details">
@@ -91,6 +92,6 @@
       </nav>
     </div>
   </main>
-  <footer><div class="wrap links"><a href="../index.html">Lab notes</a><a href="index.html">Results by case</a><a href="https://natecombs.substack.com/">My Substack</a><a href="https://www.youtube.com/watch?v=NYFGCESmikA">DHH / Lex Fridman #501</a></div></footer>
+  <footer><div class="wrap links"><a href="../index.html">Lab notes</a><a href="index.html">Results by case</a><a href="https://natecombs.substack.com/">My Substack</a></div></footer>
 </body>
 </html>

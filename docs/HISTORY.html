@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The long version of the story in the README. This page covers what the engine could do at each stage, what it took to get there, and what went wrong along…">
+  <title>How the engine grew · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="HISTORY.html" aria-current="page">History</a><a href="ENGINE.html">How it works</a><a href="AI-DEVELOPMENT.html">Building it with AI</a><a href="MIGRATION.html">Migration</a><a href="../evidence/README.html">Evidence</a><a href="GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="how-the-engine-grew">How the engine grew</h1>
+<p><em>The long version of the story in the <a href="../index.html">README</a>.</em> This page covers what the engine could do at each stage, what it took to get there, and what went wrong along the way. It's organized by what became <em>possible</em>, not by which module was rewritten.</p>
+<p><strong>Sources.</strong> Dates and counts come from the engine's private repositories: commit history, the test log the project kept from the start, and small programs run against saved snapshots of each engine. The test counts are "passing pytest cases" as logged at the time. They measure activity more than quality; <a href="../evidence/README.html#what-the-test-counts-mean">evidence/README.md</a> explains why. Where something is my inference rather than a record, I say so.</p>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#same-programs-three-engines">Same programs, three engines</a></li><li><a href="#at-a-glance">At a glance</a></li><li><a href="#1-a-weekend-prototype-august-2025">1. A weekend prototype (August 2025)</a></li><li><a href="#2-growing-up-fast-septemberoctober-2025">2. Growing up fast (September–October 2025)</a></li><li><a href="#3-consolidation-and-what-the-tests-couldnt-see-november-2025february-2026">3. Consolidation, and what the tests couldn't see (November 2025–February 2026)</a></li><li><a href="#4-its-own-repository-februaryaugust-2026">4. Its own repository (February–August 2026)</a></li><li><a href="#5-starting-over-september-2026">5. Starting over (September 2026)</a></li><li><a href="#sources">Sources</a></li></ul></nav>
+<section aria-labelledby="same-programs-three-engines"><h2 id="same-programs-three-engines">Same programs, three engines</h2>
+<p>The most direct way to see what changed is to run small, textbook programs on saved snapshots of each engine, with SWI-Prolog 10.0.2 as the reference.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Same programs, three engines table"><table>
+<thead>
+<tr>
+<th>Program and query</th>
+<th>SWI-Prolog</th>
+<th>Feb 2026</th>
+<th>Aug 2026</th>
+<th>Rewrite, Sep 2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c(X) :- X = 1, !.</code>  <code>c(2).</code>  → <code>c(X)</code></td>
+<td>1</td>
+<td>1, 2</td>
+<td>1, 2</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>max(X,Y,X) :- X &gt;= Y, !.</code>  <code>max(_,Y,Y).</code>  → <code>max(3,2,M)</code></td>
+<td>3</td>
+<td>2, 3</td>
+<td>2, 3</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>e(a,b). e(b,c). e(c,d).</code>  <code>lp(X,Y) :- lp(X,Z), e(Z,Y).</code>  <code>lp(X,Y) :- e(X,Y).</code>  → <code>lp(a,Y)</code></td>
+<td>b, c, d (with tabling)</td>
+<td>b</td>
+<td>b, c, d</td>
+<td>b, c, d</td>
+</tr>
+<tr>
+<td><code>item(a). item(b). blocked(b).</code>  <code>s(X) :- \+ blocked(X), item(X).</code>  → <code>s(X)</code></td>
+<td>none</td>
+<td>a</td>
+<td>a</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>p(1). p('1'). p(1.0).</code>  → <code>p(X)</code></td>
+<td>1, '1', 1.0</td>
+<td>not run</td>
+<td>1</td>
+<td>1, '1', 1.0</td>
+</tr>
+<tr>
+<td><code>t(X) :- X is a + 1.</code>  → <code>t(X)</code></td>
+<td>type error</td>
+<td>not run</td>
+<td>no answers</td>
+<td>type error</td>
+</tr>
+</tbody>
+</table></div>
+<p>How to read it:</p>
+<ul>
+<li><strong>Cut.</strong> The first two rows are the classic uses of cut: stop trying later clauses. The earlier engine never pruned a later <em>fact</em> clause, before or after the move to its own repository.</li>
+<li><strong>Left recursion.</strong> Left recursion over a chain was incomplete in February, then complete again by August.</li>
+<li><strong>The negation row is a difference in meaning, not simply a bug.</strong> Prolog evaluates goals left to right, so <code>\+ blocked(X)</code> fails while <code>X</code> is still unbound. The earlier engine reordered the goals and answered <code>a</code>, which is what the rule <em>means</em> declaratively, but not what Prolog does. The rewrite chose Prolog's behavior.</li>
+<li><strong>Sources.</strong> The Feb and Aug columns are my runs, except the last two Aug cells, which come from the published comparison. The rewrite column is my runs.</li>
+</ul>
+</section>
+<section aria-labelledby="at-a-glance"><h2 id="at-a-glance">At a glance</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="At a glance table"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Dates</th>
+<th style="text-align: right;">Passing tests</th>
+<th style="text-align: right;">Python source</th>
+<th>Headline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prototype</td>
+<td>Aug 2025</td>
+<td style="text-align: right;">hundreds</td>
+<td style="text-align: right;">~13,000 lines</td>
+<td>Stories become facts that change over time</td>
+</tr>
+<tr>
+<td>Rapid growth</td>
+<td>Sep–Oct 2025</td>
+<td style="text-align: right;">525 → 2,552</td>
+<td style="text-align: right;">→ ~54,000</td>
+<td>Most of the Prolog basics; tabling</td>
+</tr>
+<tr>
+<td>Consolidation</td>
+<td>Nov 2025–Feb 2026</td>
+<td style="text-align: right;">→ 3,846</td>
+<td style="text-align: right;">→ ~61,000</td>
+<td>One path for negation; explanations; tools</td>
+</tr>
+<tr>
+<td>Own repository</td>
+<td>Feb–Aug 2026</td>
+<td style="text-align: right;">→ 6,691 peak → 6,660</td>
+<td style="text-align: right;">→ ~54,000</td>
+<td>Bug waves, AI audits, deletions, a host API</td>
+</tr>
+<tr>
+<td>Rewrite</td>
+<td>Sep 2026</td>
+<td style="text-align: right;">540 → 1,144</td>
+<td style="text-align: right;">~7,400</td>
+<td>Rebuilt from a brief, old engine as reference, verification first</td>
+</tr>
+</tbody>
+</table></div>
+<p>Source sizes are non-test Python in each source tree. The earlier tree also held a parser, a command-line game and tools, so the rewrite's figure isn't an engine-for-engine comparison.</p>
+<hr />
+</section>
+<section aria-labelledby="1-a-weekend-prototype-august-2025"><h2 id="1-a-weekend-prototype-august-2025">1. A weekend prototype (August 2025)</h2>
+<p>I'd been writing short science-fiction stories on Substack, and I wanted to see whether their worlds could live in a logic engine: who is where, what they know, what changed and why. Over a weekend, Claude Code and GPT-5 helped me turn a few stories into Prolog-style facts, plus a Python engine to reason over them. I <a href="https://natecombs.substack.com/p/fly-by-wire-coding-with-ai">wrote about it</a> at the time as "fly-by-wire coding": the code arrived faster than I could read it, and I steered by asking the agents to analyze what they'd built.</p>
+<p>The earliest surviving commit (Aug 30, 2025, a port from an earlier repository that isn't part of this record) shows what the prototype could do:</p>
+<ul>
+<li><strong>Story time.</strong> An Event Calculus: events happen at time points and <em>initiate</em> or <em>terminate</em> fluents (facts that can change), and a fluent persists until something ends it. It already had tie-break rules for simultaneous starts and stops.</li>
+<li><strong>Provenance from the start.</strong> Generated facts could carry an ID pointing back to the span of story text they came from.</li>
+<li><strong>Rules, sort of.</strong> Rules were evaluated a whole set of answers at a time, with goals reordered for efficiency. That's closer to a database query than to Prolog.</li>
+</ul>
+<p>It had no Prolog-style backtracking, no cut and no arithmetic. On that snapshot, a left-recursive rule crashed Python's stack, a clause with a cut returned nothing, and <code>Y is X * 2</code> returned nothing.</p>
+</section>
+<section aria-labelledby="2-growing-up-fast-septemberoctober-2025"><h2 id="2-growing-up-fast-septemberoctober-2025">2. Growing up fast (September–October 2025)</h2>
+<p><strong>Passing tests 525 → 2,552. Source roughly 13,000 → 54,000 lines.</strong></p>
+<p>Most of the Prolog basics arrived in these two months:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="2. Growing up fast (September–October 2025) table"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Capability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aug 31</td>
+<td>Disjunction (<code>;</code>) evaluated at run time</td>
+</tr>
+<tr>
+<td>Sep 4</td>
+<td>A depth-first, backtracking evaluator (a goal stack with choice points)</td>
+</tr>
+<tr>
+<td>Sep 6–7</td>
+<td>Cut parsed and handled</td>
+</tr>
+<tr>
+<td>Sep 8–9</td>
+<td>Proper variable identity during unification</td>
+</tr>
+<tr>
+<td>Sep 14</td>
+<td>A router choosing between the original set-at-a-time evaluator and the new backtracking one</td>
+</tr>
+<tr>
+<td>Sep 23–27</td>
+<td><code>forall</code>, if-then-else, <code>member</code>/<code>append</code>/<code>length</code>/<code>sort</code>/<code>findall</code>, list syntax, <code>between</code>, atom built-ins, integer division</td>
+</tr>
+<tr>
+<td>Oct 12</td>
+<td>Tabling, so recursive rules terminate</td>
+</tr>
+<tr>
+<td>Oct 17</td>
+<td>Caches invalidated by an "epoch" counter</td>
+</tr>
+</tbody>
+</table></div>
+<p>One detail explains a lot of what follows. The router sent almost every query to the <em>original</em> evaluator. The backtracking engine only saw a short allowlist of predicates and, eventually, queries containing a cut. So for most of its life the earlier engine had Prolog's syntax and unification but not its execution model: it deduplicated answers and reordered goals.</p>
+<p>It was a noisy two months:</p>
+<ul>
+<li><strong>Sep 8–9.</strong> A refactor of variable identity took the suite from 25 failures to a worst point of 317 failures and 105 errors. The first all-green commit came eleven days later.</li>
+<li><strong>Oct 10–12.</strong> An import reorganization plus the new tabling code briefly produced 827 failures.</li>
+<li><strong>Runtime.</strong> A full test run went from about 18 seconds to several minutes. 59 logged runs took six and a half minutes or more, and the slowest took 13.</li>
+</ul>
+<h3 id="the-fix-was-the-bug">The fix was the bug</h3>
+<p>By October the engine would sometimes vanish into runaway recursion, with the CPU pinned for minutes. The first remedy was a set of depth limits:</p>
+<ul>
+<li>a maximum evaluation depth of 100;</li>
+<li>a transitive-depth limit, raised from 10 to 20 to make a murder-mystery scenario work;</li>
+<li>a cap of 10 consecutive failures.</li>
+</ul>
+<p>The runaways stopped. Path queries also started coming back short, with valid links missing from ancestor chains, and nothing said so.</p>
+<p>I fed a pile of Claude's status reports to GPT-5, which had no access to the code. It diagnosed "unbounded recursion masked as 'maybe progress'" and suggested tabling. Claude implemented it on Oct 12. I <a href="https://natecombs.substack.com/p/when-heuristics-bite-back">wrote that up</a> under the heading "the 'fix' was the bug."</p>
+<p>The sequel didn't make the article. Two things went wrong.</p>
+<p><strong>The depth limits never left.</strong> They stayed in the code as a backstop, and in April 2026 one cap was raised from 20 to 50. At the end, a 60-link chain still came back with no path, and the only sign was a line printed to the console.</p>
+<p><strong>The tabling wasn't complete.</strong> The docs called the new code "SLG resolution," but it was answer memoization without the part that makes tabling complete: a recursive call got whatever partial answers existed, and the "fixpoint" loop never actually ran. Left-recursive queries returned incomplete answers (a snapshot from just before the change was already incomplete too). Every tabling test recursed the other way, so the suite stayed green. It took until June 2026, and an AI audit, to find that the "saturation loop that ensures completeness" had never run.</p>
+</section>
+<section aria-labelledby="3-consolidation-and-what-the-tests-couldnt-see-november-2025february-2026"><h2 id="3-consolidation-and-what-the-tests-couldnt-see-november-2025february-2026">3. Consolidation, and what the tests couldn't see (November 2025–February 2026)</h2>
+<p><strong>Passing tests 2,552 → 3,846. Source roughly 54,000 → 61,000 lines.</strong></p>
+<ul>
+<li><strong>Negation, untangled.</strong> A February consolidation found five separate code paths for negation as failure, each with its own rules about unbound variables, and merged them.</li>
+<li>One path had used a Python idiom, <code>any(answers)</code>, since September. An answer that binds no variables is an empty dict, and Python treats an empty dict as false, so "yes, true, nothing to bind" read as "no."</li>
+<li>A January change removed a "HACK" that let negation run on partly bound goals. It had been carried along through several refactors.</li>
+<li>A stratification analyzer was written but only ever called from tests.</li>
+<li><strong>Explanations.</strong> A query explainer (October), an explanation module (November) and a timeline explainer (December) grew out of the original provenance IDs.</li>
+<li><strong>Tools around the engine.</strong></li>
+<li>"The Spider," a story-graph viewer (December).</li>
+<li>A code analyzer that mapped the codebase for the agents (September to December).</li>
+<li>A loop detector nicknamed Harriet (October), never wired into the engine.</li>
+<li><strong>A jump that wasn't new capability.</strong> On Jan 6, passing tests went from 3,116 to 3,473 because 368 white-box test functions for internals were back-filled.</li>
+</ul>
+<p>The last snapshot before the move to a dedicated repository (Feb 21, 2026) still got the basics in the table above wrong. The tests missed them for specific reasons:</p>
+<ul>
+<li><strong>Cut.</strong> Cut tests mostly asked yes-or-no questions, such as "is <code>c(1)</code> true?", which can't reveal an extra answer.</li>
+<li><strong>Recursion.</strong> Recursion was tested in one direction only.</li>
+<li><strong>Benchmark special-casing.</strong> In October a correctness fix cleared the caches before every query, which cost 36% on an engine-switching benchmark. To win it back, the engine cleared caches only for certain queries, chosen partly by predicate name, including <code>theory</code>, the murder-mystery benchmark's predicate. Correctness now depended on a list of names. The benchmark itself had been edited to make it satisfiable.</li>
+</ul>
+</section>
+<section aria-labelledby="4-its-own-repository-februaryaugust-2026"><h2 id="4-its-own-repository-februaryaugust-2026">4. Its own repository (February–August 2026)</h2>
+<p><strong>Passing tests 3,846 → 6,691 (May 6) → 6,660. Source roughly 61,000 → 54,000 lines.</strong></p>
+<p>The engine moved into a dedicated repository on Feb 22.</p>
+<ul>
+<li><strong>March: bug waves.</strong> Commit messages claim about 160 issues fixed between late February and March 20, some with regression tests and some without. New capabilities included:</li>
+<li><code>why/1</code>, <code>derivation/1</code> and <code>evidence_chain/1</code> (Mar 4);</li>
+<li>numeric equality <code>=:=</code>;</li>
+<li>recursion detection over strongly connected components;</li>
+<li>a parser rewrite.</li>
+</ul>
+<p>The suite grew by about 2,500 tests in March alone, the biggest month on record.
+- <strong>April–May: speed.</strong> An answer cache and indexing were switched on by default (Apr 24). The cache handed every caller the same internal list, so a caller that appended to a result changed what the next identical query returned. A test pinned that behavior as a "contract," and it was never fixed. The caching itself was worth having. On a repeated query it made this engine about a hundred times faster than the rewrite, and copying each answer before handing it out would have fixed the bug while keeping nearly all of that speed (<a href="../evidence/README.html#what-isnt-measured">evidence</a>).
+- <strong>June: the audits.</strong> Several AI reviews ran on June 12–13.
+  - <strong>Fable 5.</strong> A static read by Claude (Fable 5), split across 14 reviewers, with no tests run. Its verdict: the engine worked for the shipped stories, and its "failure mode just outside that envelope is <strong>silence</strong>."
+  - <strong>A 324-agent review.</strong> Another review used 324 agents over about two hours. Its 295 raw findings went through adversarial verification: 18 were refuted outright and about 150 downgraded, leaving 1 critical, 5 high, 40 medium and about 229 low. Its headline: the engine was "largely correct on its shipped KB," and "Its real disease is structural."
+  - <strong>The critical finding</strong> was tabling: the completeness loop had never run. It was fixed on June 14. The same day, about 5,200 lines of dead code were deleted, along with roughly 260 tests (about 4% of the suite) that had only ever exercised that code.</p>
+<p>I <a href="https://natecombs.substack.com/p/what-fable-found-in-my-logic-engine">wrote about the review</a> and decided on consolidation rather than a rewrite. That decision lasted about three months.
+- <strong>July–August: more basics.</strong>
+  - The backtracking evaluator had been dropping every alternative after the second.
+  - Clauses containing a cut had always failed on that path.
+  - Answer order depended on Python's hash seed, so it could change between runs.
+  - A top-level if-then-else always returned no answers.
+  - Inside a rule body, one matching fact could hide every rule answer.
+  - Some Event Calculus tests still passed with the Event Calculus switched off.
+  - A small host API landed in August, with "can I do this here?" game hooks.</p>
+<p><strong>Where it ended, Aug 30, 2026</strong> (from probes of that snapshot, beyond the table at the top):</p>
+<ul>
+<li>Simple left recursion was complete, but mutual left recursion found 1 of 4 answers.</li>
+<li>Recursion deeper than 50 levels was silently cut off, with only a printed warning.</li>
+<li>The natural numbers came back as <code>{0, 1}</code>, and <code>nat(3)</code> failed.</li>
+<li><code>findall</code> over a conjunction returned an empty list.</li>
+<li><code>s :- \+ s.</code> answered true.</li>
+<li>Division by zero failed silently instead of raising an error.</li>
+<li>Adding facts while other threads queried produced exceptions and wrong empty answers. (The rewrite doesn't support concurrent updates at all.)</li>
+</ul>
+<p>By the audits' account it still handled its shipped stories, and it still passed 6,660 tests.</p>
+</section>
+<section aria-labelledby="5-starting-over-september-2026"><h2 id="5-starting-over-september-2026">5. Starting over (September 2026)</h2>
+<p><strong>Tests 540 → 1,144 (a new suite). Source about 7,400 lines.</strong></p>
+<p>In September I tried the other strategy: start over. Over three days I wrote <a href="prompts/README.html">three prompts</a>, about 540 lines in all, and had agents build a new engine from them in a new repository, without importing or copying the old code. Besides goals and non-goals, the prompts prescribed how to check the work: an adversarial architecture review, mutation testing in separate worktrees, an audit of the old tests, and negative cases that distinguish a correct engine from "an always-empty or always-successful one." The old repository stayed available as a read-only "working reference implementation." The first prompt describes it as a source of "semantic requirements, domain knowledge, useful algorithms, and regression cases," not a blueprint. The detailed behavioral contract, architecture notes and list of limitations were written by the agents, as part of the first kernel commit. The first prompt asked for:</p>
+<ul>
+<li>one semantic model;</li>
+<li>rule-body goals and top-level queries that agree;</li>
+<li>query-local state that can't leak;</li>
+<li>story time kept separate from knowledge-base edits;</li>
+<li>provenance designed in rather than scraped from logs;</li>
+<li>a hard line between "false" and "didn't finish."</li>
+</ul>
+<p>Its non-goals were just as explicit. The first was "Do not expand this into a general-purpose Prolog implementation." Test-count parity was another.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="5. Starting over (September 2026) table"><table>
+<thead>
+<tr>
+<th>When (2026)</th>
+<th>What happened</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sep 13, 19:51</td>
+<td>Seed prompt committed</td>
+</tr>
+<tr>
+<td>Sep 14, 05:56</td>
+<td>First kernel commit: kernel, docs and 540 tests, after an adversarial architecture review and 36 deliberate mutations (10 defects fixed before the commit). Replayed later, this commit already passes 17 of the 21 cross-checks</td>
+</tr>
+<tr>
+<td>Sep 14, evening</td>
+<td>Second prompt: a test-migration and adversarial coverage audit</td>
+</tr>
+<tr>
+<td>Sep 15</td>
+<td>Old suite audited file by file; 842 tests. Third prompt that evening: audit the suite and kernel "in both directions"</td>
+</tr>
+<tr>
+<td>Sep 16</td>
+<td>Audit "in both directions": about 20 more defects; 1,023 tests</td>
+</tr>
+<tr>
+<td>Sep 22</td>
+<td>Five parallel AI reviewers, plus a sixth told to refute the fix plan: 5 wrong answers, a crash, a state leak; 1,144 tests</td>
+</tr>
+<tr>
+<td>Sep 22</td>
+<td>Comparison harness against the old engine, with SWI-Prolog as referee</td>
+</tr>
+<tr>
+<td>Sep 24</td>
+<td>Harness hardened; results published</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What happened to the old tests.</strong> The migration audit went through all 6,778 test cases in the old suite:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="5. Starting over (September 2026) table"><table>
+<thead>
+<tr>
+<th>The rewrite's classification (made file by file)</th>
+<th style="text-align: right;">Cases</th>
+<th style="text-align: right;">Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kernel behavior: adapted, already covered, or consolidated</td>
+<td style="text-align: right;">2,519</td>
+<td style="text-align: right;">37%</td>
+</tr>
+<tr>
+<td>Tested machinery the rewrite removed</td>
+<td style="text-align: right;">3,421</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td>Application layers left out (game, CLI, tools)</td>
+<td style="text-align: right;">800</td>
+<td style="text-align: right;">12%</td>
+</tr>
+<tr>
+<td>Blocked on a deferred feature</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">&lt;1%</td>
+</tr>
+</tbody>
+</table></div>
+<p>These are the rewrite's own judgments of its predecessor's tests, and tests of internals weren't worthless in their time. The audit also found:</p>
+<ul>
+<li>a test fixture that swapped in a fake engine answering hard-coded values;</li>
+<li>a helper that returned only true or false, so a whole family of tests "could not tell one answer from twenty";</li>
+<li>two tests that checked "at most one trust level at a time" loosened from <code>&lt;= 1</code> to <code>&gt;= 1</code>, printing a warning whenever the bug they were meant to catch occurred.</li>
+</ul>
+<p><strong>The original comparison (historical scoring).</strong> 21 small programs were run on both engines. 12 were refereed by SWI-Prolog (several also cite the ISO standard); 8 were judged by recorded rulings; 1 combined an SWI answer with a judgment about the Python API. Under the original rules, the rewrite passed 18 and the old engine 10. The <a href="../evidence/comparison-revised-2026-09-25.html">September 25 rerun with corrected scoring</a> records old <strong>11 pass / 10 fail</strong> and rewrite <strong>16 pass / 3 fail / 2 unknown</strong>. The figures below describe the original report, not the current score. <a href="../evidence/README.html#the-21-check-comparison">evidence/README.md</a> has the breakdown. The short version:</p>
+<ul>
+<li><strong>Timeouts.</strong> Two of the rewrite's passes were test-runner timeouts on endless searches.</li>
+<li><strong>A miscounted refusal.</strong> One of the old engine's failures is a refusal the harness couldn't decode. A stricter count gives it 11.</li>
+<li><strong>One-sided coverage.</strong> The checks test places where the old engine departs from ISO, but not the rewrite's own departures, nor story time, provenance or the game hooks.</li>
+<li><strong>Missed old-engine bugs.</strong> The corpus missed some of the old engine's deepest bugs. Its cut check puts the cut in the middle of a clause body, which the old engine handled.</li>
+</ul>
+<p><strong>What the rewrite gave up:</strong></p>
+<ul>
+<li>rule-level "why";</li>
+<li>cross-query caching;</li>
+<li>cut inside recursive predicates;</li>
+<li>programs that are safe only because of their data;</li>
+<li>concurrent updates;</li>
+<li>the text parser, command-line game and tools.</li>
+</ul>
+<p><strong>What it still gets wrong, without saying so:</strong></p>
+<ul>
+<li><strong>Timed effect rules.</strong> Its Event Calculus reads them in a non-classical way, so a classical "toggle" or conditional effect rule gets a different answer.</li>
+<li><strong>Unsupported built-ins.</strong> Things like <code>catch/3</code> quietly fail unless you turn on strict mode.</li>
+</ul>
+<p>It also slows down sharply on some recursive code. <a href="ENGINE.html#known-gaps">ENGINE.md</a> lists these and the rest.</p>
+</section>
+<section aria-labelledby="sources"><h2 id="sources">Sources</h2>
+<p>The engine repositories are private. Links will be added when they're released.</p>
+<ul>
+<li><strong>Earlier engine, sandbox era</strong> (Aug 2025–Feb 2026): <code>BSF2-IF-Experimental</code>.</li>
+<li><strong>Earlier engine, own repository</strong> (Feb–Aug 2026): <code>BadScienceFiction-CyclopsStorm</code>, final commit <code>e62758c</code>.</li>
+<li><strong>Rewrite:</strong> <code>AkiyaBlocks-CyclopsStorm</code>, commit <code>9be7804</code>.</li>
+<li><strong>Articles written along the way</strong> are listed in <a href="AI-DEVELOPMENT.html#further-reading">AI-DEVELOPMENT.md</a>.</li>
+</ul></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/HISTORY.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

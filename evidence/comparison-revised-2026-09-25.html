@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rerun September 25, 2026: the earlier engine passes 11, fails 10; the rewrite passes 16, fails 3, and has 2 unknowns. External timeouts no longer count as…">
+  <title>The 21 checks, rescored and rerun · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="../docs/HISTORY.html">History</a><a href="../docs/ENGINE.html">How it works</a><a href="../docs/AI-DEVELOPMENT.html">Building it with AI</a><a href="../docs/MIGRATION.html">Migration</a><a href="README.html">Evidence</a><a href="../docs/GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="the-21-checks-rescored-and-rerun">The 21 checks, rescored and rerun</h1>
+<p>Rerun September 25, 2026: the earlier engine passes <strong>11</strong>, fails <strong>10</strong>; the rewrite passes <strong>16</strong>, fails <strong>3</strong>, and has <strong>2 unknowns</strong>. External timeouts no longer count as engine stops, and the earlier engine's explicit <code>why/1</code> refusal is recognized as a refusal. No engine code changed.</p>
+<p><a href="comparison-revised-2026-09-25.json">Raw results, observations and oracle outputs</a> · <a href="rerun-comparison.py">rerun/scoring script</a> · <a href="cases-2026-09-24.json">frozen 21-case corpus</a> · <a href="https://github.com/Nate-BadScienceFiction/logic-engine-experiment/blob/main/evidence/comparison-2026-09-24.md">original report</a>.</p>
+</div>
+<nav class="page-contents" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#same-cases-revised-interpretation">Same cases, revised interpretation</a></li><li><a href="#what-a-difference-looks-like">What a difference looks like</a></li><li><a href="#results-by-evidence-strength">Results by evidence strength</a></li><li><a href="#what-changed-from-the-original-report">What changed from the original report</a></li><li><a href="#every-case-in-the-rerun">Every case in the rerun</a></li><li><a href="#supplemental-bounded-probes">Supplemental bounded probes</a></li><li><a href="#oracle-and-coverage-limits">Oracle and coverage limits</a></li><li><a href="#rerun">Rerun</a></li></ul></nav>
+<section aria-labelledby="same-cases-revised-interpretation"><h2 id="same-cases-revised-interpretation">Same cases, revised interpretation</h2>
+<p>The revisions remain old <code>e62758c23f66b26fa92c6d2dafaaf6bf3466499f</code> and new <code>9be7804c933cc8a3c51af3d8a5e4f54b012c8be6</code>. Each engine/case runs in a fresh subprocess. The corpus, default engine settings and case deadlines are unchanged. The rerun uses Python 3.12.10 and SWI-Prolog 10.0.2 on Windows 11.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Same cases, revised interpretation table"><table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Original scoring</th>
+<th>Revised scoring</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>External timeout on unbounded/bounded search</td>
+<td>Pass</td>
+<td><strong>Unknown</strong>: no completed observation of the engine's status</td>
+</tr>
+<tr>
+<td>External timeout on a case required to complete</td>
+<td>Fail</td>
+<td>Fail: required result did not arrive by the deadline</td>
+</tr>
+<tr>
+<td>Observed explicit incomplete status on unbounded search</td>
+<td>Pass</td>
+<td>Pass; the engine itself reported incompleteness</td>
+</tr>
+<tr>
+<td>Finite result without incompleteness status on unbounded search</td>
+<td>Fail</td>
+<td>Fail; silently truncating is not completion</td>
+</tr>
+<tr>
+<td>Structured <code>why/1</code> response containing only <code>no_derivation_found</code> explanations</td>
+<td>Counted as a positive answer</td>
+<td>Recognized as a refusal; original payload retained in raw metadata</td>
+</tr>
+<tr>
+<td>Other explanation-shaped values or arbitrary strings</td>
+<td>Existing encoding/count rules</td>
+<td>Unchanged; no general string-matching exemption</td>
+</tr>
+<tr>
+<td>Worker/encoder/oracle unavailable</td>
+<td>Unknown where observation is unavailable</td>
+<td>Retained; never converted into evidence of correctness</td>
+</tr>
+</tbody>
+</table></div>
+<p>The refusal adjustment recognizes the predecessor's structured public response, not whether a particular test is its negative control. The same normalization is applied to all <code>why/1</code> calls: a refusal on a positive probe would therefore fail that probe. Mixed positive/refusal responses are not collapsed. This change does not certify that positive explanations contain correct proofs.</p>
+<p>The wrapper imports the comparison harness from the pinned rewrite, applies these two corrections, preserves raw observations, and leaves both private repositories unchanged. Its self-checks cover timeout distinctions, positive explanations, explicit refusals, mixed results and unrelated predicates.</p>
+</section>
+<section aria-labelledby="what-a-difference-looks-like"><h2 id="what-a-difference-looks-like">What a difference looks like</h2>
+<p>These examples show what the cross-checks measure beyond a passing-test total:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="What a difference looks like table"><table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Expected answer</th>
+<th>Earlier engine</th>
+<th>Rewrite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Given <code>p(1). p('1'). p(1.0).</code>, what does <code>p(X)</code> return?</td>
+<td>Three distinct values: integer, atom, float</td>
+<td>Collapses them into one answer</td>
+<td>Returns all three distinct values</td>
+</tr>
+<tr>
+<td>What are <code>-10 // 3</code> and <code>-10 div 3</code>?</td>
+<td><code>-3</code> (truncate toward zero) and <code>-4</code> (round down)</td>
+<td>Fails to parse the test program</td>
+<td>Returns the two expected values</td>
+</tr>
+<tr>
+<td>Does the unbounded natural-number search finish?</td>
+<td>An unfinished search must not be described as complete</td>
+<td>Fails the check</td>
+<td>Unknown: the external deadline arrives before an observable result</td>
+</tr>
+</tbody>
+</table></div>
+<p>The first two expectations were checked against SWI-Prolog. The third tests the engine's reporting contract; a timeout alone cannot establish whether that contract was met. Exact programs, observations and judgments are in the <a href="comparison-revised-2026-09-25.json">raw results</a>.</p>
+</section>
+<section aria-labelledby="results-by-evidence-strength"><h2 id="results-by-evidence-strength">Results by evidence strength</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Results by evidence strength table"><table>
+<thead>
+<tr>
+<th>Scope</th>
+<th style="text-align: right;">Old pass</th>
+<th style="text-align: right;">Old fail</th>
+<th style="text-align: right;">Old unknown</th>
+<th style="text-align: right;">Rewrite pass</th>
+<th style="text-align: right;">Rewrite fail</th>
+<th style="text-align: right;">Rewrite unknown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Answer, control, API and termination checks (18)</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>Explanation capability probes (3)</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td><strong>All 21</strong></td>
+<td style="text-align: right;"><strong>11</strong></td>
+<td style="text-align: right;"><strong>10</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;"><strong>16</strong></td>
+<td style="text-align: right;"><strong>3</strong></td>
+<td style="text-align: right;"><strong>2</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>The capability probes test positive presence plus a negative control. They are weaker than checking the content of a proof. Do not turn the combined totals into a general correctness percentage or migration-coverage percentage.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Results by evidence strength table"><table>
+<thead>
+<tr>
+<th>Paired outcome</th>
+<th style="text-align: right;">Cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Both pass</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td>Both fail</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>Old passes, rewrite fails</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>Old fails, rewrite passes</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr>
+<td>Old fails, rewrite unknown</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>21</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>The rewrite still fixes observed arithmetic, syntax, value-fidelity and returned-list isolation failures. The old engine still supplies capabilities the rewrite omits. The revised scoring changes evidence accounting, not either implementation.</p>
+</section>
+<section aria-labelledby="what-changed-from-the-original-report"><h2 id="what-changed-from-the-original-report">What changed from the original report</h2>
+<ul>
+<li><strong>Old <code>why/1</code>: fail → pass.</strong> The absent target produced a structured <code>no_derivation_found</code> response, which now satisfies the negative control. The original payload is stored under the operation's <code>meta.raw_refusal</code>.</li>
+<li><strong>Rewrite infinite natural numbers: pass → unknown.</strong> The default run hit the external deadline; no completed worker result demonstrated an engine stop.</li>
+<li><strong>Rewrite open-list generator: pass → unknown.</strong> The end-to-end worker also hit its deadline. The query phase includes conversion of returned answers, so this observation alone cannot tell whether solving or conversion consumed the time.</li>
+<li><strong>All other case outcomes are unchanged.</strong> The raw file contains every observation from the new run, rather than merely relabeling the old JSON.</li>
+</ul>
+<p>The original 10/18 score and historical replay charts remain dated records using the old rules. Their scores must not be compared directly with this 11/16/2-unknown result as evidence of code changes.</p>
+</section>
+<section aria-labelledby="every-case-in-the-rerun"><h2 id="every-case-in-the-rerun">Every case in the rerun</h2>
+<p>The labels summarize each check. Exact identifiers match the frozen corpus and raw results.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Every case in the rerun table"><table>
+<thead>
+<tr>
+<th>Cross-check</th>
+<th>Earlier</th>
+<th>Rewrite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Combine facts and rules for one predicate<br><small><code>resolution.facts-and-rules-for-one-predicate</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Join two conditions<br><small><code>resolution.conjunction-join</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Commit to a choice with cut<br><small><code>resolution.cut-commits-to-the-clause</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Keep negation from binding variables<br><small><code>resolution.negation-binds-nothing</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Divide negative integers correctly<br><small><code>builtins.arithmetic-integer-division-on-negatives</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Distinguish sorting with and without duplicates<br><small><code>builtins.sort-deduplicates-msort-does-not</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Keep repeated answers in findall<br><small><code>builtins.findall-keeps-multiplicity</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Decompose a compound term<br><small><code>builtins.univ-decomposes-a-compound</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Respect operator precedence<br><small><code>syntax.operator-precedence-in-a-comparison</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Preserve lists of every tested length<br><small><code>syntax.a-list-is-a-list-at-every-length</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Keep integers, floats and atoms distinct<br><small><code>value-fidelity.an-integer-a-float-and-an-atom-are-three-facts</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Preserve compound arguments in returned values<br><small><code>value-fidelity.a-compound-argument-survives-the-boundary</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Find reachable nodes along a chain<br><small><code>recursion.transitive-closure-over-a-chain</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Finish left-recursive reachability<br><small><code>recursion.left-recursion-terminates-and-is-complete</code></small></td>
+<td>pass</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Report an infinite answer set as unfinished<br><small><code>recursion.an-infinite-answer-set-must-not-be-called-complete</code></small></td>
+<td>fail</td>
+<td>unknown</td>
+</tr>
+<tr>
+<td>Avoid treating an open generator as false<br><small><code>errors.an-open-generator-must-not-read-as-false</code></small></td>
+<td>fail</td>
+<td>unknown</td>
+</tr>
+<tr>
+<td>Keep returned lists independent of engine state<br><small><code>mutation.a-returned-answer-list-is-the-callers-to-keep</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Report arithmetic on a non-number as an error<br><small><code>errors.arithmetic-on-a-non-number-is-an-error</code></small></td>
+<td>fail</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>Explain a rule-derived fact<br><small><code>capability.rule-level-explanation-of-a-derived-fact</code></small></td>
+<td>pass</td>
+<td>fail</td>
+</tr>
+<tr>
+<td>Answer why a fact holds and refuse an absent target<br><small><code>capability.why-a-fact-holds</code></small></td>
+<td>pass</td>
+<td>fail</td>
+</tr>
+<tr>
+<td>Provide an evidence chain for a derived fact<br><small><code>capability.evidence-chain-for-a-derived-fact</code></small></td>
+<td>fail</td>
+<td>fail</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section aria-labelledby="supplemental-bounded-probes"><h2 id="supplemental-bounded-probes">Supplemental bounded probes</h2>
+<p>To distinguish unobserved default behavior from an inability to report exhaustion, the two unbounded cases were also run on the rewrite with explicit limits: <strong>20,000 resolution steps and at most 32 answers</strong>, default depth unchanged.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Supplemental bounded probes table"><table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Observed status</th>
+<th style="text-align: right;">Returned answers</th>
+<th style="text-align: right;">Recorded steps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Infinite natural numbers</td>
+<td><code>EXHAUSTED</code></td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">20,001</td>
+</tr>
+<tr>
+<td>Open-list generator</td>
+<td><code>EXHAUSTED</code></td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">66</td>
+</tr>
+</tbody>
+</table></div>
+<p>These demonstrate the status channel under bounded settings. They do <strong>not</strong> replace the two unknown default runs in the headline, establish a general latency bound, or measure compatibility with the old engine's limits. Counts can exceed a step ceiling by the step that detects exhaustion.</p>
+</section>
+<section aria-labelledby="oracle-and-coverage-limits"><h2 id="oracle-and-coverage-limits">Oracle and coverage limits</h2>
+<p>The frozen corpus uses <strong>12 SWI-only expectations, one mixed SWI/host-API expectation, and eight recorded adjudications</strong>. The SWI-backed outputs were obtained again during this run. The corpus calls the latter judgments “human adjudication,” but their authorship is not established here; they are treated as recorded judgments, not independently verified human review.</p>
+<p>The cases were selected with knowledge of both engines and several target old defects. They do not cover story time, source-sentence provenance, game hooks, or every deliberate dialect difference. They cannot establish that all old requirements migrated. See <a href="../docs/MIGRATION.html">the migration summary</a> for that separate question and <a href="benchmarks-revised-2026-09-25.html">the revised benchmarks</a> for performance.</p>
+</section>
+<section aria-labelledby="rerun"><h2 id="rerun">Rerun</h2>
+<p>Requires the pinned, clean source/harness revisions in both local clones, Python 3.12+, the predecessor's runtime dependencies, and SWI-Prolog. Private engine code is still required.</p>
+<pre><code class="language-powershell">python -B evidence/rerun-comparison.py --old-repo &lt;old-checkout&gt; --new-repo &lt;rewrite-checkout&gt; --output comparison.json
+python -B evidence/rerun-comparison.py --new-repo &lt;rewrite-checkout&gt; --self-test
+</code></pre>
+<p>The output records revisions, script/corpus hashes, environment, start/end timestamps, per-case oracle data, verdicts, worker observations, timeout phases and supplemental settings. <code>complete: true</code> distinguishes a finished run from a partial checkpoint.</p></section>
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>evidence/comparison-revised-2026-09-25.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

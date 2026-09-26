@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="In September 2026 I wrote three prompts, about 540 lines in all, and had AI agents build and then audit a new engine from them. They are reproduced here as…">
+  <title>The three prompts behind the rewrite · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="../HISTORY.html">History</a><a href="../ENGINE.html">How it works</a><a href="../AI-DEVELOPMENT.html">Building it with AI</a><a href="../MIGRATION.html">Migration</a><a href="../../evidence/README.html">Evidence</a><a href="../GLOSSARY.html">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="the-three-prompts-behind-the-rewrite">The three prompts behind the rewrite</h1>
+<p>In September 2026 I wrote three prompts, about 540 lines in all, and had AI agents build and then audit a new engine from them. They are reproduced here as I wrote them. <a href="../HISTORY.html#5-starting-over-september-2026">HISTORY.md</a> tells what happened next.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="The three prompts behind the rewrite table"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Date</th>
+<th>Prompt</th>
+<th>What it asks for</th>
+<th style="text-align: right;">Words</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Sep 13</td>
+<td><a href="1-design-brief-2026-09-13.html">Design brief</a></td>
+<td>Build a ground-up successor to the earlier engine: goals and non-goals, an adversarial architecture review, then a runnable, tested first slice</td>
+<td style="text-align: right;">1,983</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Sep 14</td>
+<td><a href="2-test-migration-audit-2026-09-14.html">Test-migration audit</a></td>
+<td>Give every one of the old engine's tests a disposition, check each for relevance and strength, and fill gaps from the new code outward</td>
+<td style="text-align: right;">1,638</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Sep 15</td>
+<td><a href="3-two-way-audit-2026-09-15.html">Two-way audit of code and tests</a></td>
+<td>Trace every test to the behavior it claims to check and every component to the tests that should protect it; review the fix plan adversarially; show that critical tests catch plausible bugs</td>
+<td style="text-align: right;">1,630</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Where they come from.</strong> <code>prompt.md</code> in the rewrite's repository, AkiyaBlocks-CyclopsStorm (private for now), grew by one prompt a day: commits <code>f575672</code> (Sep 13), <code>467dbb8</code> (Sep 14) and <code>beb6179</code> (Sep 15). The copies here change only formatting, and replace local folder paths with repository names.</p></div>
+
+
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/prompts/README.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>

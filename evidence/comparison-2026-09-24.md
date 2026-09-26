@@ -1,5 +1,9 @@
 # Implementation comparison
 
+> **Superseded scoring.** A [fresh rerun with corrected timeout and refusal scoring](comparison-revised-2026-09-25.md) gives old 11 pass / 10 fail and rewrite 16 pass / 3 fail / 2 unknown. The original report below is retained unchanged apart from these editorial notes.
+
+> **Note (September 25, 2026).** This is the raw harness report, kept as the record. Its speed paragraph attributes the earlier engine's apparent ~3,500× advantage to the defect in its cross-query answer cache. That does not hold: the speed came from the cache itself, which would stay fast with the defect fixed. Timings for both engines are in [the evidence overview](README.md).
+
 Git revisions: old `e62758c23f66b26fa92c6d2dafaaf6bf3466499f`, new `9be7804c933cc8a3c51af3d8a5e4f54b012c8be6`
 
 SWI-Prolog oracle: `C:\Program Files\swipl\bin\swipl.exe` (SWI-Prolog version 10.0.2 for x64-win64)

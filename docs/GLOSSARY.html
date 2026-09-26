@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Plain-language definitions of the terms used in these pages.">
+  <title>Glossary · Cyclops Storm</title>
+  <style>
+    :root { color-scheme:light; --ink:#283238; --muted:#586269; --paper:#faf9f6; --line:#d6d9d8; --link:#215e73; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .wrap { width:min(1000px,calc(100% - 2.5rem)); margin-inline:auto; }
+    a { color:var(--link); text-underline-offset:.18em; }
+    a:hover { color:#163f4d; }
+    a:focus-visible,summary:focus-visible,.table-scroll:focus-visible { outline:3px solid #9a5b1a; outline-offset:4px; }
+    .skip { position:absolute; left:-1000px; top:0; padding:.6rem 1rem; background:#fff; }
+    .skip:focus { left:1rem; }
+    .site-head { border-bottom:1px solid var(--line); }
+    .site-head .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem 2rem; padding-block:1rem; }
+    .site-head a { color:var(--ink); }
+    .site-name { font-weight:650; text-decoration:none; }
+    nav { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; font-size:.9rem; }
+    nav a[aria-current="page"] { color:var(--link); font-weight:650; }
+    main { padding-block:2.5rem 3rem; }
+    h1,h2,h3 { line-height:1.3; font-weight:650; }
+    h1 { margin:.35rem 0 1rem; font-size:clamp(1.8rem,4vw,2.4rem); }
+    h2 { margin:0 0 1rem; font-size:1.4rem; }
+    h3 { margin:1.5rem 0 .6rem; font-size:1.08rem; }
+    p { max-width:82ch; margin:0 0 1rem; }
+    .intro { margin-bottom:2rem; }
+    section { border-top:1px solid var(--line); padding-top:1.8rem; margin-top:2rem; }
+    .table-scroll { overflow-x:auto; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { text-align:left; vertical-align:top; padding:.65rem .7rem; border-bottom:1px solid var(--line); }
+    thead { background:#eef0ed; }
+    th { font-weight:600; }
+    li { margin-bottom:.6rem; }
+    ul,ol { max-width:82ch; padding-left:1.4rem; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.88em; overflow-wrap:anywhere; }
+    pre { background:#f1f2ee; border:1px solid var(--line); border-radius:4px; padding:.9rem 1rem; overflow-x:auto; font-size:.86rem; line-height:1.5; max-width:100%; }
+    pre code { font-size:inherit; overflow-wrap:normal; }
+    blockquote { margin:1rem 0; padding:.2rem 0 .2rem 1rem; border-left:3px solid var(--line); color:var(--muted); }
+    hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+    details { margin:1.2rem 0; }
+    summary { cursor:pointer; color:var(--link); }
+    img { display:block; max-width:100%; height:auto; border:1px solid var(--line); }
+    figcaption { margin-top:.5rem; color:var(--muted); font-size:.9rem; }
+    .page-contents { display:block; margin:1rem 0 2rem; padding:1rem 1.2rem; background:#eef0ed; border:1px solid var(--line); }
+    .page-contents ul { columns:2 18rem; margin:.5rem 0 0; }
+    .page-contents li { break-inside:avoid; margin-bottom:.25rem; }
+    footer { border-top:1px solid var(--line); padding-block:1.4rem; color:var(--muted); font-size:.88rem; }
+    footer p { margin:0; }
+    @media (max-width:480px) { .wrap { width:calc(100% - 2rem); } main { padding-top:1.5rem; } th,td { padding:.6rem .4rem; } }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="site-name" href="../index.html">Cyclops Storm / Lab notes</a>
+      <nav aria-label="Main navigation"><a href="HISTORY.html">History</a><a href="ENGINE.html">How it works</a><a href="AI-DEVELOPMENT.html">Building it with AI</a><a href="MIGRATION.html">Migration</a><a href="../evidence/README.html">Evidence</a><a href="GLOSSARY.html" aria-current="page">Glossary</a></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<div class="intro"><h1 id="glossary">Glossary</h1>
+<p>Plain-language definitions of the terms used in these pages.</p>
+<p><strong>Atom.</strong> A constant name in Prolog: <code>alice</code>, <code>light_on</code>, <code>'Hello'</code>. Distinct from numbers: <code>'1'</code> is an atom, <code>1</code> is an integer.</p>
+<p><strong>Backtracking.</strong> When a line of reasoning fails, the engine goes back to the most recent choice it made and tries the next option. This is how Prolog finds every answer.</p>
+<p><strong>Built-in.</strong> A predicate the engine provides rather than one you define: <code>member/2</code>, <code>findall/3</code>, <code>is/2</code>.</p>
+<p><strong>Clause.</strong> A fact or a rule.</p>
+<p><strong>Cut (<code>!</code>).</strong> "Commit to the choices made so far." Once a cut runs, Prolog won't try this predicate's remaining clauses, or other answers for the goals before the cut in this clause. Useful, and notoriously easy to get subtly wrong.</p>
+<p><strong>Event Calculus.</strong> A way of reasoning about time, introduced by Kowalski and Sergot in 1986. This engine uses a simplified form from the 1990s. Events <em>happen</em> at time points and <em>initiate</em> or <em>terminate</em> fluents. A fluent keeps holding until something terminates it; that persistence is called <em>inertia</em>.</p>
+<p><strong>Fact.</strong> A statement taken as true: <code>parent(alice, bob).</code></p>
+<p><strong>Fluent.</strong> A fact that can change over time: <code>light_on</code>, <code>device_mode(vend_01, offline)</code>.</p>
+<p><strong>Left recursion.</strong> A rule whose first goal calls the rule itself, as in <code>path(X,Y) :- path(X,Z), edge(Z,Y).</code> Plain Prolog loops forever on it; tabling fixes that.</p>
+<p><strong>Mutation testing.</strong> Deliberately breaking the code in small ways to check that some test notices. A test that never goes red can't be protecting anything.</p>
+<p><strong>Negation as failure (<code>\+</code>).</strong> <code>\+ G</code> succeeds when <code>G</code> can't be proven. "Not provable" isn't quite "false," which is why it needs care.</p>
+<p><strong>Oracle.</strong> In testing, the source of truth for expected answers. Here, usually SWI-Prolog.</p>
+<p><strong>Predicate.</strong> A named relation with a number of arguments, written <code>name/arity</code>: <code>parent/2</code>.</p>
+<p><strong>Prolog.</strong> A logic programming language from 1972. You describe facts and rules, then ask questions; the system searches for answers.</p>
+<p><strong>Provenance.</strong> Where a fact came from. Here, the sentence in the source story that supports it.</p>
+<p><strong>Result status.</strong> In this engine, a label on every result: <em>complete</em> (the search finished) or <em>exhausted</em> (a budget ran out, so the truth is unknown). A complete result with no answers means "false." It can also mean "no such predicate": by default, unknown predicates quietly fail.</p>
+<p><strong>Rule.</strong> A conditional fact: <code>ancestor(X, Z) :- parent(X, Y), ancestor(Y, Z).</code> reads "X is an ancestor of Z if X is a parent of some Y and Y is an ancestor of Z."</p>
+<p><strong>SLD resolution.</strong> The standard way Prolog executes: take the first goal, find a matching clause, replace the goal with that clause's body, and repeat, backtracking on failure.</p>
+<p><strong>Stratification.</strong> A check that no predicate depends on its own negation, directly or indirectly. A program that passes has a single intended model, meaning one agreed set of true facts. This engine refuses programs that don't pass.</p>
+<p><strong>SWI-Prolog.</strong> A widely used, mature, free Prolog system. It's used here as the referee.</p>
+<p><strong>Tabling.</strong> Remembering the answers to a subgoal and reusing them. Recursive rules that would otherwise loop forever then finish with every answer, as long as there are finitely many different calls and answers.</p>
+<p><strong>Unification.</strong> Making two terms equal by binding variables: <code>parent(X, bob)</code> unifies with <code>parent(alice, bob)</code> by setting <code>X = alice</code>.</p>
+<p><strong>Variable.</strong> A placeholder, written with a capital letter or underscore: <code>X</code>, <code>Who</code>, <code>_</code>.</p></div>
+
+
+  </main>
+  <footer><div class="wrap"><p>Generated from <code>docs/GLOSSARY.md</code> by <code>tools/build_site.py</code>.</p></div></footer>
+</body>
+</html>
